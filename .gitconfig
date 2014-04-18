@@ -1,0 +1,10 @@
+[user]
+	email = l04m33@gmail.com
+	name = Kay Zheng
+
+[alias]
+    plog = log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    stat = status -sb
+
+[color]
+	ui = 1
