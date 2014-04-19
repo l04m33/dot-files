@@ -8,3 +8,6 @@
 
 [color]
     ui = 1
+
+[core]
+    editor = vim
