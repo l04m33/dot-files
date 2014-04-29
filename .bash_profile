@@ -20,6 +20,8 @@ export EDITOR=vim
 
 # history options
 export HISTCONTROL=ignoredups:erasedups
+export HISTSIZE=20000
+export HISTFILESIZE=20000
 shopt -s histappend
 
 # virtualenvwrapper
