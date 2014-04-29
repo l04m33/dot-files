@@ -15,7 +15,12 @@ fi
 if [ -n "$APPINST_BINS" ]; then
     export PATH=$APPINST_BINS:$PATH
 fi
+
 export EDITOR=vim
+
+# history options
+export HISTCONTROL=ignoredups:erasedups
+shopt -s histappend
 
 # virtualenvwrapper
 if which virtualenvwrapper.sh > /dev/null 2>&1; then
