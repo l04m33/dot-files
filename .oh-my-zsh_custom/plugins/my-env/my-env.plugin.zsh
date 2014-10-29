@@ -1,3 +1,5 @@
+export EDITOR=vim
+
 APPINST_PATH="$HOME/app_inst"
 
 if [ -d "$APPINST_PATH" ]; then
@@ -10,15 +12,11 @@ fi
 
 # virtualenvwrapper
 if which virtualenvwrapper.sh > /dev/null 2>&1; then
+
     export WORKON_HOME=$HOME/.virtualenvs
+
     if which python3 > /dev/null 2>&1; then
         export VIRTUALENVWRAPPER_PYTHON="$(which python3)"
         export VIRTUALENVWRAPPER_VIRTUALENV="$(which pyvenv)"
     fi
-
-    if [ ! -d "$WORKON_HOME" ]; then
-        mkdir -p "$WORKON_HOME"
-    fi
-
-    source $(which virtualenvwrapper.sh)
 fi
