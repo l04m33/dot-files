@@ -175,12 +175,20 @@ local batwidget = wibox.widget.textbox()
 vicious.register(batwidget, vicious.widgets.bat, '<span color="' .. widgetcolor .. '">$2%</span>', 60, "BAT0")
 
 -- CPU usage widget
-cpuwidget = awful.widget.graph()
+local cpuwidget = awful.widget.graph()
 cpuwidget:set_width(40)
 cpuwidget:set_background_color(beautiful.bg_normal)
 cpuwidget:set_color(widgetcolor)
 vicious.cache(vicious.widgets.cpu)
 vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 2)
+
+-- Memory usage widget
+local memwidget = awful.widget.graph()
+memwidget:set_width(40)
+memwidget:set_background_color(beautiful.bg_normal)
+memwidget:set_color(widgetcolor)
+vicious.cache(vicious.widgets.mem)
+vicious.register(memwidget, vicious.widgets.mem, "$1", 2)
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
@@ -214,6 +222,7 @@ for s = 1, screen.count() do
     if s == 1 then
         right_layout:add(wibox.widget.systray())
         right_layout:add(cpuwidget)
+        right_layout:add(memwidget)
         right_layout:add(batwidget)
     end
 
