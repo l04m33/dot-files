@@ -1,0 +1,8 @@
+XTerm*locale: true
+Xterm*saveLines: 4096
+XTerm*foreground: rgb:d4/d4/d4
+XTerm*background: rgb:12/12/12
+xterm*faceName: Monospace:antialias=true
+xterm*faceNameDoublesize: WenQuanYi Zen Hei Mono:antialias=true
+xterm*faceSize: 10
+xterm*bellIsUrgent: true

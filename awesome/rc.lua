@@ -49,7 +49,7 @@ else
 end
 
 -- This is used later as the default terminal and editor to run.
-terminal = "gnome-terminal"
+terminal = "xterm"
 editor = "gvim"
 editor_cmd = editor
 
