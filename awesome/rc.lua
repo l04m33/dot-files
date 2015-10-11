@@ -520,5 +520,6 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- {{{ Daemons
-awful.util.spawn_with_shell("ibus-daemon -d -x -r -n awesome")
+awful.util.spawn("ibus-daemon -d -x -r -n awesome")
+awful.util.spawn("xscreensaver -no-splash")
 -- }}}
