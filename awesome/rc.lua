@@ -170,9 +170,23 @@ mytasklist.buttons = awful.util.table.join(
                                               if client.focus then client.focus:raise() end
                                           end))
 
+-- Volume widget
+local volwidget = wibox.widget.textbox()
+vicious.cache(vicious.widgets.volume)
+vicious.register(
+    volwidget, vicious.widgets.volume,
+    function (widget, args)
+        if args[2] == "♫" then
+            return ' <span color="' .. widgetcolor .. '">' .. args[1] .. '%</span>'
+        else
+            return ' <span color="' .. widgetcolor .. '">M</span>'
+        end
+    end,
+    2, "Master")
+
 -- Battery widget
 local batwidget = wibox.widget.textbox()
-vicious.register(batwidget, vicious.widgets.bat, '<span color="' .. widgetcolor .. '">$2%</span>', 60, "BAT0")
+vicious.register(batwidget, vicious.widgets.bat, ' <span color="' .. widgetcolor .. '">$2%</span>', 60, "BAT0")
 
 -- CPU usage widget
 local cpuwidget = awful.widget.graph()
@@ -224,6 +238,7 @@ for s = 1, screen.count() do
         right_layout:add(cpuwidget)
         right_layout:add(memwidget)
         right_layout:add(batwidget)
+        right_layout:add(volwidget)
     end
 
     right_layout:add(mytextclock)
@@ -316,6 +331,20 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift" }, "i",
         function ()
             awful.util.spawn_with_shell("ibus engine xkb:us::eng")
+        end),
+
+    -- Volume control
+    awful.key({ }, "XF86AudioRaiseVolume",
+        function ()
+            awful.util.spawn_with_shell("amixer sset Master 5%+")
+        end),
+    awful.key({ }, "XF86AudioLowerVolume",
+        function ()
+            awful.util.spawn_with_shell("amixer sset Master 5%-")
+        end),
+    awful.key({ }, "XF86AudioMute",
+        function ()
+            awful.util.spawn_with_shell("amixer sset Master toggle")
         end)
 )
 
