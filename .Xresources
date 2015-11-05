@@ -5,8 +5,13 @@ xterm*bellIsUrgent: true
 XTerm*cursorBlink: true
 XTerm*on3Clicks: regex [^ ]+
 XTerm*on4Clicks: regex .+
+! Shift + left click to open a selected link in firefox
+! Alt + left click to open a selected link in chrome
 ! Copy to both PRIMARY & CLIPBOARD
-XTerm*VT100.translations: #override <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0)
+XTerm*VT100*translations: #override \
+        Shift ~Meta <Btn1Up>: exec-formatted("firefox '%t'", PRIMARY) \n\
+        ~Shift Meta <Btn1Up>: exec-formatted("google-chrome '%t'", PRIMARY) \n\
+        ~Shift ~Meta <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0)
 
 ! Colors
 XTerm*foreground: rgb:d4/d4/d4
