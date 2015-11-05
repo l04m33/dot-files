@@ -90,7 +90,7 @@ theme.layout_tiletop = "~/.config/awesome/themes/default/layouts/tiletopw.png"
 theme.layout_spiral  = "~/.config/awesome/themes/default/layouts/spiralw.png"
 theme.layout_dwindle = "~/.config/awesome/themes/default/layouts/dwindlew.png"
 
-theme.awesome_icon = "/usr/share/awesome/icons/awesome16.png"
+theme.awesome_icon = "~/.config/awesome/themes/default/awesome16.png"
 
 -- Define the icon theme for application icons. If not set then the icons 
 -- from ~/.config/icons and ~/.config/icons/hicolor will be used.
