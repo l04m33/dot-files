@@ -2,6 +2,9 @@
 XTerm*locale: true
 Xterm*saveLines: 8192
 xterm*bellIsUrgent: true
+XTerm*cursorBlink: true
+XTerm*on3Clicks: regex [^ \n]+
+XTerm*on4Clicks: regex .+
 ! Copy to both PRIMARY & CLIPBOARD
 XTerm*VT100.translations: #override <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0)
 
