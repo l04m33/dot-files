@@ -2,6 +2,7 @@
 XTerm*locale: true
 Xterm*saveLines: 8192
 xterm*bellIsUrgent: true
+xterm*selectToClipboard: true
 
 ! Colors
 XTerm*foreground: rgb:d4/d4/d4
