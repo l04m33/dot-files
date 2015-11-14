@@ -16,6 +16,8 @@ XTerm*VT100*translations: #override \
 ! Scrollbar
 XTerm*scrollbar*thickness: 4
 XTerm*scrollbar*foreground: #748297
+! 'black' means 'solid'
+XTerm*scrollbar*thumb: black
 
 ! Colors
 XTerm*foreground: #d4d4d4
