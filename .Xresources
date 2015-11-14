@@ -13,9 +13,13 @@ XTerm*VT100*translations: #override \
         ~Shift Meta <Btn1Up>: exec-formatted("google-chrome '%t'", PRIMARY) \n\
         ~Shift ~Meta <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0)
 
+! Scrollbar
+XTerm*scrollbar*thickness: 4
+XTerm*scrollbar*foreground: #748297
+
 ! Colors
-XTerm*foreground: rgb:d4/d4/d4
-XTerm*background: rgb:12/12/12
+XTerm*foreground: #d4d4d4
+XTerm*background: #121212
 
 ! Tango color scheme
 xterm*color0: #1e1e1e
