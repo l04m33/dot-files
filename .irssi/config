@@ -410,7 +410,7 @@ statusbar = {
 settings = {
   core = { 
     real_name = "Kay Zheng";
-    user_name = "l_amee";
+    user_name = "l04m33";
     nick = "l04m33";
   };
   "fe-text" = { actlist_sort = "refnum"; };
