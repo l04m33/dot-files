@@ -414,19 +414,14 @@ settings = {
     nick = "l04m33";
   };
   "fe-text" = { actlist_sort = "refnum"; };
-  "fe-common/core" = { theme = "default"; };
+  "fe-common/core" = {
+    theme = "default";
+    bell_beeps = "yes";
+    beep_msg_level = "MSGS NOTICES INVITES DCC DCCMSGS HILIGHT";
+  };
   "perl/core/scripts" = { awl_shared_sbar = "OFF"; awl_viewer = "no"; };
 };
-hilights = (
-  {
-    text = "http(s)?://[A-Za-z0-9_/&?=%.;~#)(+-]*";
-    color = "%G";
-    act_color = "%n";
-    nick = "no";
-    word = "yes";
-    regexp = "yes";
-  }
-);
+hilights = ( );
 ignores = ( { level = "JOINS QUITS"; } );
 windows = {
   1 = { immortal = "yes"; name = "(status)"; level = "ALL"; };
