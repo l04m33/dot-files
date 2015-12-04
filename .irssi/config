@@ -408,7 +408,7 @@ statusbar = {
   };
 };
 settings = {
-  core = { 
+  core = {
     real_name = "Kay Zheng";
     user_name = "l04m33";
     nick = "l04m33";
@@ -419,7 +419,11 @@ settings = {
     bell_beeps = "yes";
     beep_msg_level = "MSGS NOTICES INVITES DCC DCCMSGS HILIGHT";
   };
-  "perl/core/scripts" = { awl_shared_sbar = "OFF"; awl_viewer = "no"; };
+  "perl/core/scripts" = {
+    awl_shared_sbar = "OFF";
+    awl_viewer = "no";
+    openurl_app_http = "google-chrome '$1'";
+  };
 };
 hilights = ( );
 ignores = ( { level = "JOINS QUITS"; } );
