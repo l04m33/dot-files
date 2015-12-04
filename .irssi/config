@@ -405,10 +405,17 @@ statusbar = {
         barend = { priority = "100"; alignment = "right"; };
       };
     };
+    awl_1 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_1 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
   };
 };
 settings = {
-  core = {
+  core = { 
     real_name = "Kay Zheng";
     user_name = "l04m33";
     nick = "l04m33";
