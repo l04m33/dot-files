@@ -1,3 +1,6 @@
+-- Environment
+local user_home = os.getenv("HOME")
+
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -522,4 +525,5 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- {{{ Daemons
 awful.util.spawn("ibus-daemon -d -x -r -n awesome")
 awful.util.spawn("xscreensaver -no-splash")
+awful.util.spawn(user_home .. "/app_inst/compton/bin/compton -c -C -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 -b")
 -- }}}
