@@ -1,3 +1,12 @@
+!!!!!!!!! Xft Settings !!!!!!!!!
+
+Xft.antialias:  true
+Xft.hinting:    true
+Xft.rgba:       rgb
+Xft.hintstyle:  hintmedium
+
+!!!!!!!!! XTerm Settings !!!!!!!!!
+
 ! Misc
 XTerm*locale: true
 Xterm*saveLines: 8192
@@ -45,3 +54,28 @@ xterm*color15: #eeeeec
 xterm*faceName: Monospace:antialias=true
 xterm*faceNameDoublesize: WenQuanYi Zen Hei Mono:antialias=true
 xterm*faceSize: 10
+
+!!!!!!!!! XScreenSaver Settings !!!!!!!!!
+
+xscreensaver.Dialog.headingFont:        -*-liberation mono-medium-r-*-*-*-100-*-*-*-*-*-*
+xscreensaver.Dialog.bodyFont:           -*-liberation mono-bold-r-*-*-*-120-*-*-*-*-*-*
+xscreensaver.Dialog.labelFont:          -*-liberation mono-bold-r-*-*-*-120-*-*-*-*-*-*
+xscreensaver.Dialog.unameFont:          -*-liberation mono-medium-r-*-*-*-80-*-*-*-*-*-*
+xscreensaver.Dialog.buttonFont:         -*-liberation mono-medium-r-*-*-*-120-*-*-*-*-*-*
+xscreensaver.Dialog.dateFont:           -*-liberation mono-medium-r-*-*-*-80-*-*-*-*-*-*
+xscreensaver.passwd.passwdFont:         -*-liberation mono-medium-r-*-*-*-100-*-*-*-*-*-*
+
+xscreensaver.Dialog.foreground: #aaaaaa
+xscreensaver.Dialog.background: #222222
+xscreensaver.Dialog.Button.foreground: #cccccc
+xscreensaver.Dialog.Button.background: #444444
+xscreensaver.Dialog.text.foreground: #cccccc
+xscreensaver.Dialog.text.background: #444444
+xscreensaver.passwd.thermometer.foreground: #748297
+xscreensaver.passwd.thermometer.background: #444444
+xscreensaver.Dialog.topShadowColor: #535d6c
+xscreensaver.Dialog.bottomShadowColor: #535d6c
+xscreensaver.Dialog.internalBorderWidth: 24
+xscreensaver.Dialog.borderWidth: 0
+xscreensaver.Dialog.shadowThickness: 1
+xscreensaver.passwd.thermometer.width: 4
