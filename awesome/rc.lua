@@ -114,11 +114,13 @@ powermenu = {
     { "poweroff", poweroffmenu }
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal },
-                                    { "power", powermenu }
-                                  }
-                        })
+mymainmenu = awful.menu({
+    items = {
+        { "open terminal", terminal },
+        { "awesome", myawesomemenu, beautiful.awesome_icon },
+        { "power", powermenu }
+    }
+})
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
