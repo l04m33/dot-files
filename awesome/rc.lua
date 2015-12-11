@@ -524,6 +524,18 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 -- {{{ Daemons
 awful.util.spawn("ibus-daemon -d -x -r -n awesome")
-awful.util.spawn("xscreensaver -no-splash")
-awful.util.spawn(user_home .. "/app_inst/compton/bin/compton -c -C -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 -b")
+
+local local_xscreensaver = user_home .. "/app_inst/xscreensaver/bin/xscreensaver"
+if awful.util.file_readable(local_xscreensaver) then
+    awful.util.spawn(local_xscreensaver .. " -no-splash")
+else
+    awful.util.spawn("xscreensaver -no-splash")
+end
+
+local local_compton = user_home .. "/app_inst/compton/bin/compton"
+if awful.util.file_readable(local_compton) then
+    awful.util.spawn(local_compton .. " -c -C -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 -b")
+else
+    awful.util.spawn("compton -c -C -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 -b")
+end
 -- }}}
