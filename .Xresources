@@ -73,9 +73,9 @@ xscreensaver.Dialog.text.foreground: #cccccc
 xscreensaver.Dialog.text.background: #444444
 xscreensaver.passwd.thermometer.foreground: #748297
 xscreensaver.passwd.thermometer.background: #444444
-xscreensaver.Dialog.topShadowColor: #535d6c
-xscreensaver.Dialog.bottomShadowColor: #535d6c
+xscreensaver.Dialog.topShadowColor: #222222
+xscreensaver.Dialog.bottomShadowColor: #222222
 xscreensaver.Dialog.internalBorderWidth: 24
 xscreensaver.Dialog.borderWidth: 0
-xscreensaver.Dialog.shadowThickness: 1
+xscreensaver.Dialog.shadowThickness: 2
 xscreensaver.passwd.thermometer.width: 4
