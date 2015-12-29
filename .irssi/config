@@ -17,7 +17,6 @@ servers = (
     use_ssl = "yes";
     ssl_cert = "~/.irssi/irssi_2.pem";
     ssl_verify = "yes";
-    ssl_cafile = "~/.irssi/freenode_UTN-USERFirst-Hardware.pem";
     autoconnect = "yes";
   },
   {
