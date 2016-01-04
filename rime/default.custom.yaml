@@ -1,0 +1,11 @@
+patch:
+  schema_list:
+    - schema: luna_pinyin          # 朙月拼音
+    - schema: luna_pinyin_fluency  # 朙月拼音 語句流
+    - schema: luna_pinyin_simp     # 朙月拼音 简化字模式
+    - schema: luna_pinyin_tw       # 朙月拼音 臺灣正體模式
+    - schema: terra_pinyin         # 地球拼音 dì qiú pīn yīn
+    - schema: jyutping             # 粵拼
+    - schema: cangjie5             # 倉頡五代
+    - schema: cangjie5_express     # 倉頡 快打模式
+    - schema: emoji         # emoji表情

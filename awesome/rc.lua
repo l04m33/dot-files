@@ -339,7 +339,7 @@ globalkeys = awful.util.table.join(
     -- Input methods
     awful.key({ modkey }, "i",
         function ()
-            awful.util.spawn_with_shell("ibus engine libpinyin")
+            awful.util.spawn_with_shell("ibus engine rime")
         end),
     awful.key({ modkey, "Shift" }, "i",
         function ()
