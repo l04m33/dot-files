@@ -5,12 +5,20 @@ source $HOME/.antigen/antigen.zsh
 
 antigen use oh-my-zsh
 
+# libraries
+antigen bundle mafredri/zsh-async
+
+# plugins
+antigen bundle robbyrussell/oh-my-zsh plugins/z
 antigen bundle robbyrussell/oh-my-zsh plugins/git
 antigen bundle robbyrussell/oh-my-zsh plugins/ssh-agent
+antigen bundle robbyrussell/oh-my-zsh plugins/bgnotify
 antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle unixorn/autoupdate-antigen.zshplugin
 #antigen bundle l04m33/dot-files .oh-my-zsh_custom/plugins/my-env/
 
-antigen theme robbyrussell/oh-my-zsh themes/pure
+# themes
+antigen bundle sindresorhus/pure
 
 antigen apply
 
