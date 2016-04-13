@@ -92,6 +92,9 @@ theme.layout_dwindle = "~/.config/awesome/themes/default/layouts/dwindlew.png"
 
 theme.awesome_icon = "~/.config/awesome/themes/default/awesome16.png"
 
+-- Gaps
+theme.useless_gap_width = 10
+
 -- Define the icon theme for application icons. If not set then the icons 
 -- from ~/.config/icons and ~/.config/icons/hicolor will be used.
 theme.icon_theme = nil

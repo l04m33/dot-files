@@ -9,6 +9,7 @@ require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
 local vicious = require("vicious")
+local custom_layout = require("custom_layout")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -67,16 +68,27 @@ modkey = "Mod4"
 local layouts =
 {
     awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
+
+--    awful.layout.suit.tile,
+--    awful.layout.suit.tile.left,
+--    awful.layout.suit.tile.bottom,
+--    awful.layout.suit.tile.top,
+    custom_layout.uselesstile,
+    custom_layout.uselesstile.left,
+    custom_layout.uselesstile.bottom,
+    custom_layout.uselesstile.top,
+
+--    awful.layout.suit.fair,
+--    awful.layout.suit.fair.horizontal,
+    custom_layout.uselessfair,
+    custom_layout.uselessfair.horizontal,
+
     awful.layout.suit.spiral,
     awful.layout.suit.spiral.dwindle,
+
     awful.layout.suit.max,
     awful.layout.suit.max.fullscreen,
+
     awful.layout.suit.magnifier
 }
 -- }}}
@@ -84,7 +96,7 @@ local layouts =
 -- {{{ Wallpaper
 if beautiful.wallpaper then
     for s = 1, screen.count() do
-        gears.wallpaper.centered(beautiful.wallpaper, s, "#000000")
+        gears.wallpaper.maximized(beautiful.wallpaper, s, false, nil)
     end
 end
 -- }}}
