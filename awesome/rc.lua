@@ -558,8 +558,8 @@ awful.util.spawn("xautolock -time 10 -corners '00+-' -locker slock")
 
 local local_compton = user_home .. "/app_inst/compton/bin/compton"
 if awful.util.file_readable(local_compton) then
-    awful.util.spawn(local_compton .. " -c -C -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 -b")
+    awful.util.spawn(local_compton .. " -c -C -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 --opacity-rule '90:class_g*?=\"xterm\"' -b")
 else
-    awful.util.spawn("compton -c -C -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 -b")
+    awful.util.spawn("compton -c -C -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 --opacity-rule '90:class_g*?=\"xterm\"' -b")
 end
 -- }}}
