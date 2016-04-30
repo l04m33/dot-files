@@ -39,7 +39,6 @@ servers = (
     use_ssl = "yes";
     ssl_cert = "~/.irssi/irssi_2.pem";
     ssl_verify = "yes";
-    ssl_cafile = "~/.irssi/oftc_spi.pem";
     autoconnect = "yes";
   },
   { 
