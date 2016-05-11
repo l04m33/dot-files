@@ -22,6 +22,7 @@
 #   ,u      Untag files
 #   ,d      Delete tags
 #   ,r      Show active database location
+#   ,i      Show detailed tag usage info
 # 
 
 import subprocess
@@ -129,6 +130,7 @@ class tmsu_init(TmsuMixin, Command):
         self.fm.execute_console('map ,u console tmsu_untag ')
         self.fm.execute_console('map ,d console tmsu_delete ')
         self.fm.execute_console('map ,r tmsu_db')
+        self.fm.execute_console('map ,i shell -w tmsu info -s -u')
 
 
 class tmsu_tags(TmsuMixin, Command):
