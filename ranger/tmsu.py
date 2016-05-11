@@ -21,6 +21,7 @@
 #   ,t      Tag files
 #   ,u      Untag files
 #   ,d      Delete tags
+#   ,f      Mark files by specifying a tmsu tag query
 #   ,r      Show active database location
 #   ,i      Show detailed tag usage info
 # 
@@ -129,6 +130,7 @@ class tmsu_init(TmsuMixin, Command):
         self.fm.execute_console('map ,t console tmsu_tag ')
         self.fm.execute_console('map ,u console tmsu_untag ')
         self.fm.execute_console('map ,d console tmsu_delete ')
+        self.fm.execute_console('map ,f console tmsu_filter ')
         self.fm.execute_console('map ,r tmsu_db')
         self.fm.execute_console('map ,i shell -w tmsu info -s -u')
 
@@ -243,3 +245,34 @@ class tmsu_db(TmsuMixin, Command):
         info = self._parse_info_text(out)
         db = info['Database']
         self.fm.notify('Using tmsu database: {}'.format(db))
+
+
+class tmsu_filter(TmsuMixin, Command):
+    """:tmsu_filter <query>
+
+    Mark the files in current directory that match the tmsu tag query
+    """
+
+    def execute(self):
+        query_words = self.args[1:]
+        if len(query_words) == 0:
+            self.fm.notify('No query provided.', bad=True)
+            return
+
+        out = self._exec('files',
+                '--path={}'.format(self.fm.thisdir.path),
+                *query_words)
+        out = out.split('\n')
+        out = [os.path.abspath(f.strip()) for f in out]
+
+        for f in self.fm.thisdir.files:
+            if f.path in out:
+                self.fm.thisdir.mark_item(f, True)
+            else:
+                self.fm.thisdir.mark_item(f, False)
+
+        self.fm.thisdir.refilter()
+
+
+    def tab(self):
+        return self._tab_tags()
