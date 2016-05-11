@@ -21,6 +21,7 @@
 #   ,t      Tag files
 #   ,u      Untag files
 #   ,d      Delete tags
+#   ,r      Show active database location
 # 
 
 import subprocess
@@ -127,6 +128,7 @@ class tmsu_init(TmsuMixin, Command):
         self.fm.execute_console('map ,t console tmsu_tag ')
         self.fm.execute_console('map ,u console tmsu_untag ')
         self.fm.execute_console('map ,d console tmsu_delete ')
+        self.fm.execute_console('map ,r tmsu_db')
 
 
 class tmsu_tags(TmsuMixin, Command):
@@ -226,3 +228,16 @@ class tmsu_delete(TmsuMixin, Command):
 
     def tab(self):
         return self._tab_tags()
+
+
+class tmsu_db(TmsuMixin, Command):
+    """:tmsu_db
+
+    Show the active database location
+    """
+
+    def execute(self):
+        out = self._exec('info')
+        info = self._parse_info_text(out)
+        db = info['Database']
+        self.fm.notify('Using tmsu database: {}'.format(db))
