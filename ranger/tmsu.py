@@ -12,6 +12,7 @@
 #
 #       from tmsu import *
 #       TmsuMixin.TMSU_BIN = '/your/tmsu/binary/location'
+#       TmsuMixin.TMSU_LEADER_KEY = ','
 #
 #   4. Invode `ranger --cmd=tmsu_init` in a tmsu working directory.
 #
@@ -25,6 +26,9 @@
 #   ,r      Show active database location
 #   ,i      Show detailed tag usage info
 # 
+# The default leader key for tmsu commands is the comma ','.
+# You can change it by changing the value of TmsuMixin.TMSU_LEADER_KEY.
+#
 
 import subprocess
 import os.path
@@ -39,6 +43,7 @@ class TmsuCmdFailedError(Exception):
 
 class TmsuMixin(object):
     TMSU_BIN = '/your/tmsu/binary/location'
+    TMSU_LEADER_KEY = ','
 
     @property
     def tmsu_bin(self):
@@ -126,13 +131,13 @@ class tmsu_init(TmsuMixin, Command):
         self.fm.notify(out.strip())
 
     def _bind_keys(self):
-        self.fm.execute_console('map ,l tmsu_tags')
-        self.fm.execute_console('map ,t console tmsu_tag ')
-        self.fm.execute_console('map ,u console tmsu_untag ')
-        self.fm.execute_console('map ,d console tmsu_delete ')
-        self.fm.execute_console('map ,f console tmsu_filter ')
-        self.fm.execute_console('map ,r tmsu_db')
-        self.fm.execute_console('map ,i shell -w tmsu info -s -u')
+        self.fm.execute_console('map {}l tmsu_tags'.format(self.TMSU_LEADER_KEY))
+        self.fm.execute_console('map {}t console tmsu_tag '.format(self.TMSU_LEADER_KEY))
+        self.fm.execute_console('map {}u console tmsu_untag '.format(self.TMSU_LEADER_KEY))
+        self.fm.execute_console('map {}d console tmsu_delete '.format(self.TMSU_LEADER_KEY))
+        self.fm.execute_console('map {}f console tmsu_filter '.format(self.TMSU_LEADER_KEY))
+        self.fm.execute_console('map {}r tmsu_db'.format(self.TMSU_LEADER_KEY))
+        self.fm.execute_console('map {}i shell -w tmsu info -s -u'.format(self.TMSU_LEADER_KEY))
 
 
 class tmsu_tags(TmsuMixin, Command):
