@@ -126,7 +126,12 @@ class tmsu_init(TmsuMixin, Command):
     def _init_tmsu_db_confirmed(self, answer):
         if answer != 'y' and answer != 'Y':
             return
-        out = self._exec('init', self.fm.thisdir.path)
+        try:
+            out = self._exec('init', self.fm.thisdir.path)
+        except TmsuCmdFailedError as e:
+            self.fm.notify(e.output.strip(), bad=True)
+            return
+
         self._bind_keys()
         self.fm.notify(out.strip())
 
