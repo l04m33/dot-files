@@ -51,7 +51,7 @@ xterm*color14: #00f5e9
 xterm*color15: #eeeeec
 
 ! Fonts
-xterm*faceName: Inconsolata NF Complete Custom:antialias=true
+xterm*faceName: Inconsolata NF Custom:antialias=true
 xterm*faceNameDoublesize: WenQuanYi Zen Hei Mono:antialias=true
 xterm*faceSize: 13
 
