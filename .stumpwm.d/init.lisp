@@ -57,16 +57,11 @@
 
 (defcommand (delete-maybe-remove tile-group) (&optional (window (current-window))) ()
   (if window
-    (let* ((f (window-frame window))
-           (g (window-group window))
-           (win-list (frame-windows g f)))
-      (unless (> (length win-list) 1)
-        (remove-split))
-      (send-client-message window :WM_PROTOCOLS (xlib:intern-atom *display* :WM_DELETE_WINDOW)))
+    (send-client-message window :WM_PROTOCOLS (xlib:intern-atom *display* :WM_DELETE_WINDOW))
     (let* ((g (current-group))
            (f (tile-group-current-frame g))
            (win-list (frame-windows g f)))
-      (unless (> (length win-list) 0)
+      (unless win-list
         (remove-split)))))
 
 (defcommand (fprev tile-group) () ()
@@ -77,6 +72,18 @@
 
 (defcommand (vsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
   (split-and-focus (current-group) :row (read-from-string ratio)))
+
+
+;;--------- Hooks ---------
+
+;; Remove a frame when there is no window in it
+(add-hook *destroy-window-hook*
+          (lambda (win)
+            (let* ((f (window-frame win))
+                   (g (window-group win))
+                   (win-list (frame-windows g f)))
+              (unless win-list
+                (remove-split)))))
 
 
 ;;--------- Key Bindings ---------
