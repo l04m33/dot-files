@@ -9,17 +9,15 @@
                              "mem"
                              "amixer"
                              "stumptray"))
-(defparameter *rc-local-modules* `("useless-gaps"))
+;(defparameter *rc-local-modules* `("useless-gaps"))
+(defparameter *rc-local-modules* nil)
+; ~/.stumpwm.d/local-modules/
 (defparameter *rc-local-modules-dir*
   (let* ((rel-modules-dir (make-pathname :directory '(:relative ".stumpwm.d" "local-modules"))))
     (merge-pathnames rel-modules-dir (user-homedir-pathname))))
 
 
 ;;--------- StumpWM Variables ---------
-
-(setf *screen-mode-line-format* `("%n > %d | %c %t | %M | BAT: %B "))
-(setf *mode-line-position* :top)
-(setf *mode-line-timeout* 1)
 
 (setf *window-border-style* :tight)
 
@@ -38,7 +36,7 @@
 
 ;;--------- Module Variables ---------
 
-(setf useless-gaps:*useless-gaps-size* 4)
+;(setf useless-gaps:*useless-gaps-size* 4)
 
 
 ;;--------- Custom Functions and Commands ---------
@@ -128,21 +126,17 @@
 
 ;;--------- Mode Line ---------
 
+(setf *screen-mode-line-format* `("^R %n ^n %d | %c %t | %M | BAT: %B "))
+(setf *mode-line-position* :top)
+(setf *mode-line-timeout* 1)
+
 (unless (head-mode-line (current-head))
   (toggle-mode-line (current-screen) (current-head)))
-
-
-;;--------- Start-up Commands ---------
 
 (defvar *rc-stumptray-enabled* nil)
 (unless *rc-stumptray-enabled*
   (setf *rc-stumptray-enabled* t)
   (stumptray:stumptray))
-
-(defvar *rc-mode-line-enabled* nil)
-(unless *rc-mode-line-enabled*
-  (setf *rc-mode-line-enabled* t)
-  (mode-line))
 
 
 ;;--------- Daemons ---------
