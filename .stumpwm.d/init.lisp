@@ -44,7 +44,7 @@
 
 ;;--------- Custom Functions and Commands ---------
 
-(defun split-and-focus (group dir ratio)
+(defun rc-split-and-focus (group dir ratio)
   (let ((old-f (tile-group-current-frame group))
         (new-f (split-frame group dir ratio)))
     (if new-f
@@ -55,7 +55,7 @@
       (message "Cannot split smaller than minimum size."))))
 
 
-(defcommand (delete-maybe-remove tile-group) (&optional (window (current-window))) ()
+(defcommand (rc-delete-maybe-remove tile-group) (&optional (window (current-window))) ()
   (if window
     (send-client-message window :WM_PROTOCOLS (xlib:intern-atom *display* :WM_DELETE_WINDOW))
     (let* ((g (current-group))
@@ -64,26 +64,27 @@
       (unless win-list
         (remove-split)))))
 
-(defcommand (fprev tile-group) () ()
+(defcommand (rc-fprev tile-group) () ()
   (focus-prev-frame (current-group)))
 
-(defcommand (hsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
-  (split-and-focus (current-group) :column (read-from-string ratio)))
+(defcommand (rc-hsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
+  (rc-split-and-focus (current-group) :column (read-from-string ratio)))
 
-(defcommand (vsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
-  (split-and-focus (current-group) :row (read-from-string ratio)))
+(defcommand (rc-vsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
+  (rc-split-and-focus (current-group) :row (read-from-string ratio)))
 
 
 ;;--------- Hooks ---------
 
 ;; Remove a frame when there is no window in it
-(add-hook *destroy-window-hook*
-          (lambda (win)
-            (let* ((f (window-frame win))
-                   (g (window-group win))
-                   (win-list (frame-windows g f)))
-              (unless win-list
-                (remove-split)))))
+(defun rc-remove-empty-frame (win)
+  (let* ((f (window-frame win))
+         (g (window-group win))
+         (win-list (frame-windows g f)))
+    (unless win-list
+      (remove-split))))
+
+(add-hook *destroy-window-hook* 'rc-remove-empty-frame)
 
 
 ;;--------- Key Bindings ---------
@@ -92,12 +93,12 @@
 
 (define-key *top-map* (kbd "s-RET") "exec xterm")
 
-(define-key *top-map* (kbd "s-C") "delete-maybe-remove")
+(define-key *top-map* (kbd "s-C") "rc-delete-maybe-remove")
 (define-key *top-map* (kbd "s-h") "prev-in-frame")
 (define-key *top-map* (kbd "s-l") "next-in-frame")
 (define-key *top-map* (kbd "s-'") "windowlist")
 
-(define-key *top-map* (kbd "s-k") "fprev")
+(define-key *top-map* (kbd "s-k") "rc-fprev")
 (define-key *top-map* (kbd "s-j") "fnext")
 
 (define-key *top-map* (kbd "s-H") "move-window left")
@@ -105,8 +106,8 @@
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
 
-(define-key *top-map* (kbd "s-i") "hsplit-and-focus")
-(define-key *top-map* (kbd "s--") "vsplit-and-focus")
+(define-key *top-map* (kbd "s-i") "rc-hsplit-and-focus")
+(define-key *top-map* (kbd "s--") "rc-vsplit-and-focus")
 (define-key *top-map* (kbd "s-=") "balance-frames")
 (define-key *top-map* (kbd "s-s") "iresize")
 
