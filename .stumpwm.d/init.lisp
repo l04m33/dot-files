@@ -8,7 +8,8 @@
                              "cpu"
                              "mem"
                              "amixer"
-                             "stumptray"))
+                             "stumptray"
+                             "ttf-fonts"))
 (defparameter *rc-local-modules* `("useless-gaps"))
 ; ~/.stumpwm.d/local-modules/
 (defparameter *rc-local-modules-dir*
@@ -19,6 +20,21 @@
 ;;--------- StumpWM Variables ---------
 
 (setf *window-border-style* :tight)
+(setf *normal-border-width* 1)
+(setf *transient-border-width* 1)
+(setf *maxsize-border-width* 1)
+
+
+;;--------- Appearance ---------
+
+(set-focus-color "#535d6c")
+(set-unfocus-color "#000000")
+(set-float-focus-color "#535d6c")
+(set-float-unfocus-color "#000000")
+
+(setf xft:*font-dirs* `("/usr/share/fonts/dejavu"))
+(xft:cache-fonts)
+(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
 
 
 ;;--------- Modules ---------
