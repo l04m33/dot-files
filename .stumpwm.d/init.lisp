@@ -141,7 +141,7 @@
 
 ;;--------- Mode Line ---------
 
-(setf *screen-mode-line-format* `("^[^7^R %n ^]^n %d ^[^7❱^] %c %t ^[^7❱^] %M ^[^7❱^] BAT: %B "))
+(setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ^[^7❱^] %c %t ^[^7❱^] %M ^[^7❱^] BAT: %B "))
 (setf *mode-line-position* :top)
 (setf *mode-line-timeout* 1)
 
