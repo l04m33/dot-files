@@ -25,18 +25,6 @@
 (setf *maxsize-border-width* 1)
 
 
-;;--------- Appearance ---------
-
-(set-focus-color "#535d6c")
-(set-unfocus-color "#000000")
-(set-float-focus-color "#535d6c")
-(set-float-unfocus-color "#000000")
-
-(setf xft:*font-dirs* `("/usr/share/fonts/dejavu"))
-(xft:cache-fonts)
-(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
-
-
 ;;--------- Modules ---------
 
 (let* ((full-module-paths (mapcar #'(lambda (p)
@@ -137,6 +125,18 @@
 (loop for g from 2 to *rc-group-count*
       for g-name = (format nil "~A" g)
       do (add-group (current-screen) g-name :background t))
+
+
+;;--------- Appearance ---------
+
+(set-focus-color "#535d6c")
+(set-unfocus-color "#000000")
+(set-float-focus-color "#535d6c")
+(set-float-unfocus-color "#000000")
+
+(setf xft:*font-dirs* `("/usr/share/fonts/dejavu"))
+(xft:cache-fonts)
+(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
 
 
 ;;--------- Mode Line ---------
