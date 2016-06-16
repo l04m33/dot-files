@@ -55,7 +55,7 @@
               (if (string= (class-name (class-of w)) "TILE-WINDOW")
                   (maximize-window w))) windows)))
 
-(defcommand gaps () ()
+(defcommand (gaps stumpwm::tile-group) () ()
             "Toggle the padding of tiled windows"
             (setf *useless-gaps-on* (null *useless-gaps-on*))
 

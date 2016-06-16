@@ -9,8 +9,7 @@
                              "mem"
                              "amixer"
                              "stumptray"))
-;(defparameter *rc-local-modules* `("useless-gaps"))
-(defparameter *rc-local-modules* nil)
+(defparameter *rc-local-modules* `("useless-gaps"))
 ; ~/.stumpwm.d/local-modules/
 (defparameter *rc-local-modules-dir*
   (let* ((rel-modules-dir (make-pathname :directory '(:relative ".stumpwm.d" "local-modules"))))
@@ -36,7 +35,7 @@
 
 ;;--------- Module Variables ---------
 
-;(setf useless-gaps:*useless-gaps-size* 4)
+(setf useless-gaps:*useless-gaps-size* 4)
 
 
 ;;--------- Custom Functions and Commands ---------
