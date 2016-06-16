@@ -4,6 +4,15 @@
 ;;--------- Global Variables ---------
 
 (defparameter *rc-group-count* 9)
+(defparameter *rc-modules* `("battery-portable"
+                             "cpu"
+                             "mem"
+                             "amixer"
+                             "stumptray"))
+(defparameter *rc-local-modules* `("useless-gaps"))
+(defparameter *rc-local-modules-dir*
+  (let* ((rel-modules-dir (make-pathname :directory '(:relative ".stumpwm.d" "local-modules"))))
+    (merge-pathnames rel-modules-dir (user-homedir-pathname))))
 
 
 ;;--------- StumpWM Variables ---------
@@ -17,23 +26,19 @@
 
 ;;--------- Modules ---------
 
-(let* ((rel-module-dir (make-pathname :directory '(:relative ".stumpwm.d" "local-modules")))
-       (local-module-dir (merge-pathnames rel-module-dir (user-homedir-pathname)))
-       (local-module-list `("useless-gaps"))
-       (full-module-paths (mapcar #'(lambda (p)
+(let* ((full-module-paths (mapcar #'(lambda (p)
                                       (merge-pathnames
                                         (make-pathname :directory `(:relative ,p))
-                                        local-module-dir))
-                                  local-module-list)))
+                                        *rc-local-modules-dir*))
+                                  *rc-local-modules*)))
   (mapcar #'add-to-load-path full-module-paths))
 
-(mapcar #'load-module
-        `("battery-portable"
-          "cpu"
-          "mem"
-          "amixer"
-          "stumptray"
-          "useless-gaps"))
+(mapcar #'load-module (append *rc-modules* *rc-local-modules*))
+
+
+;;--------- Module Variables ---------
+
+(setf useless-gaps:*useless-gaps-size* 4)
 
 
 ;;--------- Custom Functions and Commands ---------
@@ -128,6 +133,7 @@
 
 
 ;;--------- Start-up Commands ---------
+
 (defvar *rc-stumptray-enabled* nil)
 (unless *rc-stumptray-enabled*
   (setf *rc-stumptray-enabled* t)
@@ -137,10 +143,6 @@
 (unless *rc-mode-line-enabled*
   (setf *rc-mode-line-enabled* t)
   (mode-line))
-
-(setf useless-gaps:*useless-gaps-size* 4)
-(unless useless-gaps:*useless-gaps-on*
-  (useless-gaps:gaps))
 
 
 ;;--------- Daemons ---------
