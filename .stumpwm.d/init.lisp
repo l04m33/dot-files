@@ -93,6 +93,10 @@
           (gset:move-window-to-group-set window gset)
           (message "Group set '~A' not found" to-group-set))))))
 
+(defcommand start-swank (&optional port) (:string)
+  (swank:create-server :port (parse-integer (or port "4005"))
+                       :dont-close t))
+
 
 ;;--------- Hooks ---------
 
