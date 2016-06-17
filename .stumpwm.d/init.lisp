@@ -75,6 +75,13 @@
 (defcommand (rc-vsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
   (rc-split-and-focus (current-group) :row (read-from-string ratio)))
 
+(defcommand rc-switch-group-in-group-set () ()
+  (let* ((gset (gset:current-gset))
+         (cur-group-nr (gset:gset-current-group gset)))
+    (case cur-group-nr
+      (0 (gset:switch-to-group-set gset 1))
+      (t (gset:switch-to-group-set gset 0)))))
+
 
 ;;--------- Hooks ---------
 
@@ -120,10 +127,11 @@
 (define-key *top-map* (kbd "s-:") "eval")
 (define-key *top-map* (kbd "s-;") "colon")
 
-(loop for g from 1 to *rc-group-count*
-      for key = (format nil "s-~A" g)
-      for cmd = (format nil "gselect ~A" g)
+(loop for gs from 1 to *rc-group-count*
+      for key = (format nil "s-~A" gs)
+      for cmd = (format nil "gset-select ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
+(define-key *top-map* (kbd "s-SPC") "rc-switch-group-in-group-set")
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
@@ -132,10 +140,12 @@
 
 ;;--------- Groups ---------
 
-(grename "1")
-(loop for g from 2 to *rc-group-count*
-      for g-name = (format nil "~A" g)
-      do (add-group (current-screen) g-name :background t))
+(loop for gs from 1 to *rc-group-count*
+      for gs-name = (format nil "~A" gs)
+      do (gset:add-group-set (current-screen) gs-name
+                             `(("T" tile-group)
+                               ("F" stumpwm.floating-group:float-group))))
+(gset:gset-select "1")
 
 
 ;;--------- Appearance ---------

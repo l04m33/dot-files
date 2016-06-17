@@ -57,11 +57,11 @@
   (let* ((gset-hash (screen-gset-hash screen)))
     (when (gethash name gset-hash)
       (error (format nil "Group set '~A' exists" name)))
-    (let ((gset (make-instance 'group-set
-                              :number (new-gset-number)
-                              :name name
-                              :screen screen))
-          (groups (build-groups screen gset group-specs)))
+    (let* ((gset (make-instance 'group-set
+                                :number (new-gset-number)
+                                :name name
+                                :screen screen))
+           (groups (build-groups screen gset group-specs)))
       (unless groups
         (error "Empty group-specs"))
       (setf (gset-groups gset) groups
@@ -127,4 +127,4 @@
       (if group-nr
         (switch-to-group-set gset (parse-integer group-nr))
         (switch-to-group-set gset))
-      (message "Group '~A' not found" name))))
+      (message "Group set '~A' not found" name))))
