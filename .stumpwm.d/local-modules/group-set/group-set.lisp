@@ -56,7 +56,8 @@
 (defun add-group-set (screen name group-specs)
   (let* ((gset-hash (screen-gset-hash screen)))
     (when (gethash name gset-hash)
-      (error (format nil "Group set '~A' exists" name)))
+      (message "Group set '~A' exists" name)
+      (return-from add-group-set nil))
     (let* ((gset (make-instance 'group-set
                                 :number (new-gset-number)
                                 :name name
@@ -122,6 +123,7 @@
 
 (defcommand gset-new (name specs) ((:string "Name of the new group set: ")
                                    (:rest "Group specs: "))
+  "Create a new group set."
   (let* ((spec-list (split-string-by-space specs))
          (group-specs (loop for i from 0 to (1- (length spec-list)) by 2
                             collect `(,(elt spec-list i)
@@ -132,6 +134,7 @@
 
 
 (defcommand gset-select (name &optional group-nr) ((:string "Select group set: ") :string)
+  "Switch to a group set."
   (let* ((gset-hash (screen-gset-hash (current-screen)))
          (gset (gethash name gset-hash)))
     (if gset

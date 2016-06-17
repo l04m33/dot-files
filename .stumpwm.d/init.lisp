@@ -60,6 +60,7 @@
 
 
 (defcommand rc-delete-maybe-remove (&optional (window (current-window))) ()
+  "Delete a window. If invoked on an empty frame, remove that frame."
   (if window
     (send-client-message window :WM_PROTOCOLS (xlib:intern-atom *display* :WM_DELETE_WINDOW))
     ; TODO: only remove-split when g is a tile-group
@@ -70,22 +71,29 @@
         (remove-split)))))
 
 (defcommand (rc-fprev tile-group) () ()
+  "Switch to the previous frame."
   (focus-prev-frame (current-group)))
 
 (defcommand (rc-hsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
+  "Hsplit a frame, and move focus to the new frame."
   (rc-split-and-focus (current-group) :column (read-from-string ratio)))
 
 (defcommand (rc-vsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
+  "Vsplit a frame, and move focus to the new frame."
   (rc-split-and-focus (current-group) :row (read-from-string ratio)))
 
 (defcommand rc-switch-group-in-group-set () ()
+  "Switch to the other group in a group set."
   (let* ((gset (gset:current-group-set))
-         (cur-group-nr (gset:gset-current-group gset)))
+         (cur-group-nr (and gset (gset:gset-current-group gset))))
     (case cur-group-nr
       (0 (gset:switch-to-group-set gset 1))
-      (t (gset:switch-to-group-set gset 0)))))
+      (1 (gset:switch-to-group-set gset 0))
+      ((nil) (message "Group '~A' does not belong to any group set"
+                      (group-name (current-group)))))))
 
 (defcommand rc-move-window-to-group-set (to-group-set) (:string)
+  "Move a window to another group set."
   (let ((window (current-window)))
     (when window
       (let ((gset (gset:find-group-set (current-screen) to-group-set)))
@@ -93,9 +101,14 @@
           (gset:move-window-to-group-set window gset)
           (message "Group set '~A' not found" to-group-set))))))
 
-(defcommand start-swank (&optional port) (:string)
+(defcommand rc-start-swank (&optional port) (:string)
+  "Start the SWANK server."
   (swank:create-server :port (parse-integer (or port "4005"))
                        :dont-close t))
+
+(defcommand rc-stop-swank (&optional port) (:string)
+  "Stop the SWANK server."
+  (swank:stop-server (parse-integer (or port "4005"))))
 
 
 ;;--------- Hooks ---------
