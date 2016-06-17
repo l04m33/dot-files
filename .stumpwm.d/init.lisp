@@ -10,7 +10,8 @@
                              "amixer"
                              "stumptray"
                              "ttf-fonts"))
-(defparameter *rc-local-modules* `("useless-gaps"))
+(defparameter *rc-local-modules* `("useless-gaps"
+                                   "group-set"))
 ; ~/.stumpwm.d/local-modules/
 (defparameter *rc-local-modules-dir*
   (let* ((rel-modules-dir (make-pathname :directory '(:relative ".stumpwm.d" "local-modules"))))
@@ -55,9 +56,10 @@
       (message "Cannot split smaller than minimum size."))))
 
 
-(defcommand (rc-delete-maybe-remove tile-group) (&optional (window (current-window))) ()
+(defcommand rc-delete-maybe-remove (&optional (window (current-window))) ()
   (if window
     (send-client-message window :WM_PROTOCOLS (xlib:intern-atom *display* :WM_DELETE_WINDOW))
+    ; TODO: only remove-split when g is a tile-group
     (let* ((g (current-group))
            (f (tile-group-current-frame g))
            (win-list (frame-windows g f)))
@@ -78,11 +80,12 @@
 
 ;; Remove a frame when there is no window in it
 (defun rc-remove-empty-frame (win)
-  (let* ((f (window-frame win))
-         (g (window-group win))
-         (win-list (frame-windows g f)))
-    (unless win-list
-      (remove-split))))
+  (unless (typep win 'stumpwm.floating-group::float-window)
+    (let* ((f (window-frame win))
+           (g (window-group win))
+           (win-list (frame-windows g f)))
+      (unless win-list
+        (remove-split)))))
 
 (add-hook *destroy-window-hook* 'rc-remove-empty-frame)
 
