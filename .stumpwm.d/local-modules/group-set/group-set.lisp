@@ -93,8 +93,19 @@
     res))
 
 
-(defun current-gset ()
+(defun current-group-set ()
   (group-gset (current-group)))
+
+
+(defun find-group-set (screen name)
+  (let ((gset-hash (screen-gset-hash screen)))
+    (gethash name gset-hash)))
+
+
+(defun move-window-to-group-set (window gset)
+  (let* ((cur-group-nr (gset-current-group gset))
+         (cur-group (elt (gset-groups gset) cur-group-nr)))
+    (move-window-to-group window cur-group)))
 
 
 (defun split-string-by-one-space (string)

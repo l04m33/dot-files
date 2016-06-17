@@ -14,4 +14,6 @@
            #:add-group-set
            #:switch-to-group-set
            #:group-gset
-           #:current-gset))
+           #:current-group-set
+           #:find-group-set
+           #:move-window-to-group-set))

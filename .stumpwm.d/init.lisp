@@ -76,11 +76,19 @@
   (rc-split-and-focus (current-group) :row (read-from-string ratio)))
 
 (defcommand rc-switch-group-in-group-set () ()
-  (let* ((gset (gset:current-gset))
+  (let* ((gset (gset:current-group-set))
          (cur-group-nr (gset:gset-current-group gset)))
     (case cur-group-nr
       (0 (gset:switch-to-group-set gset 1))
       (t (gset:switch-to-group-set gset 0)))))
+
+(defcommand rc-move-window-to-group-set (to-group-set) (:string)
+  (let ((window (current-window)))
+    (when window
+      (let ((gset (gset:find-group-set (current-screen) to-group-set)))
+        (if gset
+          (gset:move-window-to-group-set window gset)
+          (message "Group set '~A' not found" to-group-set))))))
 
 
 ;;--------- Hooks ---------
@@ -132,6 +140,11 @@
       for cmd = (format nil "gset-select ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
 (define-key *top-map* (kbd "s-SPC") "rc-switch-group-in-group-set")
+(loop for gs from 1 to *rc-group-count*
+      for char in '(#\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
+      for key = (format nil "s-~A" char)
+      for cmd = (format nil "rc-move-window-to-group-set ~A" gs)
+      do (define-key *top-map* (kbd key) cmd))
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
