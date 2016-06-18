@@ -63,12 +63,12 @@
   "Delete a window. If invoked on an empty frame, remove that frame."
   (if window
     (send-client-message window :WM_PROTOCOLS (xlib:intern-atom *display* :WM_DELETE_WINDOW))
-    ; TODO: only remove-split when g is a tile-group
-    (let* ((g (current-group))
-           (f (tile-group-current-frame g))
-           (win-list (frame-windows g f)))
-      (unless win-list
-        (remove-split)))))
+    (let ((g (current-group)))
+      (unless (typep g 'stumpwm.floating-group:float-group)
+        (let* ((f (tile-group-current-frame g))
+               (win-list (frame-windows g f)))
+          (unless win-list
+            (remove-split)))))))
 
 (defcommand (rc-fprev tile-group) () ()
   "Switch to the previous frame."
