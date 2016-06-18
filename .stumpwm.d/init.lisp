@@ -1,4 +1,19 @@
-(in-package #:stumpwm)
+(in-package #:stumpwm-user)
+
+(import `(stumpwm::window-frame
+          stumpwm::frame-window
+          stumpwm::frame-windows
+          stumpwm::tile-group-current-frame
+          stumpwm::split-frame
+          stumpwm::focus-prev-frame
+          stumpwm::tile-group
+          stumpwm::head-mode-line
+          stumpwm::eval-command
+          stumpwm::send-client-message
+          stumpwm.floating-group:float-group
+          stumpwm.floating-group::float-window
+          stumpwm.floating-group::*float-window-border*
+          stumpwm.floating-group::*float-window-title-height*))
 
 
 ;;--------- Global Variables ---------
@@ -27,8 +42,8 @@
 
 (setf *mouse-focus-policy* :click)
 
-(setf stumpwm.floating-group::*float-window-border* 1)
-(setf stumpwm.floating-group::*float-window-title-height* 1)
+(setf *float-window-border* 1)
+(setf *float-window-title-height* 1)
 
 
 ;;--------- Modules ---------
@@ -64,9 +79,11 @@
 (defcommand rc-delete-maybe-remove (&optional (window (current-window))) ()
   "Delete a window. If invoked on an empty frame, remove that frame."
   (if window
-    (send-client-message window :WM_PROTOCOLS (xlib:intern-atom *display* :WM_DELETE_WINDOW))
+    (send-client-message
+      window :WM_PROTOCOLS
+      (xlib:intern-atom *display* :WM_DELETE_WINDOW))
     (let ((g (current-group)))
-      (unless (typep g 'stumpwm.floating-group:float-group)
+      (unless (typep g 'float-group)
         (let* ((f (tile-group-current-frame g))
                (win-list (frame-windows g f)))
           (unless win-list
@@ -131,7 +148,7 @@
 
 ;; Remove a frame when there is no window in it
 (defun rc-remove-empty-frame (win)
-  (unless (typep win 'stumpwm.floating-group::float-window)
+  (unless (typep win 'float-window)
     (let* ((f (window-frame win))
            (g (window-group win))
            (win-list (frame-windows g f)))
@@ -194,7 +211,7 @@
       for gs-name = (format nil "~A" gs)
       do (gset:add-group-set (current-screen) gs-name
                              `(("T" tile-group)
-                               ("F" stumpwm.floating-group:float-group))))
+                               ("F" float-group))))
 (gset:gset-select "1")
 
 
