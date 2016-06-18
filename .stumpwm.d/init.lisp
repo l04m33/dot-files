@@ -6,6 +6,8 @@
           stumpwm::tile-group-current-frame
           stumpwm::split-frame
           stumpwm::focus-prev-frame
+          stumpwm::frame-number
+          stumpwm::group-frames
           stumpwm::tile-group
           stumpwm::sort-windows
           stumpwm::head-mode-line
@@ -176,6 +178,11 @@
          (other-group (elt gset-groups other-group-nr))
          (windows (group-windows cur-group)))
     (move-windows-to-group windows other-group)
+    (when (typep cur-group 'tile-group)
+      (let ((frames (group-frames cur-group)))
+        (dolist (f frames)
+          (unless (= 0 (frame-number f))
+            (remove-split cur-group f)))))
     (gset:switch-to-group-set gset other-group-nr)))
 
 (defcommand rc-start-swank (&optional port) (:string)
