@@ -38,6 +38,8 @@
 
 ;;--------- StumpWM Variables ---------
 
+(setf *startup-message* nil)
+
 (setf *window-border-style* :tight)
 (setf *normal-border-width* 1)
 (setf *transient-border-width* 1)
