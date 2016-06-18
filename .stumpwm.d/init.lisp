@@ -85,7 +85,7 @@
 (defcommand rc-switch-group-in-group-set () ()
   "Switch to the other group in a group set."
   (let* ((gset (gset:current-group-set))
-         (cur-group-nr (and gset (gset:gset-current-group gset))))
+         (cur-group-nr (and gset (gset:gset-current-group-nr gset))))
     (case cur-group-nr
       (0 (gset:switch-to-group-set gset 1))
       (1 (gset:switch-to-group-set gset 0))
@@ -100,6 +100,20 @@
         (if gset
           (gset:move-window-to-group-set window gset)
           (message "Group set '~A' not found" to-group-set))))))
+
+(defcommand rc-move-all-windows-to-other-group () ()
+  "Move all windows in current group to the other group in a group set."
+  (let* ((gset (gset:current-group-set))
+         (gset-groups (gset:gset-groups gset))
+         (cur-group-nr (gset:gset-current-group-nr gset))
+         (other-group-nr (cond
+                           ((= cur-group-nr 0) 1)
+                           ((= cur-group-nr 1) 0)))
+         (cur-group (elt gset-groups cur-group-nr))
+         (other-group (elt gset-groups other-group-nr))
+         (windows (group-windows cur-group)))
+    (move-windows-to-group windows other-group)
+    (gset:switch-to-group-set gset other-group-nr)))
 
 (defcommand rc-start-swank (&optional port) (:string)
   "Start the SWANK server."
@@ -165,6 +179,7 @@
       for key = (format nil "s-~A" char)
       for cmd = (format nil "rc-move-window-to-group-set ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
+(define-key *top-map* (kbd "C-s-SPC") "rc-move-all-windows-to-other-group")
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")

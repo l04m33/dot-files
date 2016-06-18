@@ -19,9 +19,9 @@
      :initform nil
      :initarg :name
      :accessor gset-name)
-   (current-group
+   (current-group-nr
      :initform nil
-     :accessor gset-current-group)
+     :accessor gset-current-group-nr)
    (groups
      :initform nil
      :initarg :groups
@@ -30,6 +30,9 @@
      :initform nil
      :initarg :screen
      :accessor gset-screen)))
+
+(defun gset-current-group (gset)
+  (elt (gset-groups gset) (gset-current-group-nr gset)))
 
 
 (defun build-groups (screen gset group-specs)
@@ -66,15 +69,15 @@
       (unless groups
         (error "Empty group-specs"))
       (setf (gset-groups gset) groups
-            (gset-current-group gset) 0
+            (gset-current-group-nr gset) 0
             (gethash name gset-hash) gset)
       gset)))
 
 
 (defun switch-to-group-set (gset &optional group-nr)
   (if group-nr
-    (setf (gset-current-group gset) group-nr)
-    (setf group-nr (gset-current-group gset)))
+    (setf (gset-current-group-nr gset) group-nr)
+    (setf group-nr (gset-current-group-nr gset)))
   (let ((cur-group (nth group-nr (gset-groups gset))))
     (stumpwm::switch-to-group cur-group)))
 
@@ -104,8 +107,7 @@
 
 
 (defun move-window-to-group-set (window gset)
-  (let* ((cur-group-nr (gset-current-group gset))
-         (cur-group (elt (gset-groups gset) cur-group-nr)))
+  (let ((cur-group (gset-current-group gset)))
     (move-window-to-group window cur-group)))
 
 
