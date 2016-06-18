@@ -25,6 +25,8 @@
 (setf *transient-border-width* 1)
 (setf *maxsize-border-width* 1)
 
+(setf *mouse-focus-policy* :click)
+
 (setf stumpwm.floating-group::*float-window-border* 1)
 (setf stumpwm.floating-group::*float-window-title-height* 1)
 
