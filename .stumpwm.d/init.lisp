@@ -251,7 +251,7 @@
       for key = (format nil "s-~A" char)
       for cmd = (format nil "rc-move-window-to-group-set ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
-(define-key *top-map* (kbd "C-s-SPC") "rc-move-all-windows-to-other-group")
+(define-key *top-map* (kbd "S-s-SPC") "rc-move-all-windows-to-other-group")
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
