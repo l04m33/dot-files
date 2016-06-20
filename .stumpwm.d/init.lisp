@@ -36,19 +36,11 @@
     (merge-pathnames rel-modules-dir (user-homedir-pathname))))
 
 
-;;--------- StumpWM Variables ---------
+;;--------- StumpWM Behaviors ---------
 
 (setf *startup-message* nil)
-
-(setf *window-border-style* :tight)
-(setf *normal-border-width* 1)
-(setf *transient-border-width* 1)
-(setf *maxsize-border-width* 1)
-
 (setf *mouse-focus-policy* :click)
-
-(setf *float-window-border* 1)
-(setf *float-window-title-height* 1)
+(setf *input-history-ignore-duplicates* t)
 
 
 ;;--------- Modules ---------
@@ -269,6 +261,18 @@
 
 
 ;;--------- Appearance ---------
+
+(setf *window-border-style* :tight)
+(setf *normal-border-width* 1)
+(setf *transient-border-width* 1)
+(setf *maxsize-border-width* 1)
+
+(setf *float-window-border* 1)
+(setf *float-window-title-height* 1)
+
+(set-fg-color "#aaaaaa")
+(set-bg-color "#222222")
+(set-msg-border-width 0)
 
 (set-focus-color "#535d6c")
 (set-unfocus-color "#000000")
