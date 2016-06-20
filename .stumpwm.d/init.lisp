@@ -285,6 +285,9 @@
 (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ^[^7❱^] %c %t ^[^7❱^] %M ^[^7❱^] BAT: %B "))
 (setf *mode-line-position* :top)
 (setf *mode-line-timeout* 1)
+(setf *mode-line-foreground-color* "#777777")
+(setf *mode-line-background-color* "#222222")
+(setf *mode-line-border-width* 0)
 
 (unless (head-mode-line (current-head))
   (toggle-mode-line (current-screen) (current-head)))
