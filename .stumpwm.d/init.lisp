@@ -179,6 +179,34 @@
             (remove-split cur-group f)))))
     (gset:switch-to-group-set gset other-group-nr)))
 
+(defcommand rc-show-group-overview () ()
+  "Show brief stats of all groups in group sets"
+  (labels
+    ((write-group-stat (gset cur-group gnr stream)
+       (let* ((group (nth gnr (gset:gset-groups gset)))
+              (win-num (length (group-windows group))))
+         (write-string " " stream)
+         (if (string= (group-name group) (group-name cur-group))
+           (write-string "*" stream)
+           (if (> win-num 0)
+             (if (> win-num 9)
+               (write-string "#" stream)
+               (format stream "~A" win-num))
+             (write-string "-" stream)))))
+     (iter-groups (screen cur-group gnr stream)
+       (loop for s from 1 to *rc-group-count*
+             for sname = (write-to-string s)
+             do (write-group-stat (gset:find-group-set screen sname)
+                                  cur-group gnr stream))))
+    (let* ((screen (current-screen))
+           (cur-group (current-group))
+           (stat-message (with-output-to-string (out)
+                           (iter-groups screen cur-group 0 out)
+                           (format out " ~%")
+                           (iter-groups screen cur-group 1 out)
+                           (format out " ~%"))))
+      (message "~A" stat-message))))
+
 (defcommand rc-start-swank (&optional port) (:string)
   "Start the SWANK server."
   (swank:create-server :port (parse-integer (or port "4005"))
@@ -244,6 +272,7 @@
       for cmd = (format nil "rc-move-window-to-group-set ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
 (define-key *top-map* (kbd "S-s-SPC") "rc-move-all-windows-to-other-group")
+(define-key *top-map* (kbd "s-p") "rc-show-group-overview")
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
