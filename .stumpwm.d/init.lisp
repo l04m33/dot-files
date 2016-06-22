@@ -30,10 +30,25 @@
                              "ttf-fonts"))
 (defparameter *rc-local-modules* `("useless-gaps"
                                    "group-set"))
+
+; ~/.stumpwm.d/
+(defparameter *rc-dir*
+  (let* ((rel-rc-dir (make-pathname :directory '(:relative ".stumpwm.d"))))
+    (merge-pathnames rel-rc-dir (user-homedir-pathname))))
+
+(defun rc-build-resource-dir (&rest components)
+  (let* ((rel-modules-dir
+           (make-pathname
+             :directory (append '(:relative) components))))
+    (merge-pathnames rel-modules-dir *rc-dir*)))
+
 ; ~/.stumpwm.d/local-modules/
 (defparameter *rc-local-modules-dir*
-  (let* ((rel-modules-dir (make-pathname :directory '(:relative ".stumpwm.d" "local-modules"))))
-    (merge-pathnames rel-modules-dir (user-homedir-pathname))))
+  (rc-build-resource-dir "local-modules"))
+
+; ~/.stumpwm.d/fonts/
+(defparameter *rc-fonts-dir*
+  (rc-build-resource-dir "fonts"))
 
 
 ;;--------- StumpWM Behaviors ---------
@@ -308,9 +323,9 @@
 (set-float-focus-color "#535d6c")
 (set-float-unfocus-color "#000000")
 
-(setf xft:*font-dirs* `("/usr/share/fonts/dejavu"))
+(setf xft:*font-dirs* `(,*rc-fonts-dir*))
 (xft:cache-fonts)
-(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
+(set-font (make-instance 'xft:font :family "Inconsolata NF Custom" :subfamily "Medium" :size 11))
 
 
 ;;--------- Mode Line ---------
