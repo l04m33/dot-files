@@ -24,12 +24,12 @@ XTerm*VT100*translations: #override \
 
 ! Scrollbar
 XTerm*scrollbar*thickness: 4
-XTerm*scrollbar*foreground: #748297
 ! 'black' means 'solid'
 XTerm*scrollbar*thumb: black
 
 ! Tomorrow Night color scheme
 xterm*foreground:   #c5c8c6
+xterm*scrollbar*foreground: #81a2be
 xterm*background:   #1d1f21
 xterm*cursorColor:  #aeafad
 xterm*color0:       #000000
