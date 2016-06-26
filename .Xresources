@@ -28,27 +28,26 @@ XTerm*scrollbar*foreground: #748297
 ! 'black' means 'solid'
 XTerm*scrollbar*thumb: black
 
-! Colors
-XTerm*foreground: #d4d4d4
-XTerm*background: #121212
-
-! Tango color scheme
-xterm*color0: #1e1e1e
-xterm*color1: #cc0000
-xterm*color2: #4e9a06
-xterm*color3: #c4a000
-xterm*color4: #3465a4
-xterm*color5: #75507b
-xterm*color6: #0b939b
-xterm*color7: #d3d7cf
-xterm*color8: #555753
-xterm*color9: #ef2929
-xterm*color10: #8ae234
-xterm*color11: #fce94f
-xterm*color12: #729fcf
-xterm*color13: #ad7fa8
-xterm*color14: #00f5e9
-xterm*color15: #eeeeec
+! Tomorrow Night color scheme
+xterm*foreground:   #c5c8c6
+xterm*background:   #1d1f21
+xterm*cursorColor:  #aeafad
+xterm*color0:       #000000
+xterm*color1:       #912226
+xterm*color2:       #778900
+xterm*color3:       #ae7b00
+xterm*color4:       #1d2594
+xterm*color5:       #682a9b
+xterm*color6:       #2b6651
+xterm*color7:       #929593
+xterm*color8:       #666666
+xterm*color9:       #cc6666
+xterm*color10:      #b5bd68
+xterm*color11:      #f0c674
+xterm*color12:      #81a2be
+xterm*color13:      #b294bb
+xterm*color14:      #8abeb7
+xterm*color15:      #ecebec
 
 ! Fonts
 xterm*faceName: Inconsolata NF Custom:antialias=true
