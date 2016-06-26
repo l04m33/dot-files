@@ -254,7 +254,7 @@
 (add-hook *destroy-window-hook* 'rc-remove-empty-frame)
 
 (defun rc-echo-urgent-window (win)
-  (message "^[^1~A^] needs attention." (window-title win)))
+  (message "^[^1^f1~A^] needs attention." (window-title win)))
 
 (add-hook *urgent-window-hook* 'rc-echo-urgent-window)
 
@@ -338,7 +338,9 @@
 
 (setf xft:*font-dirs* `(,*rc-fonts-dir*))
 (xft:cache-fonts)
-(set-font (make-instance 'xft:font :family "Inconsolata NF Custom" :subfamily "Medium" :size 11))
+(set-font (list
+            (make-instance 'xft:font :family "Inconsolata NF Custom" :subfamily "Medium" :size 11)
+            (make-instance 'xft:font :family "WenQuanYi Zen Hei Mono" :subfamily "Regular" :size 11)))
 
 
 ;;--------- Mode Line ---------
