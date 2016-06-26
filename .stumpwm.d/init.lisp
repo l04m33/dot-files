@@ -319,6 +319,18 @@
 
 ;;--------- Appearance ---------
 
+(setf *colors* `("#1d1f21" ; black   (background)
+                 "#cc6666" ; red
+                 "#b5bd68" ; green
+                 "#f0c674" ; yellow
+                 "#81a2be" ; blue
+                 "#b294bb" ; magenta (purple)
+                 "#8abeb7" ; cyan    (aqua)
+                 "#c5c8c6" ; white   (foreground)
+                 "#969896" ; gray    (comment)
+                 ))
+(update-color-map (current-screen))
+
 (setf *window-border-style* :tight)
 (setf *normal-border-width* 1)
 (setf *transient-border-width* 1)
@@ -327,14 +339,14 @@
 (setf *float-window-border* 1)
 (setf *float-window-title-height* 1)
 
-(set-fg-color "#aaaaaa")
-(set-bg-color "#222222")
+(set-fg-color (nth 7 *colors*))
+(set-bg-color (nth 0 *colors*))
 (set-msg-border-width 0)
 
-(set-focus-color "#535d6c")
-(set-unfocus-color "#000000")
-(set-float-focus-color "#535d6c")
-(set-float-unfocus-color "#000000")
+(set-focus-color (nth 4 *colors*))
+(set-unfocus-color (nth 0 *colors*))
+(set-float-focus-color (nth 4 *colors*))
+(set-float-unfocus-color (nth 0 *colors*))
 
 (setf xft:*font-dirs* `(,*rc-fonts-dir*))
 (xft:cache-fonts)
@@ -348,8 +360,8 @@
 (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ^[^7❱^] %c %t ^[^7❱^] %M ^[^7❱^] BAT: %B "))
 (setf *mode-line-position* :top)
 (setf *mode-line-timeout* 1)
-(setf *mode-line-foreground-color* "#777777")
-(setf *mode-line-background-color* "#222222")
+(setf *mode-line-foreground-color* (nth 8 *colors*))
+(setf *mode-line-background-color* (nth 0 *colors*))
 (setf *mode-line-border-width* 0)
 
 (unless (head-mode-line (current-head))
