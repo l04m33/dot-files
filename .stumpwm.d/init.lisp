@@ -1,6 +1,7 @@
 (in-package #:stumpwm-user)
 
 (import `(stumpwm::window-frame
+          stumpwm::window-urgent-p
           stumpwm::frame-window
           stumpwm::frame-windows
           stumpwm::tile-group-current-frame
@@ -163,7 +164,7 @@
     (case cur-group-nr
       (0 (gset:switch-to-group-set gset 1))
       (1 (gset:switch-to-group-set gset 0))
-      ((nil) (message "Group '~A' does not belong to any group set"
+      ((nil) (message "Group ^[^2~A^] does not belong to any group set."
                       (group-name (current-group)))))))
 
 (defcommand rc-move-window-to-group-set (to-group-set) (:string)
@@ -173,7 +174,7 @@
       (let ((gset (gset:find-group-set (current-screen) to-group-set)))
         (if gset
           (gset:move-window-to-group-set window gset)
-          (message "Group set '~A' not found" to-group-set))))))
+          (message "Group set ^[^2~A^] not found." to-group-set))))))
 
 (defcommand rc-move-all-windows-to-other-group () ()
   "Move all windows in current group to the other group in a group set."
@@ -195,18 +196,25 @@
     (gset:switch-to-group-set gset other-group-nr)))
 
 (defcommand rc-show-group-overview () ()
-  "Show brief stats of all groups in group sets"
+  "Show brief stats of all groups in group sets."
   (labels
     ((write-group-stat (gset cur-group gnr stream)
        (let* ((group (nth gnr (gset:gset-groups gset)))
-              (win-num (length (group-windows group))))
+              (group-windows (group-windows group))
+              (win-num (length group-windows)))
          (write-string " " stream)
          (if (string= (group-name group) (group-name cur-group))
            (write-string "*" stream)
            (if (> win-num 0)
-             (if (> win-num 9)
-               (write-string "#" stream)
-               (format stream "~A" win-num))
+             (let ((has-urgent-window
+                     (loop for w in group-windows
+                           when (window-urgent-p w) return t
+                           finally (return nil))))
+               (if has-urgent-window
+                 (write-string "!" stream)
+                 (if (> win-num 9)
+                   (write-string "#" stream)
+                   (format stream "~A" win-num))))
              (write-string "-" stream)))))
      (iter-groups (screen cur-group gnr stream)
        (loop for s from 1 to *rc-group-count*
@@ -244,6 +252,11 @@
         (remove-split)))))
 
 (add-hook *destroy-window-hook* 'rc-remove-empty-frame)
+
+(defun rc-echo-urgent-window (win)
+  (message "^[^1~A^] needs attention." (window-title win)))
+
+(add-hook *urgent-window-hook* 'rc-echo-urgent-window)
 
 
 ;;--------- Key Bindings ---------
