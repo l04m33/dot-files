@@ -20,6 +20,14 @@
           stumpwm.floating-group::*float-window-title-height*))
 
 
+;;--------- Debugging ---------
+
+(defparameter *rc-log-file* (data-dir-file "debug" "log"))
+(setf *debug-level* 0)
+(ignore-errors (delete-file *rc-log-file*))
+(redirect-all-output *rc-log-file*)
+
+
 ;;--------- Global Variables ---------
 
 (defparameter *rc-group-count* 9)
