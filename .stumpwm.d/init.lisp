@@ -32,16 +32,11 @@
 (defparameter *rc-local-modules* `("useless-gaps"
                                    "group-set"))
 
-; ~/.stumpwm.d/
-(defparameter *rc-dir*
-  (let* ((rel-rc-dir (make-pathname :directory '(:relative ".stumpwm.d"))))
-    (merge-pathnames rel-rc-dir (user-homedir-pathname))))
-
 (defun rc-build-resource-dir (&rest components)
   (let* ((rel-modules-dir
            (make-pathname
              :directory (append '(:relative) components))))
-    (merge-pathnames rel-modules-dir *rc-dir*)))
+    (merge-pathnames rel-modules-dir *data-dir*)))
 
 ; ~/.stumpwm.d/local-modules/
 (defparameter *rc-local-modules-dir*
