@@ -304,6 +304,7 @@
       do (define-key *top-map* (kbd key) cmd))
 (define-key *top-map* (kbd "S-s-SPC") "rc-move-all-windows-to-other-group")
 (define-key *top-map* (kbd "s-p") "rc-show-group-overview")
+(define-key *top-map* (kbd "s-P") "vgroups")
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
