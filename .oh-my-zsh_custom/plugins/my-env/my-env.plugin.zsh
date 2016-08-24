@@ -20,3 +20,8 @@ if which virtualenvwrapper.sh > /dev/null 2>&1; then
         export VIRTUALENVWRAPPER_VIRTUALENV="$(which pyvenv)"
     fi
 fi
+
+# Aliases
+alias ec='emacsclient --alternate-editor=""'
+alias ecc='ec -c'
+alias ect='ec -t'
