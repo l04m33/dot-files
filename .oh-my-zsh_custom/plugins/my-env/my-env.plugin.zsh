@@ -25,3 +25,4 @@ fi
 alias ec='emacsclient --alternate-editor=""'
 alias ecc='ec -c'
 alias ect='ec -t'
+alias eck='emacsclient -e "(kill-emacs)"'
