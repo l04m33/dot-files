@@ -22,7 +22,7 @@ values."
      emacs-lisp
      common-lisp
      clojure
-     ac-slime
+     slime-company
      ql-env)
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
