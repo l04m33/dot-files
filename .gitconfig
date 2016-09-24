@@ -1,6 +1,7 @@
 [user]
     email = l04m33@gmail.com
-    name = Kay Zheng
+    name = Kay Z.
+    signingkey = B884B8834BF74339
 
 [alias]
     plog = log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
@@ -14,3 +15,5 @@
 
 [push]
     default = simple
+[gpg]
+    program = gpg2
