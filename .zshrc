@@ -11,7 +11,6 @@ antigen bundle mafredri/zsh-async
 # plugins
 antigen bundle robbyrussell/oh-my-zsh plugins/z
 antigen bundle robbyrussell/oh-my-zsh plugins/git
-antigen bundle robbyrussell/oh-my-zsh plugins/gpg-agent
 antigen bundle robbyrussell/oh-my-zsh plugins/bgnotify
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle unixorn/autoupdate-antigen.zshplugin
@@ -23,3 +22,4 @@ antigen bundle sindresorhus/pure
 antigen apply
 
 source $HOME/.dot-files/.oh-my-zsh_custom/plugins/my-env/my-env.plugin.zsh
+source $HOME/.dot-files/.oh-my-zsh_custom/plugins/my-gpg-agent/my-gpg-agent.plugin.zsh
