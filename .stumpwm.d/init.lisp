@@ -379,7 +379,18 @@
 
 ;;--------- Daemons ---------
 
-(run-shell-command "feh --bg-scale ~/.dot-files/awesome/themes/default/background.jpg")
+(let* ((wp-name (make-pathname :directory '(:relative ".dot-files" "awesome" "themes" "default")
+                               :name "background"))
+       (wp-abs-name (merge-pathnames wp-name (user-homedir-pathname)))
+       (wp-types '("png" "jpg"))
+       (wp-full-name (loop for type in wp-types
+                           when (probe-file
+                                  (merge-pathnames
+                                    (make-pathname :type type)
+                                    wp-abs-name))
+                           return it)))
+  (when wp-full-name
+    (run-shell-command (format nil "feh --bg-scale ~a" wp-full-name))))
 
 (run-shell-command  "ibus-daemon -d -x -r -n stumpwm")
 (run-shell-command  "xautolock -time 10 -corners '00+-' -locker slock")
