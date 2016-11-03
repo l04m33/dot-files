@@ -31,12 +31,17 @@
 ;;--------- Global Variables ---------
 
 (defparameter *rc-group-count* 9)
-(defparameter *rc-modules* `("battery-portable"
-                             "cpu"
-                             "mem"
-                             "amixer"
-                             "stumptray"
-                             "ttf-fonts"))
+
+(defparameter *rc-modules-common* '("stumptray"
+                                    "ttf-fonts"))
+(defparameter *rc-modules-linux* '("battery-portable"
+                                   "cpu"
+                                   "mem"
+                                   "amixer"))
+(defparameter *rc-modules*
+  (if (string= "Linux" (software-type))
+    (nconc (copy-list *rc-modules-common*) *rc-modules-linux*)
+    *rc-modules-common*))
 (defparameter *rc-local-modules* `("useless-gaps"
                                    "group-set"))
 
@@ -361,7 +366,9 @@
 
 ;;--------- Mode Line ---------
 
-(setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ^[^7❱^] %c %t ^[^7❱^] %M ^[^7❱^] BAT: %B "))
+(if (string= "Linux" (software-type))
+  (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ^[^7❱^] %c %t ^[^7❱^] %M ^[^7❱^] BAT: %B "))
+  (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ")))
 (setf *mode-line-position* :top)
 (setf *mode-line-timeout* 1)
 (setf *mode-line-foreground-color* (nth 8 *colors*))
