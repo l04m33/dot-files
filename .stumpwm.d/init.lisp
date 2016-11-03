@@ -390,7 +390,7 @@
                                     wp-abs-name))
                            return it)))
   (when wp-full-name
-    (run-shell-command (format nil "feh --bg-scale ~a" wp-full-name))))
+    (run-shell-command (format nil "feh --bg-fill ~a" wp-full-name))))
 
 (run-shell-command  "ibus-daemon -d -x -r -n stumpwm")
 (run-shell-command  "xautolock -time 10 -corners '00+-' -locker slock")
