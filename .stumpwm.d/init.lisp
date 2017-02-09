@@ -14,10 +14,10 @@
           stumpwm::head-mode-line
           stumpwm::eval-command
           stumpwm::send-client-message
-          stumpwm.floating-group:float-group
-          stumpwm.floating-group::float-window
-          stumpwm.floating-group::*float-window-border*
-          stumpwm.floating-group::*float-window-title-height*))
+          stumpwm::float-group
+          stumpwm::float-window
+          stumpwm::*float-window-border*
+          stumpwm::*float-window-title-height*))
 
 
 ;;--------- Debugging ---------

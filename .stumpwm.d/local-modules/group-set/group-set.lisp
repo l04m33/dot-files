@@ -130,7 +130,7 @@
          (group-specs (loop for i from 0 to (1- (length spec-list)) by 2
                             collect `(,(elt spec-list i)
                                       ,(if (equal (elt spec-list (1+ i)) "float")
-                                         'stumpwm.floating-group:float-group
+                                         'stumpwm::float-group
                                          'stumpwm::tile-group)))))
     (add-group-set (current-screen) name group-specs)))
 
