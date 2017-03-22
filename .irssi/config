@@ -138,12 +138,13 @@ channels = (
   { name = "silc"; chatnet = "SILC"; autojoin = "No"; },
   { name = "#vim"; chatnet = "Freenode"; autojoin = "yes"; },
   { name = "#python"; chatnet = "Freenode"; autojoin = "yes"; },
-  { name = "#python-dev"; chatnet = "Freenode"; autojoin = "yes"; },
+  { name = "#python-dev"; chatnet = "Freenode"; autojoin = "No"; },
   { name = "#lisp"; chatnet = "Freenode"; autojoin = "yes"; },
   { name = "#gamedev"; chatnet = "Freenode"; autojoin = "yes"; },
+  { name = "#lispgames"; chatnet = "Freenode"; autojoin = "yes"; },
   { name = "#anime"; chatnet = "Freenode"; autojoin = "yes"; },
-  { name = "#awesome"; chatnet = "OFTC"; autojoin = "yes"; },
-  { name = "#kspofficial"; chatnet = "EsperNet"; autojoin = "yes"; }
+  { name = "#awesome"; chatnet = "OFTC"; autojoin = "No"; },
+  { name = "#kspofficial"; chatnet = "EsperNet"; autojoin = "No"; }
 );
 
 aliases = {
