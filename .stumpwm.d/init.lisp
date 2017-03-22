@@ -247,6 +247,9 @@
   "Stop the SWANK server."
   (swank:stop-server (parse-integer (or port "4005"))))
 
+(defcommand rc-start-vlime (&optional port) (:string)
+  "Start the Vlime server."
+  (vlime:main :port (parse-integer (or port "7002")) :backend :vlime-usocket))
 
 ;;--------- Hooks ---------
 
