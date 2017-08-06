@@ -1,6 +1,7 @@
 export EDITOR=vim
 
 APPINST_PATH="$HOME/app_inst"
+ROSWELL_PATH="$HOME/.roswell"
 
 if [ -d "$APPINST_PATH" ]; then
     export APPINST_PATH
@@ -8,6 +9,10 @@ if [ -d "$APPINST_PATH" ]; then
 fi
 if [ -n "$APPINST_BINS" ]; then
     export PATH=$APPINST_BINS:$PATH
+fi
+
+if [ -d "$ROSWELL_PATH" ]; then
+    export PATH=$ROSWELL_PATH/bin:$PATH
 fi
 
 # virtualenvwrapper
