@@ -8,6 +8,7 @@ Xft.hintstyle:  hintmedium
 !!!!!!!!! XTerm Settings !!!!!!!!!
 
 ! Misc
+XTerm.termName: xterm-256color
 XTerm*locale: true
 Xterm*saveLines: 8192
 xterm*bellIsUrgent: true
