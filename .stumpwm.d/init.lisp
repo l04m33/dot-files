@@ -81,8 +81,6 @@
 
 ;;--------- Module Variables ---------
 
-(setf useless-gaps:*useless-gaps-size* 4)
-
 
 ;;--------- Custom Functions and Commands ---------
 
