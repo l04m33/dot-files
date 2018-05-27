@@ -33,7 +33,8 @@
 (defparameter *rc-group-count* 9)
 
 (defparameter *rc-modules-common* '("stumptray"
-                                    "ttf-fonts"))
+                                    "ttf-fonts"
+                                    "swm-gaps"))
 (defparameter *rc-modules-linux* '("battery-portable"
                                    "cpu"
                                    "mem"
@@ -42,8 +43,7 @@
   (if (string= "Linux" (software-type))
     (nconc (copy-list *rc-modules-common*) *rc-modules-linux*)
     *rc-modules-common*))
-(defparameter *rc-local-modules* `("useless-gaps"
-                                   "group-set"))
+(defparameter *rc-local-modules* `("group-set"))
 
 (defun rc-build-resource-dir (&rest components)
   (let* ((rel-modules-dir
