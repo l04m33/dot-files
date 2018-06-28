@@ -387,7 +387,7 @@
 
 ;;--------- Daemons ---------
 
-(let* ((wp-name (make-pathname :directory '(:relative ".dot-files" "awesome" "themes" "default")
+(let* ((wp-name (make-pathname :directory '(:relative ".dot-files" ".config" "awesome" "themes" "default")
                                :name "background"))
        (wp-abs-name (merge-pathnames wp-name (user-homedir-pathname)))
        (wp-types '("png" "jpg"))
