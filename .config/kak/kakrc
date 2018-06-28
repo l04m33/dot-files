@@ -1,0 +1,6 @@
+colorscheme tomorrow-night
+addhl global/ number_lines -relative -hlcursor
+set-option global ui_options ncurses_assistant=cat
+
+map global insert <tab> '<a-;><gt>'
+map global insert <s-tab> '<a-;><lt>'
