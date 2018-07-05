@@ -402,10 +402,4 @@
 
 (run-shell-command  "ibus-daemon -d -x -r -n stumpwm")
 (run-shell-command  "xautolock -time 10 -corners '00+-' -locker slock")
-(let* ((compton-path (make-pathname :directory '(:relative "app_inst" "compton" "bin")
-                                    :name "compton"))
-       (compton-abs-path (merge-pathnames compton-path (user-homedir-pathname)))
-       (compton-cmd (concatenate 'string
-                                 (namestring compton-abs-path)
-                                 " -c -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 --opacity-rule '90:class_g*?=\"xterm\"' --opacity-rule '75:window_type=\"dock\"'")))
-  (run-shell-command compton-cmd))
+(run-shell-command  "compton -c -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 --opacity-rule '90:class_g*?=\"xterm\"' --opacity-rule '75:window_type=\"dock\"'")
