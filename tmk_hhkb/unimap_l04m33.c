@@ -227,17 +227,25 @@ action_t action_for_key(uint8_t layer, keypos_t key)
         return (action_t)ACTION_NO;
     }
 
+    action_t action =
+#if defined(__AVR__)
+        (action_t)pgm_read_word(&actionmaps[(layer)][(uni.row & 0x7)][(uni.col)]);
+#else
+        actionmaps[(layer)][(uni.row & 0x7)][(uni.col)];
+#endif
+
     if (d_macro.state == D_MACRO_STATE_RECORDING &&
         d_macro.ev_count >= MAX_D_MACRO_EVENTS &&
-        !(key.row == d_macro.rec_key.row && key.col == d_macro.rec_key.col)) {
+        // the key to stop recording should always work
+        !(key.row == d_macro.rec_key.row && key.col == d_macro.rec_key.col) &&
+        // layer actions should always work, in case the stopping key is in a hidden layer
+        !(action.kind.id == ACT_LAYER ||
+            action.kind.id == ACT_LAYER_TAP ||
+            action.kind.id == ACT_LAYER_TAP_EXT)) {
         // macro buffer full, drop all key actions to signify this
         dprintln("Macro buffer full, ignore key action");
         return (action_t)ACTION_NO;
     }
 
-#if defined(__AVR__)
-    return (action_t)pgm_read_word(&actionmaps[(layer)][(uni.row & 0x7)][(uni.col)]);
-#else
-    return actionmaps[(layer)][(uni.row & 0x7)][(uni.col)];
-#endif
+    return action;
 }
