@@ -22,15 +22,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keyboard.h"
 #include "action.h"
 #include "unimap_trans.h"
-#include "timer.h"
 #if defined(__AVR__)
 #   include <avr/pgmspace.h>
 #endif
 
+//#undef NO_DEBUG
+//#define DEBUG_D_MACRO
+
+#ifdef DEBUG_D_MACRO
+#   include "debug.h"
+#else
+#   include "nodebug.h"
+#endif
+
 
 enum function_id {
-    D_MACRO_RECORD,
-    D_MACRO_PLAY,
+    D_MACRO_FUNC_RECORD,
+    D_MACRO_FUNC_PLAY,
 };
 
 
@@ -38,6 +46,8 @@ enum function_id {
 #define AC_L2      ACTION_LAYER_TAP_TOGGLE(2)
 #define AC_L3      ACTION_LAYER_TAP_KEY(3, KC_SPC)
 #define AC_CTLENT  ACTION_MODS_TAP_KEY(MOD_RCTL, KC_ENT)
+#define AC_MREC    ACTION_FUNCTION_TAP(D_MACRO_FUNC_RECORD)
+#define AC_MPLAY   ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY)
 
 #ifdef KEYMAP_SECTION_ENABLE
 const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
@@ -70,7 +80,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     CAPS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, PSCR, SLCK, PAUS, UP,   TRNS, BSPC,
     TRNS, VOLD, VOLU, MUTE, TRNS, TRNS, PAST, PSLS, HOME, PGUP, LEFT, RGHT, PENT,
     TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, PPLS, PMNS, END,  PGDN, DOWN, TRNS, L1,
-          TRNS, TRNS,             SPC,                    TRNS, TRNS),
+          TRNS, TRNS,             SPC,                    MREC, MPLAY),
 
     /* layer 2: vi movement keys (right gui) */
     [2] = UNIMAP_HHKB(
@@ -88,3 +98,146 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     LSFT, ACL0, ACL1, ACL2, TRNS, TRNS, BTN1, BTN2, BTN3, TRNS, TRNS, RSFT, TRNS,
           LALT, LGUI,             L3,                     TRNS, RALT),
 };
+
+
+#define MAX_D_MACRO_EVENTS 40
+
+typedef enum {
+    D_MACRO_STATE_IDLE,
+    D_MACRO_STATE_RECORDING,
+    D_MACRO_STATE_READY,
+    D_MACRO_STATE_PLAYING,
+} d_macro_state_t;
+
+typedef struct {
+    d_macro_state_t state;
+    keypos_t        rec_key;
+    uint8_t         ev_count;
+    keyevent_t      ev[MAX_D_MACRO_EVENTS];
+} d_macro_t;
+
+static d_macro_t d_macro = {
+    .state   = D_MACRO_STATE_IDLE,
+    .rec_key = { .row = 0, .col = 0 },
+    .ev_count = 0,
+};
+
+#define KEY_TAPPED(_rec_, _count_) ((_rec_)->tap.count == (_count_) && !(_rec_)->tap.interrupted)
+
+static void action_record(keyrecord_t *record)
+{
+    if (d_macro.state == D_MACRO_STATE_IDLE) {
+        if (!record->event.pressed && KEY_TAPPED(record, 1)) {
+            dprintln("Start dynamic macro recording");
+            d_macro.state = D_MACRO_STATE_RECORDING;
+            d_macro.ev_count = 0;
+            d_macro.rec_key = record->event.key;
+        }
+    } else if (d_macro.state == D_MACRO_STATE_RECORDING) {
+        if (!record->event.pressed && KEY_TAPPED(record, 1)) {
+            dprintln("Stop dynamic macro recording");
+            d_macro.state = D_MACRO_STATE_IDLE;
+        }
+    }
+}
+
+static void action_play(keyrecord_t *record)
+{
+    if (d_macro.state != D_MACRO_STATE_IDLE) {
+        return;
+    }
+
+    if (!record->event.pressed && KEY_TAPPED(record, 1)) {
+        dprintln("Schedule dynamic macro replay");
+        d_macro.state = D_MACRO_STATE_READY;
+    }
+}
+
+void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
+{
+    switch (id) {
+        case D_MACRO_FUNC_RECORD:
+            action_record(record);
+            break;
+        case D_MACRO_FUNC_PLAY:
+            action_play(record);
+            break;
+        default:
+            break;
+    }
+}
+
+void hook_matrix_change(keyevent_t event)
+{
+    if (d_macro.state != D_MACRO_STATE_RECORDING || d_macro.ev_count >= MAX_D_MACRO_EVENTS) {
+        return;
+    }
+
+    if (d_macro.ev_count <= 0 && !event.pressed) {
+        // stale key release event(s), ignore
+        return;
+    }
+
+    if (d_macro.ev_count > 0) {
+        keyevent_t *last_ev = &(d_macro.ev[d_macro.ev_count - 1]);
+        if ((last_ev->pressed == event.pressed) &&
+            (last_ev->key.row == event.key.row) &&
+            (last_ev->key.col == event.key.col) &&
+            (last_ev->time == event.time)) {
+            // duplicate events, ignore
+            return;
+        }
+    }
+
+    d_macro.ev[d_macro.ev_count] = event;
+    dprintf("Recorded key event %u: (%u,%u) %s [%u]\n",
+            d_macro.ev_count, event.key.row, event.key.col,
+            event.pressed ? "down" : "up", event.time);
+    (d_macro.ev_count)++;
+}
+
+void hook_keyboard_loop(void)
+{
+    if (d_macro.state != D_MACRO_STATE_READY) {
+        return;
+    }
+
+    uint32_t prev_layer_state = layer_state;
+    layer_state = 0;
+    d_macro.state = D_MACRO_STATE_PLAYING;
+
+    dprintln("Start playing macro events");
+    for (uint8_t i = 0; i < d_macro.ev_count; i++) {
+        dprintf("  Playing macro event %u\n", i);
+        action_exec(d_macro.ev[i]);
+        dprintf("  Done playing macro event %u\n", i);
+    }
+    dprintln("Stop playing macro events");
+
+    d_macro.state = D_MACRO_STATE_IDLE;
+    layer_state = prev_layer_state;
+}
+
+extern keypos_t unimap_translate(keypos_t key);
+
+action_t action_for_key(uint8_t layer, keypos_t key)
+{
+    keypos_t uni = unimap_translate(key);
+    if ((uni.row << 4 | uni.col) == UNIMAP_NO) {
+        return (action_t)ACTION_NO;
+    }
+
+    if (d_macro.state == D_MACRO_STATE_RECORDING &&
+        d_macro.ev_count >= MAX_D_MACRO_EVENTS &&
+        !(key.row == d_macro.rec_key.row && key.col == d_macro.rec_key.col)) {
+        // macro buffer full, drop all key actions to signify this
+        dprintln("Macro buffer full, ignore key action");
+        return (action_t)ACTION_NO;
+    }
+
+#if defined(__AVR__)
+    return (action_t)pgm_read_word(&actionmaps[(layer)][(uni.row & 0x7)][(uni.col)]);
+#else
+    return actionmaps[(layer)][(uni.row & 0x7)][(uni.col)];
+#endif
+}
