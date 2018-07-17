@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "keyboard.h"
 #include "action.h"
+#include "timer.h"
+#include "wait.h"
 #include "unimap_trans.h"
 #if defined(__AVR__)
 #   include <avr/pgmspace.h>
@@ -196,10 +198,23 @@ void hook_matrix_change(keyevent_t event)
     (d_macro.ev_count)++;
 }
 
+static void dyn_wait_ms(uint16_t ms)
+{
+    uint16_t start_time = timer_read();
+    while (TIMER_DIFF_16(timer_read(), start_time) < ms) {
+        wait_ms(1);
+    }
+}
+
 void hook_keyboard_loop(void)
 {
     if (d_macro.state != D_MACRO_STATE_READY) {
         return;
+    }
+
+    uint16_t last_ts = 0;
+    if (d_macro.ev_count > 0) {
+        last_ts = d_macro.ev[0].time;
     }
 
     uint32_t prev_layer_state = layer_state;
@@ -208,6 +223,10 @@ void hook_keyboard_loop(void)
 
     dprintln("Start playing macro events");
     for (uint8_t i = 0; i < d_macro.ev_count; i++) {
+        dprintf("  Waiting for %u ms\n", TIMER_DIFF_16(d_macro.ev[i].time, last_ts));
+        dyn_wait_ms(TIMER_DIFF_16(d_macro.ev[i].time, last_ts));
+        last_ts = d_macro.ev[i].time;
+
         dprintf("  Playing macro event %u\n", i);
         action_exec(d_macro.ev[i]);
         dprintf("  Done playing macro event %u\n", i);
