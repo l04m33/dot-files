@@ -45,8 +45,7 @@ enum function_id {
 
 
 #define AC_L1      ACTION_LAYER_TAP_TOGGLE(1)
-#define AC_L2      ACTION_LAYER_TAP_TOGGLE(2)
-#define AC_L3      ACTION_LAYER_TAP_KEY(3, KC_SPC)
+#define AC_L2      ACTION_LAYER_TAP_KEY(2, KC_SPC)
 #define AC_CTLENT  ACTION_MODS_TAP_KEY(MOD_RCTL, KC_ENT)
 #define AC_MREC    ACTION_FUNCTION_TAP(D_MACRO_FUNC_RECORD)
 #define AC_MPLAY   ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY)
@@ -66,7 +65,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
      * |-----------------------------------------------------------|
      * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift |L1 |
      * `-----------------------------------------------------------'
-     *       |Alt|Gui  |          L3           | L2  |Alt|
+     *       |Alt| Gui |          L2           | Gui |Alt|
      *       `-------------------------------------------'
      */
     [0] = UNIMAP_HHKB(
@@ -74,7 +73,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     TAB,  Q,    W,    E,   R,   T,   Y,   U,   I,    O,    P,    LBRC, RBRC,   BSPC,
     LCTL, A,    S,    D,   F,   G,   H,   J,   K,    L,    SCLN, QUOT, CTLENT,
     LSFT, Z,    X,    C,   V,   B,   N,   M,   COMM, DOT,  SLSH, RSFT, L1,
-          LALT, LGUI,           L3,                  L2,   RALT),
+          LALT, LGUI,           L2,                  RGUI, RALT),
 
     /* layer 1: hhkb mode (hhkb fn) */
     [1] = UNIMAP_HHKB(
@@ -84,21 +83,13 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, PPLS, PMNS, END,  PGDN, DOWN, TRNS, L1,
           TRNS, TRNS,             SPC,                    MREC, MPLAY),
 
-    /* layer 2: vi movement keys (right gui) */
+    /* layer 2: vi movement keys and mouse keys (space) */
     [2] = UNIMAP_HHKB(
     ESC,  F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,    INS,  DEL,
-    TAB,  TRNS, UP,   TRNS, TRNS, TRNS, TRNS, PGUP, HOME, PGDN, TRNS, TRNS, TRNS,   BSPC,
-    LCTL, LEFT, DOWN, RGHT, TRNS, TRNS, LEFT, DOWN, UP,   RGHT, TRNS, TRNS, CTLENT,
-    LSFT, TRNS, TRNS, TRNS, TRNS, TRNS, END,  TRNS, TRNS, TRNS, TRNS, RSFT, TRNS,
-          LALT, LGUI,             SPC,                    L2,   RALT),
-
-    /* layer 3: mouse keys (space) */
-    [3] = UNIMAP_HHKB(
-    ESC,  F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,    INS,  DEL,
-    TAB,  TRNS, TRNS, TRNS, TRNS, TRNS, WH_L, WH_D, WH_U, WH_R, TRNS, TRNS, TRNS,   BSPC,
-    LCTL, TRNS, BTN3, BTN2, BTN1, TRNS, MS_L, MS_D, MS_U, MS_R, TRNS, TRNS, CTLENT,
-    LSFT, ACL0, ACL1, ACL2, TRNS, TRNS, BTN1, BTN2, BTN3, TRNS, TRNS, RSFT, TRNS,
-          LALT, LGUI,             L3,                     TRNS, RALT),
+    TAB,  TRNS, WH_L, WH_U, WH_D, WH_R, HOME, PGDN, PGUP, END,  TRNS, TRNS, TRNS,   BSPC,
+    LCTL, TRNS, MS_L, MS_U, MS_D, MS_R, LEFT, DOWN, UP,   RGHT, TRNS, TRNS, CTLENT,
+    LSFT, TRNS, BTN3, BTN2, BTN1, TRNS, ACL2, ACL1, ACL0, TRNS, TRNS, RSFT, TRNS,
+          LALT, LGUI,             L2,                     RGUI, RALT),
 };
 
 
