@@ -28,13 +28,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #   include <avr/pgmspace.h>
 #endif
 
-//#undef NO_DEBUG
-//#define DEBUG_D_MACRO
 
 #ifdef DEBUG_D_MACRO
 #   include "debug.h"
 #else
 #   include "nodebug.h"
+#endif
+
+
+#ifdef STACK_USAGE
+#define STACK_SCAN_INTERVAL 2000
+#define STACK_COLOR         0x99
+static uint8_t *stack_begin, *stack_end;
 #endif
 
 
@@ -199,6 +204,24 @@ static void dyn_wait_ms(uint16_t ms)
 
 void hook_keyboard_loop(void)
 {
+#ifdef STACK_USAGE
+    static uint16_t last_stack_scan = 0;
+
+    uint16_t cur_time = timer_read();
+    if (TIMER_DIFF_16(cur_time, last_stack_scan) >= STACK_SCAN_INTERVAL) {
+        last_stack_scan = cur_time;
+
+        uint8_t *to_check;
+        for (to_check = stack_end; to_check <= stack_begin; to_check++) {
+            if (*to_check != STACK_COLOR) {
+                break;
+            }
+        }
+
+        xprintf("Stack scan: to_check = 0x%04X\n", (uint16_t)to_check);
+    }
+#endif
+
     if (d_macro.state != D_MACRO_STATE_READY) {
         return;
     }
@@ -259,3 +282,30 @@ action_t action_for_key(uint8_t layer, keypos_t key)
 
     return action;
 }
+
+
+/*
+ * stack usage
+ */
+
+#ifdef STACK_USAGE
+
+extern uint8_t _end;
+
+void hook_late_init(void)
+{
+    static uint8_t *to_paint;
+    uint8_t dummy;
+
+    stack_begin = &dummy;
+    stack_end   = &_end;
+    xprintf("Painting stack, from 0x%04X down to 0x%04X\n", (uint16_t)stack_begin, (uint16_t)stack_end);
+
+    for (to_paint = stack_begin; to_paint >= stack_end; to_paint--) {
+        *to_paint = STACK_COLOR;
+    }
+
+    xprintf("Done painting stack\n");
+}
+
+#endif
