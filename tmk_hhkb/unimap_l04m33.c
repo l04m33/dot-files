@@ -43,6 +43,7 @@ static uint8_t *stack_begin, *stack_end;
 #endif
 
 
+#define MAX_D_MACRO_EVENTS 256
 #define D_MACRO_EV_SUFFIX_LEN 3
 
 
@@ -119,8 +120,6 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
 };
 
 
-#define MAX_D_MACRO_EVENTS 256
-
 typedef enum {
     D_MACRO_STATE_IDLE,
     D_MACRO_STATE_RECORDING,
@@ -131,7 +130,7 @@ typedef enum {
 typedef struct {
     d_macro_state_t state;
     keypos_t        rec_key;
-    uint8_t         ev_count;
+    uint16_t        ev_count;
     keyevent_t      ev[MAX_D_MACRO_EVENTS];
 } d_macro_t;
 
