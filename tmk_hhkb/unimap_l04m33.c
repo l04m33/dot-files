@@ -43,6 +43,9 @@ static uint8_t *stack_begin, *stack_end;
 #endif
 
 
+#define D_MACRO_EV_SUFFIX_LEN 3
+
+
 enum function_id {
     D_MACRO_FUNC_RECORD,
     D_MACRO_FUNC_PLAY,
@@ -153,6 +156,15 @@ static void action_record(keyrecord_t *record)
         if (!record->event.pressed && KEY_TAPPED(record, 1)) {
             dprintln("Stop dynamic macro recording");
             d_macro.state = D_MACRO_STATE_IDLE;
+            /*
+             * XXX: Dirty hack. Strip the extra macro events to prevent unwanted
+             *      layer switch. Only works with this layout set-up, when the
+             *      macro recording is stopped by typing
+             *      L1 down -> MREC down -> MREC up -> L1 up.
+             */
+            d_macro.ev_count -=
+                d_macro.ev_count > D_MACRO_EV_SUFFIX_LEN ?
+                D_MACRO_EV_SUFFIX_LEN : d_macro.ev_count;
         }
     }
 }
@@ -288,7 +300,7 @@ action_t action_for_key(uint8_t layer, keypos_t key)
     if (d_macro.state == D_MACRO_STATE_RECORDING &&
         d_macro.ev_count >= MAX_D_MACRO_EVENTS &&
         // the key to stop recording should always work
-        !(key.row == d_macro.rec_key.row && key.col == d_macro.rec_key.col) &&
+        !KEYEQ(key, d_macro.rec_key) &&
         // layer actions should always work, in case the stopping key is in a hidden layer
         !(action.kind.id == ACT_LAYER ||
             action.kind.id == ACT_LAYER_TAP ||
