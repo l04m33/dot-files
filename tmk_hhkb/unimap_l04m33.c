@@ -54,6 +54,8 @@ enum function_id {
 #define AC_CTLENT  ACTION_MODS_TAP_KEY(MOD_RCTL, KC_ENT)
 #define AC_MREC    ACTION_FUNCTION_TAP(D_MACRO_FUNC_RECORD)
 #define AC_MPLAY   ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY)
+#define AC_LOCK    ACTION_LAYER_TAP_TOGGLE(3)
+#define AC_UNLOCK  ACTION_LAYER_MOMENTARY(4)
 
 #ifdef KEYMAP_SECTION_ENABLE
 const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
@@ -85,7 +87,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     PWR,  F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,  INS,  DEL,
     CAPS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, PSCR, SLCK, PAUS, UP,   TRNS, BSPC,
     TRNS, VOLD, VOLU, MUTE, TRNS, TRNS, PAST, PSLS, HOME, PGUP, LEFT, RGHT, PENT,
-    TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, PPLS, PMNS, END,  PGDN, DOWN, TRNS, L1,
+    LOCK, TRNS, TRNS, TRNS, TRNS, TRNS, PPLS, PMNS, END,  PGDN, DOWN, TRNS, L1,
           TRNS, TRNS,             SPC,                    MREC, MPLAY),
 
     /* layer 2: vi movement keys and mouse keys (space) */
@@ -95,6 +97,22 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     LCTL, TRNS, MS_L, MS_U, MS_D, MS_R, LEFT, DOWN, UP,   RGHT, TRNS, TRNS, CTLENT,
     LSFT, TRNS, BTN3, BTN2, BTN1, TRNS, ACL2, ACL1, ACL0, TRNS, TRNS, RSFT, TRNS,
           LALT, LGUI,             L2,                     RGUI, RALT),
+
+    /* layer 3: locked */
+    [3] = UNIMAP_HHKB(
+    NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, UNLOCK,
+        NO, NO,             NO,                     NO, NO),
+
+    /* layer 4: unlocking */
+    [4] = UNIMAP_HHKB(
+    NO,   NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO,   NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO,   NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    LOCK, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, UNLOCK,
+          NO, NO,             NO,                     NO, NO),
 };
 
 
