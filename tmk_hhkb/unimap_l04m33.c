@@ -98,7 +98,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
 };
 
 
-#define MAX_D_MACRO_EVENTS 40
+#define MAX_D_MACRO_EVENTS 256
 
 typedef enum {
     D_MACRO_STATE_IDLE,
