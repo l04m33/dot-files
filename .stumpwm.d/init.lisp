@@ -339,7 +339,10 @@
                  "#c5c8c6" ; white   (foreground)
                  "#969896" ; gray    (comment)
                  ))
-(update-color-map (current-screen))
+(set-fg-color (nth 7 *colors*))
+(set-bg-color (nth 0 *colors*))
+(dolist (screen *screen-list*)
+  (update-color-map screen))
 
 (setf *window-border-style* :tight)
 (setf *normal-border-width* 1)
@@ -349,9 +352,8 @@
 (setf *float-window-border* 1)
 (setf *float-window-title-height* 1)
 
-(set-fg-color (nth 7 *colors*))
-(set-bg-color (nth 0 *colors*))
 (set-msg-border-width 0)
+(set-frame-outline-width 2)
 
 (set-focus-color (nth 4 *colors*))
 (set-unfocus-color (nth 0 *colors*))
@@ -403,3 +405,14 @@
 (run-shell-command  "ibus-daemon -d -x -r -n stumpwm")
 (run-shell-command  "xautolock -time 10 -corners '00+-' -locker slock")
 (run-shell-command  "compton -c -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 --opacity-rule '90:class_g*?=\"xterm\"' --opacity-rule '75:window_type=\"dock\"'")
+
+
+;;--------- StumpWM Patches ---------
+
+(in-package #:stumpwm)
+
+;; The CLEAR-FRAME-OUTLINES function in StumpWM source has :EXPOSURES-P set to
+;; NIL, and fails to actually clear the frame outlines. Setting :EXPOSURES-P to
+;; T solved the problem.
+(defun clear-frame-outlines (group)
+  (xlib:clear-area (screen-root (group-screen group)) :exposures-p t))
