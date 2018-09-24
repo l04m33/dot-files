@@ -50,6 +50,8 @@ static uint8_t *stack_begin, *stack_end;
 enum function_id {
     D_MACRO_FUNC_RECORD,
     D_MACRO_FUNC_PLAY,
+    FUNC_LSHIFT_LPAREN,
+    FUNC_RSHIFT_RPAREN,
 };
 
 
@@ -60,6 +62,8 @@ enum function_id {
 #define AC_MPLAY   ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY)
 #define AC_LOCK    ACTION_LAYER_TAP_TOGGLE(3)
 #define AC_UNLOCK  ACTION_LAYER_MOMENTARY(4)
+#define AC_LSFTPRN ACTION_FUNCTION_TAP(FUNC_LSHIFT_LPAREN)
+#define AC_RSFTPRN ACTION_FUNCTION_TAP(FUNC_RSHIFT_RPAREN)
 
 #ifdef KEYMAP_SECTION_ENABLE
 const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
@@ -80,11 +84,11 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
      *       `-------------------------------------------'
      */
     [0] = UNIMAP_HHKB(
-    ESC,  1,    2,    3,   4,   5,   6,   7,   8,    9,    0,    MINS, EQL,    BSLS, GRV,
-    TAB,  Q,    W,    E,   R,   T,   Y,   U,   I,    O,    P,    LBRC, RBRC,   BSPC,
-    LCTL, A,    S,    D,   F,   G,   H,   J,   K,    L,    SCLN, QUOT, CTLENT,
-    LSFT, Z,    X,    C,   V,   B,   N,   M,   COMM, DOT,  SLSH, RSFT, L1,
-          LALT, LGUI,           L2,                  RGUI, RALT),
+    ESC,     1,    2,    3,   4,   5,   6,   7,   8,    9,    0,    MINS,    EQL,    BSLS, GRV,
+    TAB,     Q,    W,    E,   R,   T,   Y,   U,   I,    O,    P,    LBRC,    RBRC,   BSPC,
+    LCTL,    A,    S,    D,   F,   G,   H,   J,   K,    L,    SCLN, QUOT,    CTLENT,
+    LSFTPRN, Z,    X,    C,   V,   B,   N,   M,   COMM, DOT,  SLSH, RSFTPRN, L1,
+             LALT, LGUI,           L2,                  RGUI, RALT),
 
     /* layer 1: hhkb mode (hhkb fn) */
     [1] = UNIMAP_HHKB(
@@ -180,6 +184,36 @@ static void action_play(keyrecord_t *record)
     }
 }
 
+static void action_shift_paren(keyrecord_t *record, enum hid_keyboard_keypad_usage shift_kc)
+{
+    if (record->event.pressed) {
+        if (record->tap.count <= 0 || record->tap.interrupted) {
+            register_mods(MOD_BIT(shift_kc));
+        }
+    } else {
+        if (record->tap.count > 0 && !record->tap.interrupted) {
+            add_weak_mods(MOD_BIT(shift_kc));
+            send_keyboard_report();
+            switch (shift_kc) {
+                case KC_LSHIFT:
+                    register_code(KC_9);
+                    unregister_code(KC_9);
+                    break;
+                case KC_RSHIFT:
+                    register_code(KC_0);
+                    unregister_code(KC_0);
+                    break;
+                default:
+                    break;
+            }
+            del_weak_mods(MOD_BIT(shift_kc));
+            send_keyboard_report();
+        } else {
+            unregister_mods(MOD_BIT(shift_kc));
+        }
+    }
+}
+
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
     switch (id) {
@@ -188,6 +222,12 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             break;
         case D_MACRO_FUNC_PLAY:
             action_play(record);
+            break;
+        case FUNC_LSHIFT_LPAREN:
+            action_shift_paren(record, KC_LSHIFT);
+            break;
+        case FUNC_RSHIFT_RPAREN:
+            action_shift_paren(record, KC_RSHIFT);
             break;
         default:
             break;
