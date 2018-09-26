@@ -1,6 +1,81 @@
+######### Options #########
+
 colorscheme tomorrow-night
 addhl global/number-lines number-lines -relative -hlcursor
 set-option global ui_options ncurses_assistant=cat
 
+
+######### Basic Key Mappings #########
+
 map global insert <tab> '<a-;><gt>'
 map global insert <s-tab> '<a-;><lt>'
+
+
+######### Tmux Integration #########
+
+declare-user-mode rc-tmux
+map -docstring 'Tmux control'       global user    t ':enter-user-mode rc-tmux<ret>'
+map -docstring 'Split horizontally' global rc-tmux h ':tmux-new-horizontal<ret>'
+map -docstring 'Split vertically'   global rc-tmux v ':tmux-new-vertical<ret>'
+map -docstring 'Create new window'  global rc-tmux w ':tmux-new-window<ret>'
+map -docstring 'Split horizontally and run command' global rc-tmux H ':tmux-new-horizontal '
+map -docstring 'Split vertically and run command'   global rc-tmux V ':tmux-new-vertical '
+map -docstring 'Create new window and run command'  global rc-tmux W ':tmux-new-window '
+
+
+######### StumpWM Integration #########
+
+define-command -hidden -params 1.. rc-stumpwm-new-impl %{
+    nop %sh{
+        cmd="$1"
+        shift
+        if [ $# -ne 0 ]; then
+            kakoune_params="-e '$@'"
+        fi
+        if [ "${cmd}" != "nop" ]; then
+            stumpish "rc-${cmd}-and-focus";
+        fi
+        stumpish "run-shell-command xterm -e kak -c ${kak_session} ${kakoune_params}";
+    }
+}
+
+define-command -params .. -command-completion rc-stumpwm-new-horizontal %{
+    rc-stumpwm-new-impl 'hsplit' %arg{@}
+}
+
+define-command -params .. -command-completion rc-stumpwm-new-vertical %{
+    rc-stumpwm-new-impl 'vsplit' %arg{@}
+}
+
+define-command -params .. -command-completion rc-stumpwm-new-window %{
+    rc-stumpwm-new-impl 'nop' %arg{@}
+}
+
+declare-user-mode rc-stumpwm
+map -docstring 'StumpWM control'    global user       g ':enter-user-mode rc-stumpwm<ret>'
+map -docstring 'Split horizontally' global rc-stumpwm h ':rc-stumpwm-new-horizontal<ret>'
+map -docstring 'Split vertically'   global rc-stumpwm v ':rc-stumpwm-new-vertical<ret>'
+map -docstring 'Create new window'  global rc-stumpwm w ':rc-stumpwm-new-window<ret>'
+map -docstring 'Split horizontally and run command' global rc-stumpwm H ':rc-stumpwm-new-horizontal '
+map -docstring 'Split vertically and run command'   global rc-stumpwm V ':rc-stumpwm-new-vertical '
+map -docstring 'Create new window and run command'  global rc-stumpwm W ':rc-stumpwm-new-window '
+
+
+######### Auto Indent for Scheme Files #########
+
+# Ripped from python.kak
+define-command -hidden rc-scheme-indent-on-new-line %{
+    evaluate-commands -draft -itersel %{
+        # copy ';' comment prefix and following white spaces
+        try %{ execute-keys -draft k <a-x> s ^\h*\;+\h* <ret> y jgh P }
+        # preserve previous line indent
+        try %{ execute-keys -draft \; K <a-&> }
+        # cleanup trailing whitespaces from previous line
+        try %{ execute-keys -draft k <a-x> s \h+$ <ret> d }
+    }
+}
+
+hook global WinSetOption filetype=scheme %{
+    hook window InsertChar \n -group rc-scheme-indent rc-scheme-indent-on-new-line
+    set buffer indentwidth 2
+}
