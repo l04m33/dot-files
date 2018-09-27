@@ -81,5 +81,5 @@ define-command -hidden rc-scheme-indent-on-new-line %{
 
 hook global WinSetOption filetype=scheme %{
     hook window InsertChar \n -group rc-scheme-indent rc-scheme-indent-on-new-line
-    set buffer indentwidth 2
+    set-option window indentwidth 2
 }
