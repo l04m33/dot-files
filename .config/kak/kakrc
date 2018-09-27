@@ -26,16 +26,20 @@ map -docstring 'Create new window and run command'  global rc-tmux W ':tmux-new-
 ######### StumpWM Integration #########
 
 define-command -hidden -params 1.. rc-stumpwm-new-impl %{
-    nop %sh{
+    evaluate-commands %sh{
+        if [ -z "${DISPLAY}" ]; then
+            echo "echo -markup '{Error}Not in a GUI session'"
+            exit
+        fi
         cmd="$1"
         shift
         if [ $# -ne 0 ]; then
             kakoune_params="-e '$@'"
         fi
         if [ "${cmd}" != "nop" ]; then
-            stumpish "rc-${cmd}-and-focus";
+            stumpish "rc-${cmd}-and-focus"
         fi
-        stumpish "run-shell-command xterm -e kak -c ${kak_session} ${kakoune_params}";
+        stumpish "run-shell-command xterm -e kak -c ${kak_session} ${kakoune_params}" < /dev/null > /dev/null 2>&1
     }
 }
 
