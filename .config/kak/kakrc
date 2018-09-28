@@ -65,21 +65,8 @@ map -docstring 'Split vertically and run command'   global rc-stumpwm V ':rc-stu
 map -docstring 'Create new window and run command'  global rc-stumpwm W ':rc-stumpwm-new-window '
 
 
-######### Auto Indent for Scheme Files #########
-
-# Ripped from python.kak
-define-command -hidden rc-scheme-indent-on-new-line %{
-    evaluate-commands -draft -itersel %{
-        # copy ';' comment prefix and following white spaces
-        try %{ execute-keys -draft k <a-x> s ^\h*\;+\h* <ret> y jgh P }
-        # preserve previous line indent
-        try %{ execute-keys -draft \; K <a-&> }
-        # cleanup trailing whitespaces from previous line
-        try %{ execute-keys -draft k <a-x> s \h+$ <ret> d }
-    }
-}
+######### Scheme Files #########
 
 hook global WinSetOption filetype=scheme %{
-    hook window InsertChar \n -group rc-scheme-indent rc-scheme-indent-on-new-line
     set-option window indentwidth 2
 }
