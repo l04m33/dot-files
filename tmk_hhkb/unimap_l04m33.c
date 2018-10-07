@@ -88,7 +88,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     TAB,     Q,    W,    E,   R,   T,   Y,   U,   I,    O,    P,    LBRC,    RBRC,   BSPC,
     LCTL,    A,    S,    D,   F,   G,   H,   J,   K,    L,    SCLN, QUOT,    CTLENT,
     LSFTPRN, Z,    X,    C,   V,   B,   N,   M,   COMM, DOT,  SLSH, RSFTPRN, L1,
-             LALT, LGUI,           L2,                  RGUI, RALT),
+             LGUI, LALT,           L2,                  RALT, RGUI),
 
     /* layer 1: hhkb mode (hhkb fn) */
     [1] = UNIMAP_HHKB(
@@ -104,7 +104,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     TAB,  TRNS, WH_L, WH_U, WH_D, WH_R, HOME, PGDN, PGUP, END,  TRNS, TRNS, TRNS,   BSPC,
     LCTL, TRNS, MS_L, MS_U, MS_D, MS_R, LEFT, DOWN, UP,   RGHT, TRNS, TRNS, CTLENT,
     LSFT, TRNS, BTN3, BTN2, BTN1, TRNS, ACL2, ACL1, ACL0, TRNS, TRNS, RSFT, TRNS,
-          LALT, LGUI,             L2,                     RGUI, RALT),
+          LGUI, LALT,             L2,                     RALT, RGUI),
 
     /* layer 3: locked */
     [3] = UNIMAP_HHKB(
