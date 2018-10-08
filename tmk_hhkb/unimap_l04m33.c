@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "action.h"
 #include "timer.h"
 #include "wait.h"
+#include "eeconfig.h"
+#include "bootmagic.h"
 #include "unimap_trans.h"
 #if defined(__AVR__)
 #   include <avr/pgmspace.h>
