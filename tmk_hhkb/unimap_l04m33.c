@@ -323,7 +323,19 @@ void hook_keyboard_loop(void)
 
 #ifdef BOOTMAGIC_ENABLE
 
+#define BOOTMAGIC_CUSTOM_KEY_SWAP_ALT_GUI KC_Z
+
 extern keymap_config_t keymap_config;
+
+void hook_bootmagic(void)
+{
+    if (bootmagic_scan_key(BOOTMAGIC_CUSTOM_KEY_SWAP_ALT_GUI)) {
+        keymap_config.raw = eeconfig_read_keymap();
+        keymap_config.swap_lalt_lgui = !keymap_config.swap_lalt_lgui;
+        keymap_config.swap_ralt_rgui = keymap_config.swap_lalt_lgui;
+        eeconfig_write_keymap(keymap_config.raw);
+    }
+}
 
 static action_t handle_bootmagic_key_swaps(action_t action)
 {
@@ -333,60 +345,24 @@ static action_t handle_bootmagic_key_swaps(action_t action)
     }
 
     switch (action.key.code) {
-        case KC_GRAVE:
-            if (keymap_config.swap_grave_esc) {
-                action.key.code = KC_ESCAPE;
-            }
-            break;
-        case KC_ESCAPE:
-            if (keymap_config.swap_grave_esc) {
-                action.key.code = KC_GRAVE;
-            }
-            break;
-        case KC_BSPACE:
-            if (keymap_config.swap_backslash_backspace) {
-                action.key.code = KC_BSLASH;
-            }
-            break;
-        case KC_BSLASH:
-            if (keymap_config.swap_backslash_backspace) {
-                action.key.code = KC_BSPACE;
-            }
-            break;
         case KC_LALT:
             if (keymap_config.swap_lalt_lgui) {
-                if (keymap_config.no_gui) {
-                    action = (action_t)ACTION_NO;
-                } else {
-                    action.key.code = KC_LGUI;
-                }
-            }
-            break;
-        case KC_RALT:
-            if (keymap_config.swap_ralt_rgui) {
-                if (keymap_config.no_gui) {
-                    action = (action_t)ACTION_NO;
-                } else {
-                    action.key.code = KC_RGUI;
-                }
+                action.key.code = KC_LGUI;
             }
             break;
         case KC_LGUI:
             if (keymap_config.swap_lalt_lgui) {
                 action.key.code = KC_LALT;
-            } else {
-                if (keymap_config.no_gui) {
-                    action = (action_t)ACTION_NO;
-                }
+            }
+            break;
+        case KC_RALT:
+            if (keymap_config.swap_ralt_rgui) {
+                action.key.code = KC_RGUI;
             }
             break;
         case KC_RGUI:
             if (keymap_config.swap_ralt_rgui) {
                 action.key.code = KC_RALT;
-            } else {
-                if (keymap_config.no_gui) {
-                    action = (action_t)ACTION_NO;
-                }
             }
             break;
         default:
