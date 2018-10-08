@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * l04m33 custom keymap, based on unimap_hhkb.c
  */
 
+#include "keymap.h"
 #include "keyboard.h"
 #include "action.h"
 #include "timer.h"
@@ -320,6 +321,83 @@ void hook_keyboard_loop(void)
     layer_state = prev_layer_state;
 }
 
+#ifdef BOOTMAGIC_ENABLE
+
+extern keymap_config_t keymap_config;
+
+static action_t handle_bootmagic_key_swaps(action_t action)
+{
+    if (action.kind.id != ACT_LMODS && action.kind.id != ACT_RMODS)
+    {
+        return action;
+    }
+
+    switch (action.key.code) {
+        case KC_GRAVE:
+            if (keymap_config.swap_grave_esc) {
+                action.key.code = KC_ESCAPE;
+            }
+            break;
+        case KC_ESCAPE:
+            if (keymap_config.swap_grave_esc) {
+                action.key.code = KC_GRAVE;
+            }
+            break;
+        case KC_BSPACE:
+            if (keymap_config.swap_backslash_backspace) {
+                action.key.code = KC_BSLASH;
+            }
+            break;
+        case KC_BSLASH:
+            if (keymap_config.swap_backslash_backspace) {
+                action.key.code = KC_BSPACE;
+            }
+            break;
+        case KC_LALT:
+            if (keymap_config.swap_lalt_lgui) {
+                if (keymap_config.no_gui) {
+                    action = (action_t)ACTION_NO;
+                } else {
+                    action.key.code = KC_LGUI;
+                }
+            }
+            break;
+        case KC_RALT:
+            if (keymap_config.swap_ralt_rgui) {
+                if (keymap_config.no_gui) {
+                    action = (action_t)ACTION_NO;
+                } else {
+                    action.key.code = KC_RGUI;
+                }
+            }
+            break;
+        case KC_LGUI:
+            if (keymap_config.swap_lalt_lgui) {
+                action.key.code = KC_LALT;
+            } else {
+                if (keymap_config.no_gui) {
+                    action = (action_t)ACTION_NO;
+                }
+            }
+            break;
+        case KC_RGUI:
+            if (keymap_config.swap_ralt_rgui) {
+                action.key.code = KC_RALT;
+            } else {
+                if (keymap_config.no_gui) {
+                    action = (action_t)ACTION_NO;
+                }
+            }
+            break;
+        default:
+            break;
+    }
+
+    return action;
+}
+
+#endif // BOOTMAGIC_ENABLE
+
 extern keypos_t unimap_translate(keypos_t key);
 
 action_t action_for_key(uint8_t layer, keypos_t key)
@@ -334,6 +412,10 @@ action_t action_for_key(uint8_t layer, keypos_t key)
         (action_t)pgm_read_word(&actionmaps[(layer)][(uni.row & 0x7)][(uni.col)]);
 #else
         actionmaps[(layer)][(uni.row & 0x7)][(uni.col)];
+#endif
+
+#ifdef BOOTMAGIC_ENABLE
+    action = handle_bootmagic_key_swaps(action);
 #endif
 
     if (d_macro.state == D_MACRO_STATE_RECORDING &&
