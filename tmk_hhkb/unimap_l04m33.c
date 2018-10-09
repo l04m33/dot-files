@@ -53,6 +53,8 @@ static uint8_t *stack_begin, *stack_end;
 enum function_id {
     D_MACRO_FUNC_RECORD,
     D_MACRO_FUNC_PLAY,
+    D_MACRO_FUNC_PLAY_1,
+    D_MACRO_FUNC_PLAY_2,
     FUNC_LSHIFT_LPAREN,
     FUNC_RSHIFT_RPAREN,
 };
@@ -63,6 +65,8 @@ enum function_id {
 #define AC_CTLENT  ACTION_MODS_TAP_KEY(MOD_RCTL, KC_ENT)
 #define AC_MREC    ACTION_FUNCTION_TAP(D_MACRO_FUNC_RECORD)
 #define AC_MPLAY   ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY)
+#define AC_MPLAY_1 ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY_1)
+#define AC_MPLAY_2 ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY_2)
 #define AC_LOCK    ACTION_LAYER_TAP_TOGGLE(3)
 #define AC_UNLOCK  ACTION_LAYER_MOMENTARY(4)
 #define AC_LSFTPRN ACTION_FUNCTION_TAP(FUNC_LSHIFT_LPAREN)
@@ -99,7 +103,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     CAPS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, PSCR, SLCK, PAUS, UP,   TRNS, BSPC,
     TRNS, VOLD, VOLU, MUTE, TRNS, TRNS, PAST, PSLS, HOME, PGUP, LEFT, RGHT, PENT,
     LOCK, TRNS, TRNS, TRNS, TRNS, TRNS, PPLS, PMNS, END,  PGDN, DOWN, TRNS, L1,
-          TRNS, TRNS,             SPC,                    MREC, MPLAY),
+          MPLAY_1, MPLAY_2,       SPC,                    MREC, MPLAY),
 
     /* layer 2: vi movement keys and mouse keys (space) */
     [2] = UNIMAP_HHKB(
@@ -136,6 +140,7 @@ typedef enum {
 
 typedef struct {
     d_macro_state_t state;
+    int16_t         play_interval;
     keypos_t        rec_key;
     uint16_t        ev_count;
     keyevent_t      ev[MAX_D_MACRO_EVENTS];
@@ -143,6 +148,7 @@ typedef struct {
 
 static d_macro_t d_macro = {
     .state   = D_MACRO_STATE_IDLE,
+    .play_interval = -1,
     .rec_key = { .row = 0, .col = 0 },
     .ev_count = 0,
 };
@@ -175,7 +181,7 @@ static void action_record(keyrecord_t *record)
     }
 }
 
-static void action_play(keyrecord_t *record)
+static void action_play(keyrecord_t *record, int16_t interval)
 {
     if (d_macro.state != D_MACRO_STATE_IDLE) {
         return;
@@ -184,6 +190,7 @@ static void action_play(keyrecord_t *record)
     if (!record->event.pressed && KEY_TAPPED(record, 1)) {
         dprintln("Schedule dynamic macro replay");
         d_macro.state = D_MACRO_STATE_READY;
+        d_macro.play_interval = interval;
     }
 }
 
@@ -224,7 +231,13 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             action_record(record);
             break;
         case D_MACRO_FUNC_PLAY:
-            action_play(record);
+            action_play(record, -1);
+            break;
+        case D_MACRO_FUNC_PLAY_1:
+            action_play(record, 1);
+            break;
+        case D_MACRO_FUNC_PLAY_2:
+            action_play(record, 50);
             break;
         case FUNC_LSHIFT_LPAREN:
             action_shift_paren(record, KC_LSHIFT);
@@ -298,8 +311,9 @@ void hook_keyboard_loop(void)
         return;
     }
 
+    int16_t play_interval = d_macro.play_interval;
     uint16_t last_ts = 0;
-    if (d_macro.ev_count > 0) {
+    if (play_interval < 0 && d_macro.ev_count > 0) {
         last_ts = d_macro.ev[0].time;
     }
 
@@ -309,9 +323,14 @@ void hook_keyboard_loop(void)
 
     dprintln("Start playing macro events");
     for (uint8_t i = 0; i < d_macro.ev_count; i++) {
-        dprintf("  Waiting for %u ms\n", TIMER_DIFF_16(d_macro.ev[i].time, last_ts));
-        dyn_wait_ms(TIMER_DIFF_16(d_macro.ev[i].time, last_ts));
-        last_ts = d_macro.ev[i].time;
+        if (play_interval < 0) {
+            dprintf("  Waiting for %u ms\n", TIMER_DIFF_16(d_macro.ev[i].time, last_ts));
+            dyn_wait_ms(TIMER_DIFF_16(d_macro.ev[i].time, last_ts));
+            last_ts = d_macro.ev[i].time;
+        } else {
+            dprintf("  Waiting for %u ms\n", play_interval);
+            dyn_wait_ms(play_interval);
+        }
 
         dprintf("  Playing macro event %u\n", i);
         action_exec(d_macro.ev[i]);
