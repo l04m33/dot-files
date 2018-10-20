@@ -80,6 +80,11 @@
 
 
 ;;--------- Module Variables ---------
+(setf swm-gaps:*inner-gaps-size* 5)
+(setf swm-gaps:*outer-gaps-size* 10)
+(setf swm-gaps:*head-gaps-size* 0)
+(when (not swm-gaps:*gaps-on*)
+  (eval-command "toggle-gaps"))
 
 
 ;;--------- Custom Functions and Commands ---------
