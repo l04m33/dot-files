@@ -182,25 +182,6 @@ static d_macro_t d_macro = {
 
 #define PENTI_KEYS_COUNT 6
 
-typedef struct {
-    uint8_t bit;
-    uint8_t pressed;
-    uint16_t time;
-} penti_event_t;
-
-typedef struct {
-    uint8_t keys_state;
-    uint8_t keys_combo;
-    uint8_t event_count;
-    penti_event_t event_list[PENTI_KEYS_COUNT];
-} penti_state_t;
-
-static penti_state_t penti_state = {
-    .keys_state = 0,
-    .keys_combo = 0,
-    .event_count = 0,
-};
-
 static enum hid_keyboard_keypad_usage penti_alpha_chord_map[] = {
     [0]  = KC_NO,
     [1]  = KC_SPACE,
@@ -234,6 +215,27 @@ static enum hid_keyboard_keypad_usage penti_alpha_chord_map[] = {
     [29] = KC_T,
     [30] = KC_K,
     [31] = KC_W,
+};
+
+typedef struct {
+    uint8_t bit;
+    uint8_t pressed;
+    uint16_t time;
+} penti_event_t;
+
+typedef struct {
+    uint8_t keys_state;
+    uint8_t keys_combo;
+    uint8_t event_count;
+    penti_event_t event_list[PENTI_KEYS_COUNT];
+    enum hid_keyboard_keypad_usage *chord_map;
+} penti_state_t;
+
+static penti_state_t penti_state = {
+    .keys_state = 0,
+    .keys_combo = 0,
+    .event_count = 0,
+    .chord_map = penti_alpha_chord_map,
 };
 
 
@@ -357,11 +359,11 @@ static void action_penti_key(keyrecord_t *record, uint8_t bit)
                     dprintln("  Penti arpeggio detected");
                 } else {
                     dprintln("  Penti chord detected");
-                    handle_penti_chord(penti_state.keys_combo, penti_alpha_chord_map);
+                    handle_penti_chord(penti_state.keys_combo, penti_state.chord_map);
                 }
             } else {
                 dprintln("  Penti single-key chord detected");
-                handle_penti_chord(penti_state.keys_combo, penti_alpha_chord_map);
+                handle_penti_chord(penti_state.keys_combo, penti_state.chord_map);
             }
 
             penti_state.keys_combo = 0;
