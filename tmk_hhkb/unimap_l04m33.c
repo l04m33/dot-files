@@ -57,8 +57,17 @@ enum function_id {
     D_MACRO_FUNC_PLAY_2,
     FUNC_LSHIFT_LPAREN,
     FUNC_RSHIFT_RPAREN,
+    PENTI_KEY,
 };
 
+typedef enum {
+    PENTI_THUMB_BIT = 0,
+    PENTI_INDEX_BIT,
+    PENTI_MIDDLE_BIT,
+    PENTI_RING_BIT,
+    PENTI_PINKY_BIT,
+    PENTI_REPEAT_BIT,
+} penti_bit_t;
 
 #define AC_L1      ACTION_LAYER_TAP_TOGGLE(1)
 #define AC_L2      ACTION_LAYER_TAP_KEY(2, KC_SPC)
@@ -71,6 +80,15 @@ enum function_id {
 #define AC_UNLOCK  ACTION_LAYER_MOMENTARY(4)
 #define AC_LSFTPRN ACTION_FUNCTION_TAP(FUNC_LSHIFT_LPAREN)
 #define AC_RSFTPRN ACTION_FUNCTION_TAP(FUNC_RSHIFT_RPAREN)
+
+#define AC_PENTI        ACTION_LAYER_TOGGLE(5)
+#define AC_PENTI_THUMB  ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_THUMB_BIT)
+#define AC_PENTI_INDEX  ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_INDEX_BIT)
+#define AC_PENTI_MIDDLE ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_MIDDLE_BIT)
+#define AC_PENTI_RING   ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_RING_BIT)
+#define AC_PENTI_PINKY  ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_PINKY_BIT)
+#define AC_PENTI_REPEAT ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_REPEAT_BIT)
+
 
 #ifdef KEYMAP_SECTION_ENABLE
 const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
@@ -107,11 +125,11 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
 
     /* layer 2: vi movement keys and mouse keys (space) */
     [2] = UNIMAP_HHKB(
-    ESC,  F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,    INS,  DEL,
-    TAB,  TRNS, WH_L, WH_U, WH_D, WH_R, HOME, PGDN, PGUP, END,  TRNS, TRNS, TRNS,   BSPC,
-    LCTL, TRNS, MS_L, MS_U, MS_D, MS_R, LEFT, DOWN, UP,   RGHT, TRNS, TRNS, CTLENT,
-    LSFT, TRNS, BTN3, BTN2, BTN1, TRNS, ACL2, ACL1, ACL0, TRNS, TRNS, RSFT, TRNS,
-          LGUI, LALT,             L2,                     RALT, RGUI),
+    PENTI, F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,    INS,  DEL,
+    TAB,   TRNS, WH_L, WH_U, WH_D, WH_R, HOME, PGDN, PGUP, END,  TRNS, TRNS, TRNS,   BSPC,
+    LCTL,  TRNS, MS_L, MS_U, MS_D, MS_R, LEFT, DOWN, UP,   RGHT, TRNS, TRNS, CTLENT,
+    LSFT,  TRNS, BTN3, BTN2, BTN1, TRNS, ACL2, ACL1, ACL0, TRNS, TRNS, RSFT, TRNS,
+           LGUI, LALT,             L2,                     RALT, RGUI),
 
     /* layer 3: locked */
     [3] = UNIMAP_HHKB(
@@ -128,6 +146,14 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     NO,   NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
     LOCK, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, UNLOCK,
           NO, NO,             NO,                     NO, NO),
+
+    /* layer 5: Penti keyboard mode */
+    [5] = UNIMAP_HHKB(
+    PENTI, NO,          NO,           NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO,    NO,          NO,           NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO,    PENTI_PINKY, PENTI_RING,   PENTI_MIDDLE, PENTI_INDEX, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO,    NO,          PENTI_REPEAT, NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO,
+           NO,          NO,                                      PENTI_THUMB,        NO, NO),
 };
 
 
@@ -152,6 +178,64 @@ static d_macro_t d_macro = {
     .rec_key = { .row = 0, .col = 0 },
     .ev_count = 0,
 };
+
+
+#define PENTI_KEYS_COUNT 6
+
+typedef struct {
+    uint8_t bit;
+    uint8_t pressed;
+    uint16_t time;
+} penti_event_t;
+
+typedef struct {
+    uint8_t keys_state;
+    uint8_t keys_combo;
+    uint8_t event_count;
+    penti_event_t event_list[PENTI_KEYS_COUNT];
+} penti_state_t;
+
+static penti_state_t penti_state = {
+    .keys_state = 0,
+    .keys_combo = 0,
+    .event_count = 0,
+};
+
+static enum hid_keyboard_keypad_usage penti_alpha_chord_map[] = {
+    [0]  = KC_NO,
+    [1]  = KC_SPACE,
+    [2]  = KC_S,
+    [3]  = KC_F,
+    [4]  = KC_E,
+    [5]  = KC_R,
+    [6]  = KC_L,
+    [7]  = KC_Z,
+    [8]  = KC_I,
+    [9]  = KC_A,
+    [10] = KC_C,
+    [11] = KC_Q,
+    [12] = KC_O,
+    [13] = KC_B,
+    [14] = KC_U,
+    [15] = KC_P,
+    [16] = KC_N,
+    [17] = KC_D,
+    [18] = KC_J,
+    [19] = KC_H,
+    [20] = KC_NO,
+    [21] = KC_NO,
+    [22] = KC_NO,
+    [23] = KC_NO,
+    [24] = KC_G,
+    [25] = KC_Y,
+    [26] = KC_V,
+    [27] = KC_X,
+    [28] = KC_M,
+    [29] = KC_T,
+    [30] = KC_K,
+    [31] = KC_W,
+};
+
 
 #define KEY_TAPPED(_rec_, _count_) ((_rec_)->tap.count == (_count_) && !(_rec_)->tap.interrupted)
 
@@ -224,6 +308,68 @@ static void action_shift_paren(keyrecord_t *record, enum hid_keyboard_keypad_usa
     }
 }
 
+static void handle_penti_chord(uint8_t combo, enum hid_keyboard_keypad_usage *map)
+{
+    enum hid_keyboard_keypad_usage kc = map[combo];
+    if (kc != KC_NO) {
+        register_code(kc);
+        unregister_code(kc);
+        send_keyboard_report();
+    }
+    // TODO: handle RESET combos
+}
+
+static void action_penti_key(keyrecord_t *record, uint8_t bit)
+{
+    dprintf("Penti key event: bit %u, %s [%u]\n",
+            bit, record->event.pressed ? "down" : "up",
+            record->event.time);
+
+    uint8_t mask = (1 << bit);
+
+    if (record->event.pressed) {
+        if (penti_state.event_count >= PENTI_KEYS_COUNT) {
+            dprintln("  XXX: Penti event list overflow");
+            penti_state.keys_state = 0;
+            penti_state.keys_combo = 0;
+            penti_state.event_count = 0;
+        } else {
+            penti_state.keys_state |= mask;
+            penti_state.keys_combo |= mask;
+
+            penti_event_t *penti_ev = &(penti_state.event_list[penti_state.event_count++]);
+            penti_ev->bit = bit;
+            penti_ev->pressed = record->event.pressed;
+            penti_ev->time = record->event.time;
+        }
+    } else {
+        penti_state.keys_state &= (~mask);
+        if (penti_state.keys_state == 0) {
+            dprintf("Penti combo engaged: 0x%02X, event count: %u\n",
+                    penti_state.keys_combo,
+                    penti_state.event_count);
+
+            if (penti_state.event_count > 1) {
+                penti_event_t *last = &(penti_state.event_list[penti_state.event_count - 1]),
+                              *second_to_last = &(penti_state.event_list[penti_state.event_count - 2]);
+                if (TIMER_DIFF_16(record->event.time, last->time) <= 240 &&
+                    TIMER_DIFF_16(last->time, second_to_last->time) >= 80) {
+                    dprintln("  Penti arpeggio detected");
+                } else {
+                    dprintln("  Penti chord detected");
+                    handle_penti_chord(penti_state.keys_combo, penti_alpha_chord_map);
+                }
+            } else {
+                dprintln("  Penti single-key chord detected");
+                handle_penti_chord(penti_state.keys_combo, penti_alpha_chord_map);
+            }
+
+            penti_state.keys_combo = 0;
+            penti_state.event_count = 0;
+        }
+    }
+}
+
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
     switch (id) {
@@ -244,6 +390,9 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             break;
         case FUNC_RSHIFT_RPAREN:
             action_shift_paren(record, KC_RSHIFT);
+            break;
+        case PENTI_KEY:
+            action_penti_key(record, opt);
             break;
         default:
             break;
