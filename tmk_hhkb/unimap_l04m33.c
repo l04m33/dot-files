@@ -310,15 +310,50 @@ static void action_shift_paren(keyrecord_t *record, enum hid_keyboard_keypad_usa
     }
 }
 
+static void penti_tap_hw_key(enum hid_keyboard_keypad_usage key_code)
+{
+    register_code(key_code);
+    unregister_code(key_code);
+    send_keyboard_report();
+}
+
 static void handle_penti_chord(uint8_t combo, enum hid_keyboard_keypad_usage *map)
 {
     enum hid_keyboard_keypad_usage kc = map[combo];
     if (kc != KC_NO) {
-        register_code(kc);
-        unregister_code(kc);
-        send_keyboard_report();
+        penti_tap_hw_key(kc);
     }
     // TODO: handle RESET combos
+}
+
+static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t ev_list[])
+{
+    switch (combo) {
+        case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_RING_BIT)):
+            switch (ev_list[0].bit) {
+                case PENTI_INDEX_BIT:
+                    penti_tap_hw_key(KC_ENTER);
+                    break;
+                case PENTI_RING_BIT:
+                    penti_tap_hw_key(KC_ESC);
+                    break;
+            }
+            break;
+
+        case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_MIDDLE_BIT)):
+            switch (ev_list[0].bit) {
+                case PENTI_INDEX_BIT:
+                    penti_tap_hw_key(KC_TAB);
+                    break;
+                case PENTI_MIDDLE_BIT:
+                    penti_tap_hw_key(KC_BSPACE);
+                    break;
+            }
+            break;
+
+        default:
+            return;
+    }
 }
 
 static void action_penti_key(keyrecord_t *record, uint8_t bit)
@@ -357,6 +392,9 @@ static void action_penti_key(keyrecord_t *record, uint8_t bit)
                 if (TIMER_DIFF_16(record->event.time, last->time) <= 240 &&
                     TIMER_DIFF_16(last->time, second_to_last->time) >= 80) {
                     dprintln("  Penti arpeggio detected");
+                    handle_penti_arpeggio(penti_state.keys_combo,
+                                          penti_state.event_count,
+                                          penti_state.event_list);
                 } else {
                     dprintln("  Penti chord detected");
                     handle_penti_chord(penti_state.keys_combo, penti_state.chord_map);
