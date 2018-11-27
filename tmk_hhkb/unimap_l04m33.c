@@ -222,6 +222,41 @@ static penti_chord_map_entry_t penti_alpha_chord_map[] = {
     { .key_code = KC_W },
 };
 
+static penti_chord_map_entry_t penti_shift_chord_map[] = {
+    { .key_code = KC_NO },     // 0x00
+    { .key_code = KC_SPACE },
+    { .key_code = KC_S, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_F, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_E, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_R, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_L, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_Z, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_I, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_A, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_C, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_Q, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_O, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_B, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_U, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_P, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_N, .modifiers = MOD_BIT(KC_LSHIFT) },      // 0x10
+    { .key_code = KC_D, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_J, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_H, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_G, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_Y, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_V, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_X, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_M, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_T, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_K, .modifiers = MOD_BIT(KC_LSHIFT) },
+    { .key_code = KC_W, .modifiers = MOD_BIT(KC_LSHIFT) },
+};
+
 typedef struct {
     uint8_t bit;
     uint8_t pressed;
@@ -346,6 +381,23 @@ static void handle_penti_chord(uint8_t combo, penti_chord_map_entry_t *map)
 static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t ev_list[])
 {
     switch (combo) {
+        case ((1 << PENTI_THUMB_BIT) | (1 << PENTI_INDEX_BIT)):
+            switch (ev_list[0].bit) {
+                case PENTI_THUMB_BIT:
+                    // TODO: transient state
+                    penti_state.chord_map = penti_shift_chord_map;
+                    break;
+                case PENTI_INDEX_BIT:
+                    // TODO: a stack or something
+                    if (penti_state.chord_map == penti_alpha_chord_map) {
+                        penti_state.chord_map = penti_shift_chord_map;
+                    } else if (penti_state.chord_map == penti_shift_chord_map) {
+                        penti_state.chord_map = penti_alpha_chord_map;
+                    }
+                    break;
+            }
+            break;
+
         case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_RING_BIT)):
             switch (ev_list[0].bit) {
                 case PENTI_INDEX_BIT:
