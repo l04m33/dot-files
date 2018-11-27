@@ -263,19 +263,25 @@ typedef struct {
     uint16_t time;
 } penti_event_t;
 
+#define PENTI_CHORD_MAP_STACK_SIZE 7
+
 typedef struct {
     uint8_t keys_state;
     uint8_t keys_combo;
     uint8_t event_count;
     penti_event_t event_list[PENTI_KEYS_COUNT];
-    penti_chord_map_entry_t *chord_map;
+    uint8_t chord_map_transient;
+    int8_t chord_map_stack_top;
+    penti_chord_map_entry_t *(chord_map_stack[PENTI_CHORD_MAP_STACK_SIZE]);
 } penti_state_t;
 
 static penti_state_t penti_state = {
     .keys_state = 0,
     .keys_combo = 0,
     .event_count = 0,
-    .chord_map = penti_alpha_chord_map,
+    .chord_map_transient = 0,
+    .chord_map_stack_top = 0,
+    .chord_map_stack = { penti_alpha_chord_map },
 };
 
 
@@ -357,6 +363,57 @@ static void penti_tap_hw_key(enum hid_keyboard_keypad_usage key_code)
     send_keyboard_report();
 }
 
+static penti_chord_map_entry_t *get_chord_map(void)
+{
+    return penti_state.chord_map_stack[penti_state.chord_map_stack_top];
+}
+
+static void push_chord_map(penti_chord_map_entry_t *map)
+{
+    dprintf("Before push_chord_map: chord_map_stack_top = %d\n",
+            penti_state.chord_map_stack_top);
+
+    if (penti_state.chord_map_stack_top >= 0) {
+        uint8_t move = 0;
+        for (uint8_t i = 0; i <= penti_state.chord_map_stack_top; i++) {
+            dprintf("chord_map_stack[%d] = %u\n", i, penti_state.chord_map_stack[i]);
+            if (penti_state.chord_map_stack[i] == map) {
+                dprintf("Penti chord map already in stack, found at index %d\n", i);
+                move = 1;
+            }
+            if (move && i < penti_state.chord_map_stack_top) {
+                dprintf("Moving penti chord map stack entry %d to entry %d\n", i+1, i);
+                penti_state.chord_map_stack[i] = penti_state.chord_map_stack[i+1];
+            }
+        }
+        if (move) {
+            penti_state.chord_map_stack_top--;
+        }
+    }
+
+    penti_state.chord_map_stack[++penti_state.chord_map_stack_top] = map;
+
+    dprintf("After push_chord_map: chord_map_stack_top = %d\n",
+            penti_state.chord_map_stack_top);
+}
+
+static penti_chord_map_entry_t *pop_chord_map(void)
+{
+    dprintf("Before pop_chord_map: chord_map_stack_top = %d\n",
+            penti_state.chord_map_stack_top);
+
+    if (penti_state.chord_map_stack_top <= 0) {
+        return NULL;
+    }
+    penti_chord_map_entry_t *cur_map = get_chord_map();
+    penti_state.chord_map_stack_top--;
+
+    dprintf("After pop_chord_map: chord_map_stack_top = %d\n",
+            penti_state.chord_map_stack_top);
+
+    return cur_map;
+}
+
 static void handle_penti_chord(uint8_t combo, penti_chord_map_entry_t *map)
 {
     penti_chord_map_entry_t *entry = &(map[combo]);
@@ -374,6 +431,10 @@ static void handle_penti_chord(uint8_t combo, penti_chord_map_entry_t *map)
             del_weak_mods(entry->modifiers);
         }
         send_keyboard_report();
+
+        if (penti_state.chord_map_transient) {
+            pop_chord_map();
+        }
     }
     // TODO: handle RESET chords
 }
@@ -385,14 +446,15 @@ static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t
             switch (ev_list[0].bit) {
                 case PENTI_THUMB_BIT:
                     // TODO: transient state
-                    penti_state.chord_map = penti_shift_chord_map;
+                    push_chord_map(penti_shift_chord_map);
+                    penti_state.chord_map_transient = 1;
                     break;
                 case PENTI_INDEX_BIT:
-                    // TODO: a stack or something
-                    if (penti_state.chord_map == penti_alpha_chord_map) {
-                        penti_state.chord_map = penti_shift_chord_map;
-                    } else if (penti_state.chord_map == penti_shift_chord_map) {
-                        penti_state.chord_map = penti_alpha_chord_map;
+                    if (get_chord_map() == penti_shift_chord_map) {
+                        pop_chord_map();
+                    } else {
+                        push_chord_map(penti_shift_chord_map);
+                        penti_state.chord_map_transient = 0;
                     }
                     break;
             }
@@ -466,11 +528,11 @@ static void action_penti_key(keyrecord_t *record, uint8_t bit)
                                           penti_state.event_list);
                 } else {
                     dprintln("  Penti chord detected");
-                    handle_penti_chord(penti_state.keys_combo, penti_state.chord_map);
+                    handle_penti_chord(penti_state.keys_combo, get_chord_map());
                 }
             } else {
                 dprintln("  Penti single-key chord detected");
-                handle_penti_chord(penti_state.keys_combo, penti_state.chord_map);
+                handle_penti_chord(penti_state.keys_combo, get_chord_map());
             }
 
             penti_state.keys_combo = 0;
