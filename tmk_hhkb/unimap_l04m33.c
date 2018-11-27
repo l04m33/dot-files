@@ -312,6 +312,7 @@ typedef struct {
     penti_event_t event_list[PENTI_KEYS_COUNT];
     int8_t chord_map_stack_top;
     penti_chord_map_stack_entry_t chord_map_stack[PENTI_CHORD_MAP_STACK_SIZE];
+    penti_chord_map_entry_t *to_repeat;
 } penti_state_t;
 
 static penti_state_t penti_state = {
@@ -320,6 +321,7 @@ static penti_state_t penti_state = {
     .event_count = 0,
     .chord_map_stack_top = 0,
     .chord_map_stack = { { .map = penti_alpha_chord_map, .transient = 0 } },
+    .to_repeat = NULL,
 };
 
 
@@ -454,11 +456,32 @@ static penti_chord_map_stack_entry_t *pop_chord_map(void)
     return cur_map;
 }
 
+static void handle_penti_repeat_key(uint8_t down)
+{
+    if (penti_state.to_repeat == NULL) {
+        return;
+    }
+
+    if (down) {
+        if ((penti_state.to_repeat)->modifiers > 0) {
+            register_mods((penti_state.to_repeat)->modifiers);
+        }
+        register_code((penti_state.to_repeat)->key_code);
+    } else {
+        unregister_code((penti_state.to_repeat)->key_code);
+        if ((penti_state.to_repeat)->modifiers > 0) {
+            unregister_mods((penti_state.to_repeat)->modifiers);
+        }
+    }
+}
+
 static void handle_penti_chord(uint8_t combo)
 {
     penti_chord_map_stack_entry_t *stack_entry = get_chord_map();
     penti_chord_map_entry_t *entry = &(stack_entry->map[combo]);
     if (entry->key_code != KC_NO) {
+        penti_state.to_repeat = entry;
+
         if (entry->modifiers > 0) {
             add_weak_mods(entry->modifiers);
             send_keyboard_report();
@@ -547,6 +570,11 @@ static void action_penti_key(keyrecord_t *record, uint8_t bit)
     dprintf("Penti key event: bit %u, %s [%u]\n",
             bit, record->event.pressed ? "down" : "up",
             record->event.time);
+
+    if (bit == PENTI_REPEAT_BIT) {
+        handle_penti_repeat_key(record->event.pressed);
+        return;
+    }
 
     uint8_t mask = (1 << bit);
 
