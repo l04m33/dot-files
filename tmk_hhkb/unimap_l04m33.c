@@ -476,8 +476,9 @@ static void handle_penti_chord(uint8_t combo)
         if (stack_entry->transient) {
             pop_chord_map();
         }
+    } else {
+        while (pop_chord_map());
     }
-    // TODO: handle RESET chords
 }
 
 static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t ev_list[])
