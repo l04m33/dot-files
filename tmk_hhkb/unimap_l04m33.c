@@ -187,6 +187,11 @@ typedef struct {
     uint8_t modifiers;
 } penti_chord_map_entry_t;
 
+static penti_chord_map_entry_t PENTI_TO_REPEAT_ENTER  = { .key_code = KC_ENTER };
+static penti_chord_map_entry_t PENTI_TO_REPEAT_ESCAPE = { .key_code = KC_ESCAPE };
+static penti_chord_map_entry_t PENTI_TO_REPEAT_TAB    = { .key_code = KC_TAB };
+static penti_chord_map_entry_t PENTI_TO_REPEAT_BSPACE = { .key_code = KC_BSPACE };
+
 static penti_chord_map_entry_t penti_alpha_chord_map[] = {
     { .key_code = KC_NO },     // 0x00
     { .key_code = KC_SPACE },
@@ -291,6 +296,41 @@ static penti_chord_map_entry_t penti_punct_chord_map[] = {
     { .key_code = KC_2,        .modifiers = MOD_BIT(KC_LSHIFT) }, // @
     { .key_code = KC_COMMA,    .modifiers = MOD_BIT(KC_LSHIFT) }, // <
 };
+
+//static penti_chord_map_entry_t penti_digit_chord_map[] = {
+//    { .key_code = KC_NO },     // 0x00
+//    { .key_code = KC_SPACE },
+//    { .key_code = KC_1 },
+//    { .key_code = KC_4 },
+//    { .key_code = KC_2 },
+//    { .key_code = KC_5 },
+//    { .key_code = KC_7 },
+//    { .key_code = KC_END },
+//    { .key_code = KC_3 },
+//    { .key_code = KC_6 },
+//    { .key_code = KC_COMMA },
+//    { .key_code = KC_PGUP },
+//    { .key_code = KC_8 },
+//    { .key_code = KC_LEFT },
+//    { .key_code = KC_0 },
+//    { .key_code = KC_EQUAL, .modifiers = MOD_BIT(KC_LSHIFT) },
+//    { .key_code = KC_RIGHT },      // 0x10
+//    { .key_code = KC_DOT },
+//    { .key_code = KC_SCOLON, .modifiers = MOD_BIT(KC_LSHIFT) },
+//    { .key_code = KC_HOME },
+//    { .key_code = KC_NO },
+//    { .key_code = KC_NO },
+//    { .key_code = KC_NO },
+//    { .key_code = KC_NO },
+//    { .key_code = KC_9 },
+//    { .key_code = KC_UP },
+//    { .key_code = KC_DOWN },
+//    { .key_code = KC_PGDOWN },
+//    { .key_code = KC_MINUS },
+//    { .key_code = KC_GRAVE, .modifiers = MOD_BIT(KC_LSHIFT) },
+//    { .key_code = KC_NO },
+//    { .key_code = KC_INSERT },
+//};
 
 typedef struct {
     uint8_t bit;
@@ -538,13 +578,30 @@ static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t
             }
             break;
 
+        //case ((1 << PENTI_THUMB_BIT) | (1 << PENTI_RING_BIT)):
+        //    switch (ev_list[0].bit) {
+        //        case PENTI_THUMB_BIT:
+        //            push_chord_map(penti_digit_chord_map, 1);
+        //            break;
+        //        case PENTI_RING_BIT:
+        //            if ((get_chord_map())->map == penti_digit_chord_map) {
+        //                pop_chord_map();
+        //            } else {
+        //                push_chord_map(penti_digit_chord_map, 0);
+        //            }
+        //            break;
+        //    }
+        //    break;
+
         case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_RING_BIT)):
             switch (ev_list[0].bit) {
                 case PENTI_INDEX_BIT:
                     penti_tap_hw_key(KC_ENTER);
+                    penti_state.to_repeat = &PENTI_TO_REPEAT_ENTER;
                     break;
                 case PENTI_RING_BIT:
-                    penti_tap_hw_key(KC_ESC);
+                    penti_tap_hw_key(KC_ESCAPE);
+                    penti_state.to_repeat = &PENTI_TO_REPEAT_ESCAPE;
                     break;
             }
             break;
@@ -553,9 +610,11 @@ static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t
             switch (ev_list[0].bit) {
                 case PENTI_INDEX_BIT:
                     penti_tap_hw_key(KC_TAB);
+                    penti_state.to_repeat = &PENTI_TO_REPEAT_TAB;
                     break;
                 case PENTI_MIDDLE_BIT:
                     penti_tap_hw_key(KC_BSPACE);
+                    penti_state.to_repeat = &PENTI_TO_REPEAT_BSPACE;
                     break;
             }
             break;
