@@ -182,39 +182,44 @@ static d_macro_t d_macro = {
 
 #define PENTI_KEYS_COUNT 6
 
-static enum hid_keyboard_keypad_usage penti_alpha_chord_map[] = {
-    [0]  = KC_NO,
-    [1]  = KC_SPACE,
-    [2]  = KC_S,
-    [3]  = KC_F,
-    [4]  = KC_E,
-    [5]  = KC_R,
-    [6]  = KC_L,
-    [7]  = KC_Z,
-    [8]  = KC_I,
-    [9]  = KC_A,
-    [10] = KC_C,
-    [11] = KC_Q,
-    [12] = KC_O,
-    [13] = KC_B,
-    [14] = KC_U,
-    [15] = KC_P,
-    [16] = KC_N,
-    [17] = KC_D,
-    [18] = KC_J,
-    [19] = KC_H,
-    [20] = KC_NO,
-    [21] = KC_NO,
-    [22] = KC_NO,
-    [23] = KC_NO,
-    [24] = KC_G,
-    [25] = KC_Y,
-    [26] = KC_V,
-    [27] = KC_X,
-    [28] = KC_M,
-    [29] = KC_T,
-    [30] = KC_K,
-    [31] = KC_W,
+typedef struct {
+    uint8_t key_code;
+    uint8_t modifiers;
+} penti_chord_map_entry_t;
+
+static penti_chord_map_entry_t penti_alpha_chord_map[] = {
+    { .key_code = KC_NO },     // 0x00
+    { .key_code = KC_SPACE },
+    { .key_code = KC_S },
+    { .key_code = KC_F },
+    { .key_code = KC_E },
+    { .key_code = KC_R },
+    { .key_code = KC_L },
+    { .key_code = KC_Z },
+    { .key_code = KC_I },
+    { .key_code = KC_A },
+    { .key_code = KC_C },
+    { .key_code = KC_Q },
+    { .key_code = KC_O },
+    { .key_code = KC_B },
+    { .key_code = KC_U },
+    { .key_code = KC_P },
+    { .key_code = KC_N },      // 0x10
+    { .key_code = KC_D },
+    { .key_code = KC_J },
+    { .key_code = KC_H },
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_G },
+    { .key_code = KC_Y },
+    { .key_code = KC_V },
+    { .key_code = KC_X },
+    { .key_code = KC_M },
+    { .key_code = KC_T },
+    { .key_code = KC_K },
+    { .key_code = KC_W },
 };
 
 typedef struct {
@@ -228,7 +233,7 @@ typedef struct {
     uint8_t keys_combo;
     uint8_t event_count;
     penti_event_t event_list[PENTI_KEYS_COUNT];
-    enum hid_keyboard_keypad_usage *chord_map;
+    penti_chord_map_entry_t *chord_map;
 } penti_state_t;
 
 static penti_state_t penti_state = {
@@ -317,13 +322,25 @@ static void penti_tap_hw_key(enum hid_keyboard_keypad_usage key_code)
     send_keyboard_report();
 }
 
-static void handle_penti_chord(uint8_t combo, enum hid_keyboard_keypad_usage *map)
+static void handle_penti_chord(uint8_t combo, penti_chord_map_entry_t *map)
 {
-    enum hid_keyboard_keypad_usage kc = map[combo];
-    if (kc != KC_NO) {
-        penti_tap_hw_key(kc);
+    penti_chord_map_entry_t *entry = &(map[combo]);
+    if (entry->key_code != KC_NO) {
+        if (entry->modifiers > 0) {
+            add_weak_mods(entry->modifiers);
+            send_keyboard_report();
+        }
+
+        // simulate a tap
+        register_code(entry->key_code);
+        unregister_code(entry->key_code);
+
+        if (entry->modifiers > 0) {
+            del_weak_mods(entry->modifiers);
+        }
+        send_keyboard_report();
     }
-    // TODO: handle RESET combos
+    // TODO: handle RESET chords
 }
 
 static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t ev_list[])
