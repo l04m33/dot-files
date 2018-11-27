@@ -257,6 +257,41 @@ static penti_chord_map_entry_t penti_shift_chord_map[] = {
     { .key_code = KC_W, .modifiers = MOD_BIT(KC_LSHIFT) },
 };
 
+static penti_chord_map_entry_t penti_punct_chord_map[] = {
+    { .key_code = KC_NO },     // 0x00
+    { .key_code = KC_SPACE },
+    { .key_code = KC_8,        .modifiers = MOD_BIT(KC_LSHIFT) }, // *
+    { .key_code = KC_SLASH,    .modifiers = MOD_BIT(KC_LSHIFT) }, // ?
+    { .key_code = KC_LBRACKET }, // [
+    { .key_code = KC_4,        .modifiers = MOD_BIT(KC_LSHIFT) }, // $
+    { .key_code = KC_MINUS,    .modifiers = MOD_BIT(KC_LSHIFT) }, // _
+    { .key_code = KC_QUOTE,    .modifiers = MOD_BIT(KC_LSHIFT) }, // "
+    { .key_code = KC_1,        .modifiers = MOD_BIT(KC_LSHIFT) }, // !
+    { .key_code = KC_GRAVE },    // `
+    { .key_code = KC_RBRACKET }, // ]
+    { .key_code = KC_QUOTE },    // '
+    { .key_code = KC_BSLASH,   .modifiers = MOD_BIT(KC_LSHIFT) }, // |
+    { .key_code = KC_LBRACKET, .modifiers = MOD_BIT(KC_LSHIFT) }, // {
+    { .key_code = KC_7,        .modifiers = MOD_BIT(KC_LSHIFT) }, // &
+    { .key_code = KC_RBRACKET, .modifiers = MOD_BIT(KC_LSHIFT) }, // }
+    { .key_code = KC_0,        .modifiers = MOD_BIT(KC_LSHIFT) }, // 0x10, )
+    { .key_code = KC_SLASH },    // /
+    { .key_code = KC_SCOLON },   // ;
+    { .key_code = KC_3,        .modifiers = MOD_BIT(KC_LSHIFT) }, // #
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_NO },
+    { .key_code = KC_EQUAL },    // =
+    { .key_code = KC_6,        .modifiers = MOD_BIT(KC_LSHIFT) }, // ^
+    { .key_code = KC_9,        .modifiers = MOD_BIT(KC_LSHIFT) }, // (
+    { .key_code = KC_BSLASH },   // '\'
+    { .key_code = KC_DOT,      .modifiers = MOD_BIT(KC_LSHIFT) }, // >
+    { .key_code = KC_5,        .modifiers = MOD_BIT(KC_LSHIFT) }, // %
+    { .key_code = KC_2,        .modifiers = MOD_BIT(KC_LSHIFT) }, // @
+    { .key_code = KC_COMMA,    .modifiers = MOD_BIT(KC_LSHIFT) }, // <
+};
+
 typedef struct {
     uint8_t bit;
     uint8_t pressed;
@@ -442,10 +477,10 @@ static void handle_penti_chord(uint8_t combo, penti_chord_map_entry_t *map)
 static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t ev_list[])
 {
     switch (combo) {
+
         case ((1 << PENTI_THUMB_BIT) | (1 << PENTI_INDEX_BIT)):
             switch (ev_list[0].bit) {
                 case PENTI_THUMB_BIT:
-                    // TODO: transient state
                     push_chord_map(penti_shift_chord_map);
                     penti_state.chord_map_transient = 1;
                     break;
@@ -454,6 +489,23 @@ static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t
                         pop_chord_map();
                     } else {
                         push_chord_map(penti_shift_chord_map);
+                        penti_state.chord_map_transient = 0;
+                    }
+                    break;
+            }
+            break;
+
+        case ((1 << PENTI_THUMB_BIT) | (1 << PENTI_MIDDLE_BIT)):
+            switch (ev_list[0].bit) {
+                case PENTI_THUMB_BIT:
+                    push_chord_map(penti_punct_chord_map);
+                    penti_state.chord_map_transient = 1;
+                    break;
+                case PENTI_MIDDLE_BIT:
+                    if (get_chord_map() == penti_punct_chord_map) {
+                        pop_chord_map();
+                    } else {
+                        push_chord_map(penti_punct_chord_map);
                         penti_state.chord_map_transient = 0;
                     }
                     break;
