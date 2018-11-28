@@ -617,6 +617,8 @@ static void handle_penti_chord(uint8_t combo)
         penti_clear_transient_modifiers();
     } else {
         while (pop_chord_map());
+        penti_state.extra_modifiers = 0;
+        penti_state.extra_modifiers_transient = 0;
     }
 }
 
