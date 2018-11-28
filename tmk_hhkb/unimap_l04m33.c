@@ -568,15 +568,19 @@ static void handle_penti_repeat_key(uint8_t down)
         return;
     }
 
+    uint8_t modifiers =
+        penti_state.to_repeat.modifiers | penti_state.extra_modifiers;
+
     if (down) {
-        if (penti_state.to_repeat.modifiers > 0) {
-            register_mods(penti_state.to_repeat.modifiers);
+        if (modifiers > 0) {
+            register_mods(modifiers);
         }
         register_code(penti_state.to_repeat.key_code);
     } else {
         unregister_code(penti_state.to_repeat.key_code);
-        if (penti_state.to_repeat.modifiers > 0) {
-            unregister_mods(penti_state.to_repeat.modifiers);
+        if (modifiers > 0) {
+            unregister_mods(modifiers);
+            penti_clear_transient_modifiers();
         }
     }
 }
