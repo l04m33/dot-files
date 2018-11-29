@@ -459,7 +459,7 @@ static void action_play(keyrecord_t *record, int16_t interval)
     }
 }
 
-static void action_shift_paren(keyrecord_t *record, enum hid_keyboard_keypad_usage shift_kc)
+static void action_shift_paren(keyrecord_t *record, uint8_t shift_kc)
 {
     if (record->event.pressed) {
         if (record->tap.count <= 0 || record->tap.interrupted) {
@@ -489,7 +489,7 @@ static void action_shift_paren(keyrecord_t *record, enum hid_keyboard_keypad_usa
     }
 }
 
-static void penti_tap_hw_key(enum hid_keyboard_keypad_usage key_code, uint8_t modifiers)
+static void penti_tap_hw_key(uint8_t key_code, uint8_t modifiers)
 {
     if (modifiers > 0) {
         add_weak_mods(modifiers);
@@ -656,8 +656,7 @@ static void arpeggio_switch_modifier(uint8_t b0, uint8_t bn, uint8_t first_bit, 
 }
 
 static void arpeggio_tap_key(uint8_t b0, uint8_t bn, uint8_t first_bit,
-                             enum hid_keyboard_keypad_usage key_code_0,
-                             enum hid_keyboard_keypad_usage key_code_n)
+                             uint8_t key_code_0, uint8_t key_code_n)
 {
     if (first_bit == b0) {
         penti_tap_hw_key(key_code_0, penti_state.extra_modifiers);
