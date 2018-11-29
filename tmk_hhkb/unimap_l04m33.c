@@ -710,6 +710,11 @@ static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t
                                      ev_list[0].bit, MOD_BIT(KC_LGUI));
             break;
 
+        case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_PINKY_BIT)):
+            arpeggio_switch_modifier(PENTI_INDEX_BIT, PENTI_PINKY_BIT,
+                                     ev_list[0].bit, MOD_BIT(KC_LALT));
+            break;
+
         case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_RING_BIT)):
             arpeggio_tap_key(PENTI_INDEX_BIT, PENTI_RING_BIT,
                              ev_list[0].bit, KC_ENTER, KC_ESCAPE);
