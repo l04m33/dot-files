@@ -49,6 +49,9 @@ static uint8_t *stack_begin, *stack_end;
 #define MAX_D_MACRO_EVENTS 256
 #define D_MACRO_EV_SUFFIX_LEN 3
 
+/* This is chosen arbitrarily. Any unused key code will do. */
+#define PENTI_KC_RESET KC_CLEAR
+
 typedef struct {
     uint8_t key_code;
     uint8_t modifiers;
@@ -79,10 +82,10 @@ static const penti_chord_map_entry_t penti_alpha_chord_map[] PROGMEM = {
     { .key_code = KC_D },
     { .key_code = KC_J },
     { .key_code = KC_H },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
     { .key_code = KC_G },
     { .key_code = KC_Y },
     { .key_code = KC_V },
@@ -118,10 +121,10 @@ static const penti_chord_map_entry_t penti_shift_chord_map[] PROGMEM = {
     { .key_code = KC_D, .modifiers = MOD_BIT(KC_LSHIFT) },
     { .key_code = KC_J, .modifiers = MOD_BIT(KC_LSHIFT) },
     { .key_code = KC_H, .modifiers = MOD_BIT(KC_LSHIFT) },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
     { .key_code = KC_G, .modifiers = MOD_BIT(KC_LSHIFT) },
     { .key_code = KC_Y, .modifiers = MOD_BIT(KC_LSHIFT) },
     { .key_code = KC_V, .modifiers = MOD_BIT(KC_LSHIFT) },
@@ -157,10 +160,10 @@ static const penti_chord_map_entry_t penti_punct_chord_map[] PROGMEM = {
     { .key_code = KC_SLASH },    // /
     { .key_code = KC_SCOLON },   // ;
     { .key_code = KC_3,        .modifiers = MOD_BIT(KC_LSHIFT) }, // #
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
     { .key_code = KC_EQUAL },    // =
     { .key_code = KC_6,        .modifiers = MOD_BIT(KC_LSHIFT) }, // ^
     { .key_code = KC_9,        .modifiers = MOD_BIT(KC_LSHIFT) }, // (
@@ -196,10 +199,10 @@ static const penti_chord_map_entry_t penti_digit_chord_map[] PROGMEM = {
     { .key_code = KC_DOT },
     { .key_code = KC_SCOLON, .modifiers = MOD_BIT(KC_LSHIFT) },
     { .key_code = KC_HOME },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
     { .key_code = KC_9 },
     { .key_code = KC_UP },
     { .key_code = KC_DOWN },
@@ -235,17 +238,17 @@ static const penti_chord_map_entry_t penti_funct_chord_map[] PROGMEM = {
     { .key_code = KC_NO },     // DEF
     { .key_code = KC_NO },     // <empty>
     { .key_code = KC_NO },     // HELP
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
-    { .key_code = KC_NO },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
+    { .key_code = PENTI_KC_RESET },
     { .key_code = KC_F9 },
     { .key_code = KC_NO },     // <empty>
     { .key_code = KC_NO },     // <empty>
     { .key_code = KC_NO },     // PASTE2
     { .key_code = KC_F12 },
     { .key_code = KC_NO },     // <empty>
-    { .key_code = KC_NO },     // RESET
+    { .key_code = PENTI_KC_RESET },
     { .key_code = KC_NO },     // <empty>
 };
 
@@ -599,7 +602,11 @@ static void handle_penti_chord(uint8_t combo)
     penti_chord_map_entry_t entry = stack_entry->map[combo];
 #endif
 
-    if (entry.key_code != KC_NO) {
+    if (entry.key_code == PENTI_KC_RESET) {
+        while (pop_chord_map());
+        penti_state.extra_modifiers = 0;
+        penti_state.extra_modifiers_transient = 0;
+    } else if (entry.key_code != KC_NO) {
         uint8_t modifiers = entry.modifiers | penti_state.extra_modifiers;
 
         dprintf("Penti chord: combo = %02X, modifiers = %02X\n",
@@ -615,10 +622,6 @@ static void handle_penti_chord(uint8_t combo)
             pop_chord_map();
         }
         penti_clear_transient_modifiers();
-    } else {
-        while (pop_chord_map());
-        penti_state.extra_modifiers = 0;
-        penti_state.extra_modifiers_transient = 0;
     }
 }
 
