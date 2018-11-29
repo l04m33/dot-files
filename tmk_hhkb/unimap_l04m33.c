@@ -703,6 +703,23 @@ static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t
             }
             break;
 
+        case ((1 << PENTI_RING_BIT) | (1 << PENTI_PINKY_BIT)):
+            switch (ev_list[0].bit) {
+                case PENTI_RING_BIT:
+                    penti_state.extra_modifiers |= MOD_BIT(KC_LGUI);
+                    penti_state.extra_modifiers_transient |= MOD_BIT(KC_LGUI);
+                    break;
+                case PENTI_PINKY_BIT:
+                    penti_state.extra_modifiers_transient &= (~(MOD_BIT(KC_LGUI)));
+                    if (penti_state.extra_modifiers & MOD_BIT(KC_LGUI)) {
+                        penti_state.extra_modifiers &= (~(MOD_BIT(KC_LGUI)));
+                    } else {
+                        penti_state.extra_modifiers |= MOD_BIT(KC_LGUI);
+                    }
+                    break;
+            }
+            break;
+
         case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_RING_BIT)):
             switch (ev_list[0].bit) {
                 case PENTI_INDEX_BIT:
