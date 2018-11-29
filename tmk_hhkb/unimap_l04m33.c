@@ -622,136 +622,100 @@ static void handle_penti_chord(uint8_t combo)
     }
 }
 
+static void arpeggio_switch_chord_map(uint8_t b0, uint8_t bn, uint8_t first_bit,
+                                      const penti_chord_map_entry_t *map)
+{
+    if (first_bit == b0) {
+        push_chord_map(map, 1);
+    } else if (first_bit == bn) {
+        if ((get_chord_map())->map == map) {
+            pop_chord_map();
+        } else {
+            push_chord_map(map, 0);
+        }
+    } else {
+        dprintf("  XXX: Inconsistent arpeggio bits");
+    }
+}
+
+static void arpeggio_switch_modifier(uint8_t b0, uint8_t bn, uint8_t first_bit, uint8_t mod_bit)
+{
+    if (first_bit == b0) {
+        penti_state.extra_modifiers |= mod_bit;
+        penti_state.extra_modifiers_transient |= mod_bit;
+    } else if (first_bit == bn) {
+        penti_state.extra_modifiers_transient &= (~mod_bit);
+        if (penti_state.extra_modifiers & mod_bit) {
+            penti_state.extra_modifiers &= (~mod_bit);
+        } else {
+            penti_state.extra_modifiers |= mod_bit;
+        }
+    } else {
+        dprintf("  XXX: Inconsistent arpeggio bits");
+    }
+}
+
+static void arpeggio_tap_key(uint8_t b0, uint8_t bn, uint8_t first_bit,
+                             enum hid_keyboard_keypad_usage key_code_0,
+                             enum hid_keyboard_keypad_usage key_code_n)
+{
+    if (first_bit == b0) {
+        penti_tap_hw_key(key_code_0, penti_state.extra_modifiers);
+        penti_state.to_repeat.key_code = key_code_0;
+        penti_state.to_repeat.modifiers = penti_state.extra_modifiers;
+        penti_clear_transient_modifiers();
+    } else if (first_bit == bn) {
+        penti_tap_hw_key(key_code_n, penti_state.extra_modifiers);
+        penti_state.to_repeat.key_code = key_code_n;
+        penti_state.to_repeat.modifiers = penti_state.extra_modifiers;
+        penti_clear_transient_modifiers();
+    } else {
+        dprintf("  XXX: Inconsistent arpeggio bits");
+    }
+}
+
 static void handle_penti_arpeggio(uint8_t combo, uint8_t ev_count, penti_event_t ev_list[])
 {
     switch (combo) {
 
         case ((1 << PENTI_THUMB_BIT) | (1 << PENTI_INDEX_BIT)):
-            switch (ev_list[0].bit) {
-                case PENTI_THUMB_BIT:
-                    push_chord_map(penti_shift_chord_map, 1);
-                    break;
-                case PENTI_INDEX_BIT:
-                    if ((get_chord_map())->map == penti_shift_chord_map) {
-                        pop_chord_map();
-                    } else {
-                        push_chord_map(penti_shift_chord_map, 0);
-                    }
-                    break;
-            }
+            arpeggio_switch_chord_map(PENTI_THUMB_BIT, PENTI_INDEX_BIT,
+                                      ev_list[0].bit, penti_shift_chord_map);
             break;
 
         case ((1 << PENTI_THUMB_BIT) | (1 << PENTI_MIDDLE_BIT)):
-            switch (ev_list[0].bit) {
-                case PENTI_THUMB_BIT:
-                    push_chord_map(penti_punct_chord_map, 1);
-                    break;
-                case PENTI_MIDDLE_BIT:
-                    if ((get_chord_map())->map == penti_punct_chord_map) {
-                        pop_chord_map();
-                    } else {
-                        push_chord_map(penti_punct_chord_map, 0);
-                    }
-                    break;
-            }
+            arpeggio_switch_chord_map(PENTI_THUMB_BIT, PENTI_MIDDLE_BIT,
+                                      ev_list[0].bit, penti_punct_chord_map);
             break;
 
         case ((1 << PENTI_THUMB_BIT) | (1 << PENTI_RING_BIT)):
-            switch (ev_list[0].bit) {
-                case PENTI_THUMB_BIT:
-                    push_chord_map(penti_digit_chord_map, 1);
-                    break;
-                case PENTI_RING_BIT:
-                    if ((get_chord_map())->map == penti_digit_chord_map) {
-                        pop_chord_map();
-                    } else {
-                        push_chord_map(penti_digit_chord_map, 0);
-                    }
-                    break;
-            }
+            arpeggio_switch_chord_map(PENTI_THUMB_BIT, PENTI_RING_BIT,
+                                      ev_list[0].bit, penti_digit_chord_map);
             break;
 
         case ((1 << PENTI_MIDDLE_BIT) | (1 << PENTI_RING_BIT)):
-            switch (ev_list[0].bit) {
-                case PENTI_MIDDLE_BIT:
-                    push_chord_map(penti_funct_chord_map, 1);
-                    break;
-                case PENTI_RING_BIT:
-                    if ((get_chord_map())->map == penti_funct_chord_map) {
-                        pop_chord_map();
-                    } else {
-                        push_chord_map(penti_funct_chord_map, 0);
-                    }
-                    break;
-            }
+            arpeggio_switch_chord_map(PENTI_MIDDLE_BIT, PENTI_RING_BIT,
+                                      ev_list[0].bit, penti_funct_chord_map);
             break;
 
         case ((1 << PENTI_THUMB_BIT) | (1 << PENTI_PINKY_BIT)):
-            switch (ev_list[0].bit) {
-                case PENTI_THUMB_BIT:
-                    penti_state.extra_modifiers |= MOD_BIT(KC_LCTRL);
-                    penti_state.extra_modifiers_transient |= MOD_BIT(KC_LCTRL);
-                    break;
-                case PENTI_PINKY_BIT:
-                    penti_state.extra_modifiers_transient &= (~(MOD_BIT(KC_LCTRL)));
-                    if (penti_state.extra_modifiers & MOD_BIT(KC_LCTRL)) {
-                        penti_state.extra_modifiers &= (~(MOD_BIT(KC_LCTRL)));
-                    } else {
-                        penti_state.extra_modifiers |= MOD_BIT(KC_LCTRL);
-                    }
-                    break;
-            }
+            arpeggio_switch_modifier(PENTI_THUMB_BIT, PENTI_PINKY_BIT,
+                                     ev_list[0].bit, MOD_BIT(KC_LCTRL));
             break;
 
         case ((1 << PENTI_RING_BIT) | (1 << PENTI_PINKY_BIT)):
-            switch (ev_list[0].bit) {
-                case PENTI_RING_BIT:
-                    penti_state.extra_modifiers |= MOD_BIT(KC_LGUI);
-                    penti_state.extra_modifiers_transient |= MOD_BIT(KC_LGUI);
-                    break;
-                case PENTI_PINKY_BIT:
-                    penti_state.extra_modifiers_transient &= (~(MOD_BIT(KC_LGUI)));
-                    if (penti_state.extra_modifiers & MOD_BIT(KC_LGUI)) {
-                        penti_state.extra_modifiers &= (~(MOD_BIT(KC_LGUI)));
-                    } else {
-                        penti_state.extra_modifiers |= MOD_BIT(KC_LGUI);
-                    }
-                    break;
-            }
+            arpeggio_switch_modifier(PENTI_RING_BIT, PENTI_PINKY_BIT,
+                                     ev_list[0].bit, MOD_BIT(KC_LGUI));
             break;
 
         case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_RING_BIT)):
-            switch (ev_list[0].bit) {
-                case PENTI_INDEX_BIT:
-                    penti_tap_hw_key(KC_ENTER, penti_state.extra_modifiers);
-                    penti_clear_transient_modifiers();
-                    penti_state.to_repeat.key_code = KC_ENTER;
-                    penti_state.to_repeat.modifiers = 0;
-                    break;
-                case PENTI_RING_BIT:
-                    penti_tap_hw_key(KC_ESCAPE, penti_state.extra_modifiers);
-                    penti_clear_transient_modifiers();
-                    penti_state.to_repeat.key_code = KC_ESCAPE;
-                    penti_state.to_repeat.modifiers = 0;
-                    break;
-            }
+            arpeggio_tap_key(PENTI_INDEX_BIT, PENTI_RING_BIT,
+                             ev_list[0].bit, KC_ENTER, KC_ESCAPE);
             break;
 
         case ((1 << PENTI_INDEX_BIT) | (1 << PENTI_MIDDLE_BIT)):
-            switch (ev_list[0].bit) {
-                case PENTI_INDEX_BIT:
-                    penti_tap_hw_key(KC_TAB, penti_state.extra_modifiers);
-                    penti_clear_transient_modifiers();
-                    penti_state.to_repeat.key_code = KC_TAB;
-                    penti_state.to_repeat.modifiers = 0;
-                    break;
-                case PENTI_MIDDLE_BIT:
-                    penti_tap_hw_key(KC_BSPACE, penti_state.extra_modifiers);
-                    penti_clear_transient_modifiers();
-                    penti_state.to_repeat.key_code = KC_BSPACE;
-                    penti_state.to_repeat.modifiers = 0;
-                    break;
-            }
+            arpeggio_tap_key(PENTI_INDEX_BIT, PENTI_MIDDLE_BIT,
+                             ev_list[0].bit, KC_TAB, KC_BSPACE);
             break;
 
         default:
