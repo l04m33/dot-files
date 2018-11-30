@@ -352,9 +352,9 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     /* layer 5: Penti keyboard mode */
     [5] = UNIMAP_HHKB(
     PENTI, NO,          NO,           NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO,    NO,          NO,           NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO,    PENTI_PINKY, PENTI_RING,   PENTI_MIDDLE, PENTI_INDEX, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO,    NO,          PENTI_REPEAT, NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO,
+    NO,    NO,          PENTI_RING,   PENTI_MIDDLE, PENTI_INDEX, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    NO,    PENTI_PINKY, NO,           PENTI_REPEAT, NO,          NO, NO, NO, NO, NO, NO, NO, NO,
+    NO,    NO,          NO,           NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO,
            NO,          NO,                                      PENTI_THUMB,        NO, NO),
 };
 
