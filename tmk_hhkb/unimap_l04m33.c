@@ -259,6 +259,7 @@ enum function_id {
     D_MACRO_FUNC_PLAY_2,
     FUNC_LSHIFT_LPAREN,
     FUNC_RSHIFT_RPAREN,
+    FUNC_AUTO_PAREN,
     PENTI_KEY,
 };
 
@@ -282,6 +283,7 @@ typedef enum {
 #define AC_UNLOCK  ACTION_LAYER_MOMENTARY(4)
 #define AC_LSFTPRN ACTION_FUNCTION_TAP(FUNC_LSHIFT_LPAREN)
 #define AC_RSFTPRN ACTION_FUNCTION_TAP(FUNC_RSHIFT_RPAREN)
+#define AC_AUTOPRN ACTION_FUNCTION_TAP(FUNC_AUTO_PAREN)
 
 #define AC_PENTI        ACTION_LAYER_TOGGLE(5)
 #define AC_PENTI_THUMB  ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_THUMB_BIT)
@@ -322,7 +324,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     PWR,  F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,  INS,  DEL,
     CAPS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, PSCR, SLCK, PAUS, UP,   TRNS, BSPC,
     TRNS, VOLD, VOLU, MUTE, TRNS, TRNS, PAST, PSLS, HOME, PGUP, LEFT, RGHT, PENT,
-    LOCK, TRNS, TRNS, TRNS, TRNS, TRNS, PPLS, PMNS, END,  PGDN, DOWN, TRNS, L1,
+    LOCK, TRNS, TRNS, TRNS, TRNS, TRNS, PPLS, PMNS, END,  PGDN, DOWN, AUTOPRN, L1,
           MPLAY_1, MPLAY_2,       SPC,                    MREC, MPLAY),
 
     /* layer 2: vi movement keys and mouse keys (space) */
@@ -420,6 +422,14 @@ static penti_state_t penti_state = {
     .to_repeat = { .key_code = KC_NO },
 };
 
+typedef struct {
+    uint8_t enabled;
+} auto_paren_state_t;
+
+static auto_paren_state_t auto_paren_state = {
+    .enabled = 0,
+};
+
 
 #define KEY_TAPPED(_rec_, _count_) ((_rec_)->tap.count == (_count_) && !(_rec_)->tap.interrupted)
 
@@ -470,25 +480,54 @@ static void action_shift_paren(keyrecord_t *record, uint8_t shift_kc)
         }
     } else {
         if (record->tap.count > 0 && !record->tap.interrupted) {
-            add_weak_mods(MOD_BIT(shift_kc));
-            send_keyboard_report();
-            switch (shift_kc) {
-                case KC_LSHIFT:
-                    register_code(KC_9);
-                    unregister_code(KC_9);
-                    break;
-                case KC_RSHIFT:
-                    register_code(KC_0);
-                    unregister_code(KC_0);
-                    break;
-                default:
-                    break;
+            if (auto_paren_state.enabled) {
+                switch (shift_kc) {
+                    case KC_LSHIFT:
+                        action_macro_play(
+                            MACRO(
+                                I(0),
+                                D(LSHIFT),
+                                T(9),
+                                T(0),
+                                U(LSHIFT),
+                                T(LEFT),
+                                END));
+                        break;
+                    case KC_RSHIFT:
+                        action_macro_play(MACRO(T(RIGHT), END));
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                add_weak_mods(MOD_BIT(shift_kc));
+                send_keyboard_report();
+                switch (shift_kc) {
+                    case KC_LSHIFT:
+                        register_code(KC_9);
+                        unregister_code(KC_9);
+                        break;
+                    case KC_RSHIFT:
+                        register_code(KC_0);
+                        unregister_code(KC_0);
+                        break;
+                    default:
+                        break;
+                }
+                del_weak_mods(MOD_BIT(shift_kc));
+                send_keyboard_report();
             }
-            del_weak_mods(MOD_BIT(shift_kc));
-            send_keyboard_report();
         } else {
             unregister_mods(MOD_BIT(shift_kc));
         }
+    }
+}
+
+static void action_auto_paren(keyrecord_t *record)
+{
+    if (!record->event.pressed && KEY_TAPPED(record, 1)) {
+        auto_paren_state.enabled = 1 - auto_paren_state.enabled;
+        dprintf("auto paren: %d\n", auto_paren_state.enabled);
     }
 }
 
@@ -809,6 +848,9 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             break;
         case FUNC_RSHIFT_RPAREN:
             action_shift_paren(record, KC_RSHIFT);
+            break;
+        case FUNC_AUTO_PAREN:
+            action_auto_paren(record);
             break;
         case PENTI_KEY:
             action_penti_key(record, opt);
