@@ -375,7 +375,9 @@
 ;;--------- Mode Line ---------
 
 (if (string= "Linux" (software-type))
-  (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ^[^7❱^] %c %t ^[^7❱^] %M ^[^7❱^] BAT: %B "))
+  (progn
+    (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ^[^7❱^] %C ^[^7❱^] %M ^[^7❱^] BAT: %B "))
+    (setf cpu::*cpu-modeline-fmt* "%c %t"))
   (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ")))
 (setf *mode-line-position* :top)
 (setf *mode-line-timeout* 1)
