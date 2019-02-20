@@ -27,13 +27,13 @@ const uint16_t keymaps_default[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_core(
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC,
         KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_ENT,
-        KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_RSFT, MO(2),
+        KC_LSPO, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_RSPC, MO(2),
         KC_ESC,  KC_LGUI, KC_LALT, KC_BSPC, KC_SPC,  KC_SPC,  MO(1),   KC_RALT, KC_APP,  KC_RCTL
     ),
     [1] = LAYOUT_core(
         _______, _______, _______, _______, _______, _______, _______, KC_PGUP, KC_UP,   KC_PGDN, KC_PSCR, KC_SLCK, KC_PAUS,
         KC_CAPS, KC_MPRV, KC_MPLY, KC_MNXT, _______, _______, KC_HOME, KC_LEFT, KC_DOWN, KC_RIGHT,KC_INS,  _______,
-        _______, _______, _______, _______, _______, _______, KC_END,  _______, _______, _______, _______, _______,
+        KC_LSFT, _______, _______, _______, _______, _______, KC_END,  _______, _______, _______, KC_RSFT, _______,
         _______, _______, _______, KC_DEL,  _______, _______, _______, _______, _______, _______
     ),
     [2] = LAYOUT_core(
