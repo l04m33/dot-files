@@ -13,14 +13,37 @@ map global insert <s-tab> '<a-;><lt>'
 
 ######### Tmux Integration #########
 
+define-command -hidden -params 1.. rc-tmux-new-impl %{
+    evaluate-commands %sh{
+        orientation="$1"
+        shift
+        if [ $# -ne 0 ]; then
+            kakoune_params="-e '$@'"
+        fi
+        echo "tmux-terminal-${orientation} kak -c %val{session} ${kakoune_params}"
+    }
+}
+
+define-command -params .. -command-completion rc-tmux-new-horizontal %{
+    rc-tmux-new-impl 'horizontal' %arg{@}
+}
+
+define-command -params .. -command-completion rc-tmux-new-vertical %{
+    rc-tmux-new-impl 'vertical' %arg{@}
+}
+
+define-command -params .. -command-completion rc-tmux-new-window %{
+    rc-tmux-new-impl 'window' %arg{@}
+}
+
 declare-user-mode rc-tmux
 map -docstring 'Tmux control'       global user    t ':enter-user-mode rc-tmux<ret>'
-map -docstring 'Split horizontally' global rc-tmux h ':tmux-terminal-horizontal kak -c %val{session}<ret>'
-map -docstring 'Split vertically'   global rc-tmux v ':tmux-terminal-vertical kak -c %val{session}<ret>'
-map -docstring 'Create new window'  global rc-tmux w ':tmux-terminal-window kak -c %val{session}<ret>'
-map -docstring 'Split horizontally and run command' global rc-tmux H ':tmux-terminal-horizontal kak -c %val{session} '
-map -docstring 'Split vertically and run command'   global rc-tmux V ':tmux-terminal-vertical kak -c %val{session} '
-map -docstring 'Create new window and run command'  global rc-tmux W ':tmux-terminal-window kak -c %val{session} '
+map -docstring 'Split horizontally' global rc-tmux h ':rc-tmux-new-horizontal<ret>'
+map -docstring 'Split vertically'   global rc-tmux v ':rc-tmux-new-vertical<ret>'
+map -docstring 'Create new window'  global rc-tmux w ':rc-tmux-new-window<ret>'
+map -docstring 'Split horizontally and run command' global rc-tmux H ':rc-tmux-new-horizontal '
+map -docstring 'Split vertically and run command'   global rc-tmux V ':rc-tmux-new-vertical '
+map -docstring 'Create new window and run command'  global rc-tmux W ':rc-tmux-new-window '
 
 
 ######### StumpWM Integration #########
