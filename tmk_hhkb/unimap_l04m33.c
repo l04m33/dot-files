@@ -485,7 +485,7 @@ static void action_shift_paren(keyrecord_t *record, uint8_t shift_kc)
                     case KC_LSHIFT:
                         action_macro_play(
                             MACRO(
-                                I(0),
+                                I(10),
                                 D(LSHIFT),
                                 T(9),
                                 T(0),
