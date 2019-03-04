@@ -15,12 +15,12 @@ map global insert <s-tab> '<a-;><lt>'
 
 declare-user-mode rc-tmux
 map -docstring 'Tmux control'       global user    t ':enter-user-mode rc-tmux<ret>'
-map -docstring 'Split horizontally' global rc-tmux h ':tmux-new-horizontal<ret>'
-map -docstring 'Split vertically'   global rc-tmux v ':tmux-new-vertical<ret>'
-map -docstring 'Create new window'  global rc-tmux w ':tmux-new-window<ret>'
-map -docstring 'Split horizontally and run command' global rc-tmux H ':tmux-new-horizontal '
-map -docstring 'Split vertically and run command'   global rc-tmux V ':tmux-new-vertical '
-map -docstring 'Create new window and run command'  global rc-tmux W ':tmux-new-window '
+map -docstring 'Split horizontally' global rc-tmux h ':tmux-terminal-horizontal kak -c %val{session}<ret>'
+map -docstring 'Split vertically'   global rc-tmux v ':tmux-terminal-vertical kak -c %val{session}<ret>'
+map -docstring 'Create new window'  global rc-tmux w ':tmux-terminal-window kak -c %val{session}<ret>'
+map -docstring 'Split horizontally and run command' global rc-tmux H ':tmux-terminal-horizontal kak -c %val{session} '
+map -docstring 'Split vertically and run command'   global rc-tmux V ':tmux-terminal-vertical kak -c %val{session} '
+map -docstring 'Create new window and run command'  global rc-tmux W ':tmux-terminal-window kak -c %val{session} '
 
 
 ######### StumpWM Integration #########
