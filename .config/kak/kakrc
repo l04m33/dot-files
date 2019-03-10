@@ -2,13 +2,15 @@
 
 declare-option -hidden str rc_kak_exec %sh{
     kakoune_prefix="$(dirname $(dirname $kak_runtime))"
+    kakoune_exec="kak"
     for k in "${kakoune_prefix}/bin/kak" \
              "${kakoune_prefix}/src/kak"; do
         if [ -x "${k}" ]; then
-            echo -n ${k}
+            kakoune_exec=${k}
             break
         fi
     done
+    echo -n ${kakoune_exec}
 }
 
 
