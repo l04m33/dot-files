@@ -1,3 +1,17 @@
+######### Globals #########
+
+declare-option -hidden str rc_kak_exec %sh{
+    kakoune_prefix="$(dirname $(dirname $kak_runtime))"
+    for k in "${kakoune_prefix}/bin/kak" \
+             "${kakoune_prefix}/src/kak"; do
+        if [ -x "${k}" ]; then
+            echo -n ${k}
+            break
+        fi
+    done
+}
+
+
 ######### Options #########
 
 colorscheme tomorrow-night
@@ -20,7 +34,7 @@ define-command -hidden -params 1.. rc-tmux-new-impl %{
         if [ $# -ne 0 ]; then
             kakoune_params="-e '$@'"
         fi
-        echo "tmux-terminal-${orientation} kak -c %val{session} ${kakoune_params}"
+        echo "tmux-terminal-${orientation} ${kak_opt_rc_kak_exec} -c ${kak_session} ${kakoune_params}"
     }
 }
 
@@ -62,7 +76,7 @@ define-command -hidden -params 1.. rc-stumpwm-new-impl %{
         if [ "${cmd}" != "nop" ]; then
             stumpish "rc-${cmd}-and-focus"
         fi
-        stumpish "run-shell-command xterm -e kak -c ${kak_session} ${kakoune_params}" < /dev/null > /dev/null 2>&1
+        stumpish "run-shell-command xterm -e ${kak_opt_rc_kak_exec} -c ${kak_session} ${kakoune_params}" < /dev/null > /dev/null 2>&1
     }
 }
 
