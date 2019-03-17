@@ -44,7 +44,7 @@ const uint16_t keymaps_default[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     /* Fn layer */
     [1] = LAYOUT_core(
-        _______, _______, _______, _______, _______, _______, _______, KC_PGUP, KC_UP,   KC_PGDN, KC_PSCR, KC_SLCK, KC_PAUS,
+        _______, KC_VOLD, KC_VOLU, KC_MUTE, _______, _______, _______, KC_PGUP, KC_UP,   KC_PGDN, KC_PSCR, KC_SLCK, KC_PAUS,
         KC_CAPS, KC_MPRV, KC_MPLY, KC_MNXT, _______, _______, KC_HOME, KC_LEFT, KC_DOWN, KC_RIGHT,KC_INS,  KC_ENT,
         KC_LSFT, _______, _______, _______, _______, _______, KC_END,  _______, _______, _______, KC_RSFT, _______,
         _______, _______, _______, KC_DEL,  _______, _______, _______, _______, _______, _______
