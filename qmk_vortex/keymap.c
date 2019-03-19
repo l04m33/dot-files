@@ -30,6 +30,7 @@ enum keycodes {
 #include "dynamic_macro.h"
 
 #include "penti.h"
+#include "shift_paren.h"
 
 /************************************************
  * keymaps
@@ -84,22 +85,6 @@ uint16_t keymaps[MAX_LAYERS][MATRIX_ROWS][MATRIX_COLS];
  * keymaps end
  ************************************************/
 
-/************************************************
- * space cadet shift keys & auto paren mode
- ************************************************/
-
-typedef struct {
-    uint8_t enabled;
-} auto_paren_state_t;
-
-static auto_paren_state_t auto_paren_state = {
-    .enabled = 0,
-};
-
-/************************************************
- * space cadet shift keys & auto paren mode end
- ************************************************/
-
 enum function_id {
     PENTI_KEY,
     LSHIFT_LPAREN,
@@ -143,75 +128,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void led_set_user(uint8_t usb_led) {
 
 }
-
-/************************************************
- * space cadet shift keys & auto paren mode
- ************************************************/
-
-static void action_shift_paren(keyrecord_t *record, uint8_t shift_kc)
-{
-    if (record->event.pressed) {
-        if (record->tap.count <= 0 || record->tap.interrupted) {
-            register_mods(MOD_BIT(shift_kc));
-        }
-    } else {
-        if (record->tap.count > 0 && !record->tap.interrupted) {
-            if (auto_paren_state.enabled) {
-                switch (shift_kc) {
-                    case KC_LSHIFT:
-                        action_macro_play(
-                            MACRO(
-                                I(10),
-                                D(LSHIFT),
-                                T(9),
-                                T(0),
-                                U(LSHIFT),
-                                T(LEFT),
-                                END));
-                        break;
-                    case KC_RSHIFT:
-                        action_macro_play(MACRO(T(RIGHT), END));
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                add_weak_mods(MOD_BIT(shift_kc));
-                send_keyboard_report();
-                switch (shift_kc) {
-                    case KC_LSHIFT:
-                        register_code(KC_9);
-                        unregister_code(KC_9);
-                        break;
-                    case KC_RSHIFT:
-                        register_code(KC_0);
-                        unregister_code(KC_0);
-                        break;
-                    default:
-                        break;
-                }
-                del_weak_mods(MOD_BIT(shift_kc));
-                send_keyboard_report();
-            }
-        } else {
-            unregister_mods(MOD_BIT(shift_kc));
-        }
-    }
-}
-
-#define KEY_TAPPED(_rec_, _count_) ((_rec_)->tap.count == (_count_) && !(_rec_)->tap.interrupted)
-
-static void action_auto_paren(keyrecord_t *record)
-{
-    if (!record->event.pressed && KEY_TAPPED(record, 1)) {
-        auto_paren_state.enabled = 1 - auto_paren_state.enabled;
-        dprintf("auto paren: %d\n", auto_paren_state.enabled);
-    }
-}
-
-/************************************************
- * space cadet shift keys & auto paren mode end
- ************************************************/
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
