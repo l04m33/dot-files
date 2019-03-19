@@ -9,7 +9,11 @@ typedef struct {
     uint8_t modifiers;
 } penti_chord_map_entry_t;
 
-static const penti_chord_map_entry_t penti_alpha_chord_map[] = {
+#ifdef KEYMAP_SECTION_ENABLE
+static const penti_chord_map_entry_t penti_alpha_chord_map[] __attribute__ ((section (".keymap.keymaps"))) = {
+#else
+static const penti_chord_map_entry_t penti_alpha_chord_map[] PROGMEM = {
+#endif
     { .key_code = KC_NO },     // 0x00
     { .key_code = KC_SPACE },
     { .key_code = KC_S },
@@ -44,7 +48,11 @@ static const penti_chord_map_entry_t penti_alpha_chord_map[] = {
     { .key_code = KC_W },
 };
 
-static const penti_chord_map_entry_t penti_shift_chord_map[] = {
+#ifdef KEYMAP_SECTION_ENABLE
+static const penti_chord_map_entry_t penti_shift_chord_map[] __attribute__ ((section (".keymap.keymaps"))) = {
+#else
+static const penti_chord_map_entry_t penti_shift_chord_map[] PROGMEM = {
+#endif
     { .key_code = KC_NO },     // 0x00
     { .key_code = KC_SPACE },
     { .key_code = KC_S, .modifiers = MOD_BIT(KC_LSHIFT) },
@@ -79,7 +87,11 @@ static const penti_chord_map_entry_t penti_shift_chord_map[] = {
     { .key_code = KC_W, .modifiers = MOD_BIT(KC_LSHIFT) },
 };
 
-static const penti_chord_map_entry_t penti_punct_chord_map[] = {
+#ifdef KEYMAP_SECTION_ENABLE
+static const penti_chord_map_entry_t penti_punct_chord_map[] __attribute__ ((section (".keymap.keymaps"))) = {
+#else
+static const penti_chord_map_entry_t penti_punct_chord_map[] PROGMEM = {
+#endif
     { .key_code = KC_NO },     // 0x00
     { .key_code = KC_SPACE },
     { .key_code = KC_8,        .modifiers = MOD_BIT(KC_LSHIFT) }, // *
@@ -114,7 +126,11 @@ static const penti_chord_map_entry_t penti_punct_chord_map[] = {
     { .key_code = KC_COMMA,    .modifiers = MOD_BIT(KC_LSHIFT) }, // <
 };
 
-static const penti_chord_map_entry_t penti_digit_chord_map[] = {
+#ifdef KEYMAP_SECTION_ENABLE
+static const penti_chord_map_entry_t penti_digit_chord_map[] __attribute__ ((section (".keymap.keymaps"))) = {
+#else
+static const penti_chord_map_entry_t penti_digit_chord_map[] PROGMEM = {
+#endif
     { .key_code = KC_NO },     // 0x00
     { .key_code = KC_SPACE },
     { .key_code = KC_1 },
@@ -149,7 +165,11 @@ static const penti_chord_map_entry_t penti_digit_chord_map[] = {
     { .key_code = KC_INSERT },
 };
 
-static const penti_chord_map_entry_t penti_funct_chord_map[] = {
+#ifdef KEYMAP_SECTION_ENABLE
+static const penti_chord_map_entry_t penti_funct_chord_map[] __attribute__ ((section (".keymap.keymaps"))) = {
+#else
+static const penti_chord_map_entry_t penti_funct_chord_map[] PROGMEM = {
+#endif
     { .key_code = KC_NO },     // 0x00
     { .key_code = KC_NO },     // NEW
     { .key_code = KC_F1 },
@@ -330,7 +350,16 @@ static void penti_tap_hw_key(uint8_t key_code, uint8_t modifiers)
 static void handle_penti_chord(uint8_t combo)
 {
     penti_chord_map_stack_entry_t *stack_entry = get_chord_map();
+
+#if defined(__AVR__)
+    uint16_t entry_val = pgm_read_word(&(stack_entry->map[combo]));
+    penti_chord_map_entry_t entry = {
+        .key_code = (uint8_t)((entry_val) & 0x00ff),
+        .modifiers = (uint8_t)((entry_val >> 8) & 0x00ff)
+    };
+#else
     penti_chord_map_entry_t entry = stack_entry->map[combo];
+#endif
 
     if (entry.key_code == PENTI_KC_RESET) {
         while (pop_chord_map());
