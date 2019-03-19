@@ -60,7 +60,9 @@ static void action_shift_paren(keyrecord_t *record, uint8_t shift_kc)
     }
 }
 
+#ifndef KEY_TAPPED
 #define KEY_TAPPED(_rec_, _count_) ((_rec_)->tap.count == (_count_) && !(_rec_)->tap.interrupted)
+#endif
 
 static void action_auto_paren(keyrecord_t *record)
 {

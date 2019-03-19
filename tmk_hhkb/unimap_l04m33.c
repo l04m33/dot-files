@@ -177,8 +177,6 @@ static d_macro_t d_macro = {
 };
 
 
-#define KEY_TAPPED(_rec_, _count_) ((_rec_)->tap.count == (_count_) && !(_rec_)->tap.interrupted)
-
 static void action_record(keyrecord_t *record)
 {
     if (d_macro.state == D_MACRO_STATE_IDLE) {

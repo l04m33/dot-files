@@ -548,4 +548,4 @@ static void action_penti_key(keyrecord_t *record, uint8_t bit)
     }
 }
 
-#endif // mk_common/penti_h_INCLUDED
+#endif // PENTI_H_INCLUDED
