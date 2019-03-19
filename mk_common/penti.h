@@ -1,6 +1,9 @@
 #ifndef PENTI_H_INCLUDED
 #define PENTI_H_INCLUDED
 
+#include "timer.h"
+#include "keymap.h"
+
 /* This is chosen arbitrarily. Any unused key code will do. */
 #define PENTI_KC_RESET KC_CLEAR
 
