@@ -33,6 +33,9 @@ static void action_shift_paren(keyrecord_t *record, uint8_t kc)
             /* key tapped */
             uint8_t cur_mods = get_mods() | get_weak_mods();
             uint8_t shift_bits = MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT);
+            #if defined(QUANTUM_H)
+            uint8_t saved_mods = 0;
+            #endif
             if (auto_paren_state.enabled &&
                 /* To minimize interference with other modifiers,
                  * only do the auto-pairing when no other modifier
@@ -55,11 +58,12 @@ static void action_shift_paren(keyrecord_t *record, uint8_t kc)
                     case KC_LBRACKET:
                         #if defined(QUANTUM_H)
                         /* Stupid QMK. *sigh* */
-                        if (cur_mods & shift_bits) {
+                        saved_mods = get_mods();
+                        if (saved_mods & shift_bits) {
                             SEND_STRING("[]");
-                            set_mods(0);
+                            clear_mods();
                             SEND_STRING(SS_TAP(X_LEFT));
-                            set_mods(cur_mods);
+                            set_mods(saved_mods);
                         } else {
                             SEND_STRING("[]" SS_TAP(X_LEFT));
                         }
@@ -80,10 +84,11 @@ static void action_shift_paren(keyrecord_t *record, uint8_t kc)
                     case KC_RBRACKET:
                         #if defined(QUANTUM_H)
                         /* Stupid QMK again. */
-                        if (cur_mods & shift_bits) {
-                            set_mods(0);
+                        saved_mods = get_mods();
+                        if (saved_mods & shift_bits) {
+                            clear_mods();
                             SEND_STRING(SS_TAP(X_RIGHT));
-                            set_mods(cur_mods);
+                            set_mods(saved_mods);
                         } else {
                             SEND_STRING(SS_TAP(X_RIGHT));
                         }
