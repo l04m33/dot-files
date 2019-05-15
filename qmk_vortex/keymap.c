@@ -42,7 +42,7 @@ const uint16_t keymaps_default[][MATRIX_ROWS][MATRIX_COLS] = {
 #if defined(KEYMAP_VORTEX_CORE)
     /* default layer */
     [0] = LAYOUT_core(
-        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,         KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC,
+        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,         KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    F(8), F(9),
         KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,         KC_G,         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, MT(MOD_RCTL,KC_ENT),
         F(6),    KC_Z,    KC_X,    KC_C,    KC_V,         KC_B,         KC_N,    KC_M,    KC_COMM, KC_DOT,  F(7),    MO(2),
         KC_ESC,  KC_LGUI, KC_LALT, KC_BSPC, LT(3,KC_SPC), LT(3,KC_SPC), MO(1),   KC_RALT, KC_APP,  KC_RCTL
@@ -58,13 +58,13 @@ const uint16_t keymaps_default[][MATRIX_ROWS][MATRIX_COLS] = {
     [2] = LAYOUT_core(
         KC_GRV,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,          KC_F7,        KC_F8,   KC_F9,   KC_F10,  KC_F11, KC_F12,
         KC_1,            KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,           KC_8,         KC_9,    KC_0,    KC_MINS, KC_EQL,
-        _______,         _______, _______, _______, _______, KC_QUOT, KC_SLSH,        KC_LBRC,      KC_RBRC, KC_BSLS, F(8),    _______,
+        _______,         _______, _______, _______, _______, KC_QUOT, KC_SLSH,        KC_LBRC,      KC_RBRC, KC_BSLS, F(10),    _______,
         DYN_MACRO_PLAY1, _______, _______, _______, _______, _______, DYN_REC_START1, DYN_REC_STOP, _______, _______
     ),
     /* Space Fn layer */
     /* XXX: mouse keys are not working due to lack of endpoints (?) */
     [3] = LAYOUT_core(
-        TG(4),   _______, KC_WH_L, KC_WH_U, KC_WH_D, KC_WH_R, KC_HOME, KC_PGDN, KC_PGUP, KC_END,  _______, _______, _______,
+        TG(4),   _______, KC_WH_L, KC_WH_U, KC_WH_D, KC_WH_R, KC_HOME, KC_PGDN, KC_PGUP, KC_END,  _______, KC_LBRC, KC_RBRC,
         _______, _______, KC_MS_L, KC_MS_U, KC_MS_D, KC_MS_R, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, KC_ENT,
         KC_LSFT, _______, KC_BTN3, KC_BTN2, KC_BTN1, _______, KC_ACL2, KC_ACL1, KC_ACL0, _______, KC_RSFT, _______,
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
@@ -91,6 +91,8 @@ enum function_id {
     PENTI_KEY,
     LSHIFT_LPAREN,
     RSHIFT_RPAREN,
+    AUTO_LBRACKET,
+    AUTO_RBRACKET,
     AUTO_PAREN,
 };
 
@@ -104,7 +106,9 @@ const uint16_t PROGMEM fn_actions[] = {
 
     [6] = ACTION_FUNCTION_TAP(LSHIFT_LPAREN),
     [7] = ACTION_FUNCTION_TAP(RSHIFT_RPAREN),
-    [8] = ACTION_FUNCTION_TAP(AUTO_PAREN),
+    [8] = ACTION_FUNCTION_TAP(AUTO_LBRACKET),
+    [9] = ACTION_FUNCTION_TAP(AUTO_RBRACKET),
+    [10] = ACTION_FUNCTION_TAP(AUTO_PAREN),
 };
 
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
@@ -142,6 +146,12 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             break;
         case RSHIFT_RPAREN:
             action_shift_paren(record, KC_RSHIFT);
+            break;
+        case AUTO_LBRACKET:
+            action_shift_paren(record, KC_LBRACKET);
+            break;
+        case AUTO_RBRACKET:
+            action_shift_paren(record, KC_RBRACKET);
             break;
         case AUTO_PAREN:
             action_auto_paren(record);

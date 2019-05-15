@@ -31,13 +31,14 @@ static void action_shift_paren(keyrecord_t *record, uint8_t kc)
         /* key up */
         if (record->tap.count > 0 && !record->tap.interrupted) {
             /* key tapped */
+            uint8_t cur_mods = get_mods() | get_weak_mods();
+            uint8_t shift_bits = MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT);
             if (auto_paren_state.enabled &&
                 /* To minimize interference with other modifiers,
                  * only do the auto-pairing when no other modifier
                  * is added.
                  */
-                !((get_mods() | get_weak_mods()) &
-                  ~(MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)))) {
+                !(cur_mods & ~shift_bits)) {
                 /* auto paren enabled */
                 switch (kc) {
                     case KC_LSHIFT:
@@ -52,6 +53,17 @@ static void action_shift_paren(keyrecord_t *record, uint8_t kc)
                                 END));
                         break;
                     case KC_LBRACKET:
+                        #if defined(QUANTUM_H)
+                        /* Stupid QMK. *sigh* */
+                        if (cur_mods & shift_bits) {
+                            SEND_STRING("[]");
+                            set_mods(0);
+                            SEND_STRING(SS_TAP(X_LEFT));
+                            set_mods(cur_mods);
+                        } else {
+                            SEND_STRING("[]" SS_TAP(X_LEFT));
+                        }
+                        #else
                         action_macro_play(
                             MACRO(
                                 I(10),
@@ -62,9 +74,20 @@ static void action_shift_paren(keyrecord_t *record, uint8_t kc)
                                 T(LEFT),
                                 RM(),
                                 END));
+                        #endif
                         break;
                     case KC_RSHIFT:
                     case KC_RBRACKET:
+                        #if defined(QUANTUM_H)
+                        /* Stupid QMK again. */
+                        if (cur_mods & shift_bits) {
+                            set_mods(0);
+                            SEND_STRING(SS_TAP(X_RIGHT));
+                            set_mods(cur_mods);
+                        } else {
+                            SEND_STRING(SS_TAP(X_RIGHT));
+                        }
+                        #else
                         action_macro_play(
                             MACRO(
                                 SM(),
@@ -72,6 +95,7 @@ static void action_shift_paren(keyrecord_t *record, uint8_t kc)
                                 T(RIGHT),
                                 RM(),
                                 END));
+                        #endif
                         break;
                     default:
                         break;
