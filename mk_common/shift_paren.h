@@ -17,7 +17,10 @@ static void action_shift_paren(keyrecord_t *record, uint8_t shift_kc)
         }
     } else {
         if (record->tap.count > 0 && !record->tap.interrupted) {
-            if (auto_paren_state.enabled) {
+            /* To minimize interference with other modifiers,
+             * only do the auto-pairing when no modifier is added.
+             */
+            if (auto_paren_state.enabled && !(get_mods() | get_weak_mods())) {
                 switch (shift_kc) {
                     case KC_LSHIFT:
                         action_macro_play(
