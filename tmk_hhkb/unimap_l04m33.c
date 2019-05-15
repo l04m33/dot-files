@@ -42,6 +42,8 @@ enum function_id {
     D_MACRO_FUNC_PLAY_2,
     FUNC_LSHIFT_LPAREN,
     FUNC_RSHIFT_RPAREN,
+    FUNC_AUTO_LBRACKET,
+    FUNC_AUTO_RBRACKET,
     FUNC_AUTO_PAREN,
     PENTI_KEY,
 };
@@ -57,6 +59,8 @@ enum function_id {
 #define AC_UNLOCK  ACTION_LAYER_MOMENTARY(4)
 #define AC_LSFTPRN ACTION_FUNCTION_TAP(FUNC_LSHIFT_LPAREN)
 #define AC_RSFTPRN ACTION_FUNCTION_TAP(FUNC_RSHIFT_RPAREN)
+#define AC_AUTOLBRC ACTION_FUNCTION_TAP(FUNC_AUTO_LBRACKET)
+#define AC_AUTORBRC ACTION_FUNCTION_TAP(FUNC_AUTO_RBRACKET)
 #define AC_AUTOPRN ACTION_FUNCTION_TAP(FUNC_AUTO_PAREN)
 
 #define AC_PENTI        ACTION_LAYER_TOGGLE(5)
@@ -87,10 +91,10 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
      *       `-------------------------------------------'
      */
     [0] = UNIMAP_HHKB(
-    ESC,     1,    2,    3,   4,   5,   6,   7,   8,    9,    0,    MINS,    EQL,    BSLS, GRV,
-    TAB,     Q,    W,    E,   R,   T,   Y,   U,   I,    O,    P,    LBRC,    RBRC,   BSPC,
-    LCTL,    A,    S,    D,   F,   G,   H,   J,   K,    L,    SCLN, QUOT,    CTLENT,
-    LSFTPRN, Z,    X,    C,   V,   B,   N,   M,   COMM, DOT,  SLSH, RSFTPRN, L1,
+    ESC,     1,    2,    3,   4,   5,   6,   7,   8,    9,    0,    MINS,     EQL,      BSLS, GRV,
+    TAB,     Q,    W,    E,   R,   T,   Y,   U,   I,    O,    P,    AUTOLBRC, AUTORBRC, BSPC,
+    LCTL,    A,    S,    D,   F,   G,   H,   J,   K,    L,    SCLN, QUOT,     CTLENT,
+    LSFTPRN, Z,    X,    C,   V,   B,   N,   M,   COMM, DOT,  SLSH, RSFTPRN,  L1,
              LGUI, LALT,           L2,                  RALT, RGUI),
 
     /* layer 1: hhkb mode (hhkb fn) */
@@ -104,7 +108,7 @@ const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
     /* layer 2: vi movement keys and mouse keys (space) */
     [2] = UNIMAP_HHKB(
     PENTI, F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,    INS,  DEL,
-    TAB,   TRNS, WH_L, WH_U, WH_D, WH_R, HOME, PGDN, PGUP, END,  TRNS, TRNS, TRNS,   BSPC,
+    TAB,   TRNS, WH_L, WH_U, WH_D, WH_R, HOME, PGDN, PGUP, END,  TRNS, LBRC, RBRC,   BSPC,
     LCTL,  TRNS, MS_L, MS_U, MS_D, MS_R, LEFT, DOWN, UP,   RGHT, TRNS, TRNS, CTLENT,
     LSFT,  TRNS, BTN3, BTN2, BTN1, TRNS, ACL2, ACL1, ACL0, TRNS, TRNS, RSFT, TRNS,
            LGUI, LALT,             L2,                     RALT, RGUI),
@@ -155,6 +159,12 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             break;
         case FUNC_RSHIFT_RPAREN:
             action_shift_paren(record, KC_RSHIFT);
+            break;
+        case FUNC_AUTO_LBRACKET:
+            action_shift_paren(record, KC_LBRACKET);
+            break;
+        case FUNC_AUTO_RBRACKET:
+            action_shift_paren(record, KC_RBRACKET);
             break;
         case FUNC_AUTO_PAREN:
             action_auto_paren(record);

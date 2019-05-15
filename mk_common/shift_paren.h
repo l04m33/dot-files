@@ -9,19 +9,37 @@ static auto_paren_state_t auto_paren_state = {
     .enabled = 0,
 };
 
-static void action_shift_paren(keyrecord_t *record, uint8_t shift_kc)
+static void action_shift_paren(keyrecord_t *record, uint8_t kc)
 {
     if (record->event.pressed) {
+        /* key down */
         if (record->tap.count <= 0 || record->tap.interrupted) {
-            register_mods(MOD_BIT(shift_kc));
+            switch (kc) {
+                case KC_LSHIFT:
+                case KC_RSHIFT:
+                    register_mods(MOD_BIT(kc));
+                    break;
+                case KC_LBRACKET:
+                case KC_RBRACKET:
+                    register_code(kc);
+                    break;
+                default:
+                    break;
+            }
         }
     } else {
+        /* key up */
         if (record->tap.count > 0 && !record->tap.interrupted) {
-            /* To minimize interference with other modifiers,
-             * only do the auto-pairing when no modifier is added.
-             */
-            if (auto_paren_state.enabled && !(get_mods() | get_weak_mods())) {
-                switch (shift_kc) {
+            /* key tapped */
+            if (auto_paren_state.enabled &&
+                /* To minimize interference with other modifiers,
+                 * only do the auto-pairing when no other modifier
+                 * is added.
+                 */
+                !((get_mods() | get_weak_mods()) &
+                  ~(MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)))) {
+                /* auto paren enabled */
+                switch (kc) {
                     case KC_LSHIFT:
                         action_macro_play(
                             MACRO(
@@ -33,32 +51,76 @@ static void action_shift_paren(keyrecord_t *record, uint8_t shift_kc)
                                 T(LEFT),
                                 END));
                         break;
+                    case KC_LBRACKET:
+                        action_macro_play(
+                            MACRO(
+                                I(10),
+                                T(LBRACKET),
+                                T(RBRACKET),
+                                SM(),
+                                CM(),
+                                T(LEFT),
+                                RM(),
+                                END));
+                        break;
                     case KC_RSHIFT:
-                        action_macro_play(MACRO(T(RIGHT), END));
+                    case KC_RBRACKET:
+                        action_macro_play(
+                            MACRO(
+                                SM(),
+                                CM(),
+                                T(RIGHT),
+                                RM(),
+                                END));
                         break;
                     default:
                         break;
                 }
             } else {
-                add_weak_mods(MOD_BIT(shift_kc));
-                send_keyboard_report();
-                switch (shift_kc) {
+                /* auto paren disabled */
+                switch (kc) {
                     case KC_LSHIFT:
-                        register_code(KC_9);
-                        unregister_code(KC_9);
-                        break;
                     case KC_RSHIFT:
-                        register_code(KC_0);
-                        unregister_code(KC_0);
+                        add_weak_mods(MOD_BIT(kc));
+                        send_keyboard_report();
+                        switch (kc) {
+                            case KC_LSHIFT:
+                                register_code(KC_9);
+                                unregister_code(KC_9);
+                                break;
+                            case KC_RSHIFT:
+                                register_code(KC_0);
+                                unregister_code(KC_0);
+                                break;
+                            default:
+                                break;
+                        }
+                        del_weak_mods(MOD_BIT(kc));
+                        send_keyboard_report();
+                        break;
+                    case KC_LBRACKET:
+                    case KC_RBRACKET:
+                        register_code(kc);
+                        unregister_code(kc);
                         break;
                     default:
                         break;
                 }
-                del_weak_mods(MOD_BIT(shift_kc));
-                send_keyboard_report();
             }
         } else {
-            unregister_mods(MOD_BIT(shift_kc));
+            /* key pressed and then interrupted */
+            switch (kc) {
+                case KC_LSHIFT:
+                case KC_RSHIFT:
+                    unregister_mods(MOD_BIT(kc));
+                    break;
+                case KC_LBRACKET:
+                case KC_RBRACKET:
+                    unregister_code(kc);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
