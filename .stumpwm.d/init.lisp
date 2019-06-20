@@ -342,7 +342,11 @@
                  "#b294bb" ; magenta (purple)
                  "#8abeb7" ; cyan    (aqua)
                  "#c5c8c6" ; white   (foreground)
+
                  "#969896" ; gray    (comment)
+                 "#282a2e" ; (current line)
+                 "#373b41" ; (selection)
+                 "#de935f" ; (orange)
                  ))
 (set-fg-color (nth 7 *colors*))
 (set-bg-color (nth 0 *colors*))
@@ -376,7 +380,16 @@
 
 (if (string= "Linux" (software-type))
   (progn
-    (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ^[^7❱^] %C ^[^7❱^] %M ^[^7❱^] BAT: %B "))
+    (setf *screen-mode-line-format* `("^[^(:fg \"#1d1f21\")^(:bg \"#81a2be\") %n ^]"
+                                      "^[^(:fg \"#81a2be\")^(:bg \"#8abeb7\")^]"
+                                      "^[^(:fg \"#1d1f21\")^(:bg \"#8abeb7\") %d ^]"
+                                      "^[^(:fg \"#8abeb7\")^(:bg \"#b5bd68\")^]"
+                                      "^[^(:fg \"#1d1f21\")^(:bg \"#b5bd68\") %C ^]"
+                                      "^[^(:fg \"#b5bd68\")^(:bg \"#f0c674\")^]"
+                                      "^[^(:fg \"#1d1f21\")^(:bg \"#f0c674\") %M ^]"
+                                      "^[^(:fg \"#f0c674\")^(:bg \"#de935f\")^]"
+                                      "^[^(:fg \"#1d1f21\")^(:bg \"#de935f\") BAT: %B ^]"
+                                      "^[^(:fg \"#de935f\")^]"))
     (setf cpu::*cpu-modeline-fmt* "%c %t"))
   (setf *screen-mode-line-format* `("^[^7^R %n ^r^] %d ")))
 (setf *mode-line-position* :top)
