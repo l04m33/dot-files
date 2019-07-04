@@ -104,6 +104,23 @@ map -docstring 'Split vertically and run command'   global rc-stumpwm V ':rc-stu
 map -docstring 'Create new window and run command'  global rc-stumpwm W ':rc-stumpwm-new-window '
 
 
+######### Kak-lsp Integration #########
+
+map -docstring 'Enable kak-lsp' global user l ':rc-enable-kak-lsp<ret>'
+
+define-command -hidden -params .. rc-enable-kak-lsp %{
+    evaluate-commands %sh{
+        kak-lsp --kakoune -s $kak_session
+        if [ $# -ne 0 -a "$1" = "debug" ]; then
+            kak-lsp -s $kak_session -vvv > /tmp/kak-lsp.log 2>&1 < /dev/null &
+        fi
+    }
+    hook global WinSetOption filetype=(python) %{
+        lsp-enable-window
+    }
+    map -docstring 'kak-lsp' global user l ':enter-user-mode lsp<ret>'
+}
+
 ######### Scheme Files #########
 
 hook global WinSetOption filetype=scheme %{
