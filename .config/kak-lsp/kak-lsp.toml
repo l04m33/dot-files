@@ -1,0 +1,6 @@
+[language.python]
+filetypes = ["python"]
+roots = ["requirements.txt", "setup.py", ".git", ".hg"]
+command = "pyls"
+args = []
+offset_encoding = "utf-8"
