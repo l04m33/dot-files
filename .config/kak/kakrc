@@ -110,9 +110,13 @@ map -docstring 'Enable kak-lsp' global user l ':rc-enable-kak-lsp<ret>'
 
 define-command -hidden -params .. rc-enable-kak-lsp %{
     evaluate-commands %sh{
-        kak-lsp --kakoune -s $kak_session
-        if [ $# -ne 0 -a "$1" = "debug" ]; then
-            kak-lsp -s $kak_session -vvv > /tmp/kak-lsp.log 2>&1 < /dev/null &
+        if which kak-lsp > /dev/null 2>&1; then
+            kak-lsp --kakoune -s $kak_session
+            if [ $# -ne 0 -a "$1" = "debug" ]; then
+                kak-lsp -s $kak_session -vvv > /tmp/kak-lsp.log 2>&1 < /dev/null &
+            fi
+        else
+            echo "echo -markup '{Error}kak-lsp command not found'"
         fi
     }
     hook global WinSetOption filetype=(python) %{
