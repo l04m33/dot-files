@@ -104,6 +104,17 @@ map -docstring 'Split vertically and run command'   global rc-stumpwm V ':rc-stu
 map -docstring 'Create new window and run command'  global rc-stumpwm W ':rc-stumpwm-new-window '
 
 
+######### Plug.kak Integration #########
+
+evaluate-commands %sh{
+    if [ -f "${kak_config}/plugins/plug.kak/rc/plug.kak" ]; then
+        echo "source \"${kak_config}/plugins/plug.kak/rc/plug.kak\""
+    else
+        echo "nop"
+    fi
+}
+
+
 ######### Kak-lsp Integration #########
 
 map -docstring 'Enable kak-lsp' global user l ':rc-enable-kak-lsp<ret>'
