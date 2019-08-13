@@ -13,6 +13,14 @@ declare-option -hidden str rc_kak_exec %sh{
     echo -n ${kakoune_exec}
 }
 
+declare-option -hidden str rc_plug_kak_found %sh{
+    if [ -f "${kak_config}/plugins/plug.kak/rc/plug.kak" ]; then
+        echo "yes"
+    else
+        echo "no"
+    fi
+}
+
 
 ######### Options #########
 
@@ -107,8 +115,17 @@ map -docstring 'Create new window and run command'  global rc-stumpwm W ':rc-stu
 ######### Plug.kak Integration #########
 
 evaluate-commands %sh{
-    if [ -f "${kak_config}/plugins/plug.kak/rc/plug.kak" ]; then
+    if [ "$kak_opt_rc_plug_kak_found" = "yes" ]; then
         echo "source \"${kak_config}/plugins/plug.kak/rc/plug.kak\""
+        echo "plug \"andreyorst/plug.kak\""
+        echo "plug \"ul/kak-lsp\" do %{
+                  cargo build --release --locked
+                  cargo install --force --path .
+              }"
+        echo "plug \"eraserhd/parinfer-rust\" do %{
+                  cargo build --release --locked
+                  cargo install --force --path .
+              }"
     else
         echo "nop"
     fi
