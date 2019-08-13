@@ -117,8 +117,8 @@ map -docstring 'Create new window and run command'  global rc-stumpwm W ':rc-stu
 evaluate-commands %sh{
     if [ "$kak_opt_rc_plug_kak_found" = "yes" ]; then
         echo "source \"${kak_config}/plugins/plug.kak/rc/plug.kak\""
-        echo "plug \"andreyorst/plug.kak\""
-        echo "plug \"ul/kak-lsp\" do %{
+        echo "plug \"andreyorst/plug.kak\" branch \"dev\" noload"
+        echo "plug \"ul/kak-lsp\" noload do %{
                   cargo build --release --locked
                   cargo install --force --path .
               }"
