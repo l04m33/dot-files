@@ -122,9 +122,17 @@ evaluate-commands %sh{
                   cargo build --release --locked
                   cargo install --force --path .
               }"
+        # The hooks in parinfer-rust doesn't work, thus all the excess hooks below.
+        # Should remove them once parinfer-rust is fixed.
         echo "plug \"eraserhd/parinfer-rust\" do %{
                   cargo build --release --locked
                   cargo install --force --path .
+              } config %{
+                  hook -group rc-parinfer-switch global WinSetOption filetype=(lisp|scheme) %{
+                      hook -group rc-parinfer window NormalKey .* %{ parinfer -if-enabled -smart }
+                      hook -group rc-parinfer window InsertChar (?!\n).* %{ parinfer -if-enabled -smart }
+                      hook -group rc-parinfer window InsertDelete .* %{ parinfer -if-enabled -smart }
+                  }
               }"
     else
         echo "nop"
@@ -147,14 +155,15 @@ define-command -hidden -params .. rc-enable-kak-lsp %{
             echo "echo -markup '{Error}kak-lsp command not found'"
         fi
     }
-    hook global WinSetOption filetype=(python) %{
+    hook -group rc-kak-lsp-switch global WinSetOption filetype=(python) %{
         lsp-enable-window
     }
     map -docstring 'kak-lsp' global user l ':enter-user-mode lsp<ret>'
 }
 
-######### Scheme Files #########
 
-hook global WinSetOption filetype=scheme %{
+######### Lisp Files #########
+
+hook -group rc-lisp-switch global WinSetOption filetype=(lisp|scheme) %{
     set-option window indentwidth 2
 }
