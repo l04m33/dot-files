@@ -36,7 +36,7 @@
 
 (defparameter *rc-group-count* 9)
 
-(defparameter *rc-modules-common* '("stumptray"
+(defparameter *rc-modules-common* '(;;"stumptray"
                                     "ttf-fonts"
                                     "swm-gaps"))
 (defparameter *rc-modules-linux* '("battery-portable"
@@ -450,10 +450,10 @@
 (unless (head-mode-line (current-head))
   (toggle-mode-line (current-screen) (current-head)))
 
-(defvar *rc-stumptray-enabled* nil)
-(unless *rc-stumptray-enabled*
-  (setf *rc-stumptray-enabled* t)
-  (stumptray:stumptray))
+;;(defvar *rc-stumptray-enabled* nil)
+;;(unless *rc-stumptray-enabled*
+;;  (setf *rc-stumptray-enabled* t)
+;;  (stumptray:stumptray))
 
 
 ;;--------- Daemons ---------
