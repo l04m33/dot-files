@@ -125,16 +125,12 @@ evaluate-commands %sh{
                   cargo build --release --locked
                   cargo install --force --path .
               }"
-        # The hooks in parinfer-rust doesn't work, thus all the excess hooks below.
-        # Should remove them once parinfer-rust is fixed.
         echo "plug \"eraserhd/parinfer-rust\" do %{
                   cargo build --release --locked
                   cargo install --force --path .
               } config %{
-                  hook -group rc-parinfer-switch global WinSetOption filetype=(lisp|scheme) %{
-                      hook -group rc-parinfer window NormalKey .* %{ parinfer -if-enabled -smart }
-                      hook -group rc-parinfer window InsertChar (?!\n).* %{ parinfer -if-enabled -smart }
-                      hook -group rc-parinfer window InsertDelete .* %{ parinfer -if-enabled -smart }
+                  hook global WinSetOption filetype=(clojure|lisp|scheme|racket) %{
+                      parinfer-enable-window -smart
                   }
               }"
     else
