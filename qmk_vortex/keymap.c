@@ -60,7 +60,7 @@ const uint16_t keymaps_default[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_COLEMAK_DH] = LAYOUT_core(
         KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,                      KC_B,                      KC_J,         KC_L,    KC_U,    KC_Y,    KC_SCLN, F(8), F(9),
         KC_LCTL, KC_A,    KC_R,    KC_S,    KC_T,                      KC_G,                      KC_K,         KC_N,    KC_E,    KC_I,    KC_O,    MT(MOD_RCTL,KC_ENT),
-        F(6),    KC_Z,    KC_X,    KC_C,    KC_D,                      KC_V,                      KC_M,         KC_H,    KC_COMM, KC_DOT,  F(7),    MO(LAYER_FN1),
+        F(6),    KC_X,    KC_C,    KC_D,    KC_V,                      KC_Z,                      KC_M,         KC_H,    KC_COMM, KC_DOT,  F(7),    MO(LAYER_FN1),
         KC_ESC,  KC_LGUI, KC_LALT, KC_BSPC, LT(LAYER_SPACE_FN,KC_SPC), LT(LAYER_SPACE_FN,KC_SPC), MO(LAYER_FN), KC_RALT, KC_APP,  KC_RCTL
     ),
     /* Fn layer */
