@@ -34,6 +34,15 @@ enum keycodes {
 #include "penti.h"
 #include "shift_paren.h"
 
+enum layer_id {
+    LAYER_DEFAULT = 0,
+    LAYER_COLEMAK_DH,
+    LAYER_FN,
+    LAYER_FN1,
+    LAYER_SPACE_FN,
+    LAYER_PENTI,
+};
+
 /************************************************
  * keymaps
  ************************************************/
@@ -41,47 +50,47 @@ enum keycodes {
 const uint16_t keymaps_default[][MATRIX_ROWS][MATRIX_COLS] = {
 #if defined(KEYMAP_VORTEX_CORE)
     /* default layer */
-    [0] = LAYOUT_core(
-        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,         KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    F(8), F(9),
-        KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,         KC_G,         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, MT(MOD_RCTL,KC_ENT),
-        F(6),    KC_Z,    KC_X,    KC_C,    KC_V,         KC_B,         KC_N,    KC_M,    KC_COMM, KC_DOT,  F(7),    MO(3),
-        KC_ESC,  KC_LGUI, KC_LALT, KC_BSPC, LT(4,KC_SPC), LT(4,KC_SPC), MO(2),   KC_RALT, KC_APP,  KC_RCTL
+    [LAYER_DEFAULT] = LAYOUT_core(
+        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,                      KC_T,                      KC_Y,         KC_U,    KC_I,    KC_O,    KC_P,    F(8), F(9),
+        KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,                      KC_G,                      KC_H,         KC_J,    KC_K,    KC_L,    KC_SCLN, MT(MOD_RCTL,KC_ENT),
+        F(6),    KC_Z,    KC_X,    KC_C,    KC_V,                      KC_B,                      KC_N,         KC_M,    KC_COMM, KC_DOT,  F(7),    MO(LAYER_FN1),
+        KC_ESC,  KC_LGUI, KC_LALT, KC_BSPC, LT(LAYER_SPACE_FN,KC_SPC), LT(LAYER_SPACE_FN,KC_SPC), MO(LAYER_FN), KC_RALT, KC_APP,  KC_RCTL
     ),
     /* Colemak Mod-DH */
-    [1] = LAYOUT_core(
-        KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,         KC_B,         KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, F(8), F(9),
-        KC_LCTL, KC_A,    KC_R,    KC_S,    KC_T,         KC_G,         KC_K,    KC_N,    KC_E,    KC_I,    KC_O,    MT(MOD_RCTL,KC_ENT),
-        F(6),    KC_Z,    KC_X,    KC_C,    KC_D,         KC_V,         KC_M,    KC_H,    KC_COMM, KC_DOT,  F(7),    MO(3),
-        KC_ESC,  KC_LGUI, KC_LALT, KC_BSPC, LT(4,KC_SPC), LT(4,KC_SPC), MO(2),   KC_RALT, KC_APP,  KC_RCTL
+    [LAYER_COLEMAK_DH] = LAYOUT_core(
+        KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,                      KC_B,                      KC_J,         KC_L,    KC_U,    KC_Y,    KC_SCLN, F(8), F(9),
+        KC_LCTL, KC_A,    KC_R,    KC_S,    KC_T,                      KC_G,                      KC_K,         KC_N,    KC_E,    KC_I,    KC_O,    MT(MOD_RCTL,KC_ENT),
+        F(6),    KC_Z,    KC_X,    KC_C,    KC_D,                      KC_V,                      KC_M,         KC_H,    KC_COMM, KC_DOT,  F(7),    MO(LAYER_FN1),
+        KC_ESC,  KC_LGUI, KC_LALT, KC_BSPC, LT(LAYER_SPACE_FN,KC_SPC), LT(LAYER_SPACE_FN,KC_SPC), MO(LAYER_FN), KC_RALT, KC_APP,  KC_RCTL
     ),
     /* Fn layer */
-    [2] = LAYOUT_core(
+    [LAYER_FN] = LAYOUT_core(
         DEBUG,   KC_VOLD, KC_VOLU, KC_MUTE, _______, _______, _______, KC_PGUP, KC_UP,   KC_PGDN, KC_PSCR, KC_SLCK, KC_PAUS,
         KC_CAPS, KC_MPRV, KC_MPLY, KC_MNXT, _______, _______, KC_HOME, KC_LEFT, KC_DOWN, KC_RIGHT,KC_INS,  KC_ENT,
         KC_LSFT, _______, _______, _______, _______, _______, KC_END,  _______, _______, _______, KC_RSFT, _______,
         _______, _______, _______, KC_DEL,  _______, _______, _______, _______, _______, _______
     ),
     /* Fn1 layer */
-    [3] = LAYOUT_core(
-        KC_GRV,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,          KC_F7,        KC_F8,   KC_F9,   KC_F10,  KC_F11, KC_F12,
-        KC_1,            KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,           KC_8,         KC_9,    KC_0,    KC_MINS, KC_EQL,
-        _______,         _______, _______, TG(1),   _______, KC_QUOT, KC_SLSH,        KC_LBRC,      KC_RBRC, KC_BSLS, F(10),    _______,
-        DYN_MACRO_PLAY1, _______, _______, _______, _______, _______, DYN_REC_START1, DYN_REC_STOP, _______, _______
+    [LAYER_FN1] = LAYOUT_core(
+        KC_GRV,          KC_F1,   KC_F2,   KC_F3,                KC_F4,   KC_F5,   KC_F6,          KC_F7,        KC_F8,   KC_F9,   KC_F10,  KC_F11, KC_F12,
+        KC_1,            KC_2,    KC_3,    KC_4,                 KC_5,    KC_6,    KC_7,           KC_8,         KC_9,    KC_0,    KC_MINS, KC_EQL,
+        _______,         _______, _______, TG(LAYER_COLEMAK_DH), _______, KC_QUOT, KC_SLSH,        KC_LBRC,      KC_RBRC, KC_BSLS, F(10),    _______,
+        DYN_MACRO_PLAY1, _______, _______, _______,              _______, _______, DYN_REC_START1, DYN_REC_STOP, _______, _______
     ),
     /* Space Fn layer */
     /* XXX: mouse keys are not working due to lack of endpoints (?) */
-    [4] = LAYOUT_core(
-        TG(5),   _______, KC_WH_L, KC_WH_U, KC_WH_D, KC_WH_R, KC_HOME, KC_PGDN, KC_PGUP, KC_END,  _______, KC_LBRC, KC_RBRC,
-        _______, _______, KC_MS_L, KC_MS_U, KC_MS_D, KC_MS_R, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, KC_ENT,
-        KC_LSFT, _______, KC_BTN3, KC_BTN2, KC_BTN1, _______, KC_ACL2, KC_ACL1, KC_ACL0, _______, KC_RSFT, _______,
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+    [LAYER_SPACE_FN] = LAYOUT_core(
+        TG(LAYER_PENTI), _______, KC_WH_L, KC_WH_U, KC_WH_D, KC_WH_R, KC_HOME, KC_PGDN, KC_PGUP, KC_END,  _______, KC_LBRC, KC_RBRC,
+        _______,         _______, KC_MS_L, KC_MS_U, KC_MS_D, KC_MS_R, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, KC_ENT,
+        KC_LSFT,         _______, KC_BTN3, KC_BTN2, KC_BTN1, _______, KC_ACL2, KC_ACL1, KC_ACL0, _______, KC_RSFT, _______,
+        _______,         _______, _______, _______, _______, _______, _______, _______, _______, _______
     ),
     /* Penti mode layer */
     [5] = LAYOUT_core(
-        TG(5),   XXXXXXX, F(3),    F(2),    F(1),    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, F(4),    XXXXXXX, F(5),    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, F(0),    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
+        TG(LAYER_PENTI), XXXXXXX, F(3),    F(2),    F(1),    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX,         F(4),    XXXXXXX, F(5),    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX, F(0),    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
     ),
 #else
     #error "No Keymap!"
