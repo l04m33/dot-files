@@ -73,6 +73,7 @@
 (setf *startup-message* nil)
 (setf *mouse-focus-policy* :click)
 (setf *input-history-ignore-duplicates* t)
+(setf *maximum-completions* 20)
 
 
 ;;--------- Modules ---------
@@ -380,8 +381,8 @@
                  "#969896" ; gray    (comment)
                  "#282a2e" ; (current line)
                  "#373b41" ; (selection)
-                 "#de935f" ; (orange)
-                 ))
+                 "#de935f")) ; (orange)
+
 (set-fg-color (nth 7 *colors*))
 (set-bg-color (nth 0 *colors*))
 (dolist (screen *screen-list*)
