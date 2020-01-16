@@ -16,7 +16,6 @@ antigen bundle bgnotify
 # external plugins
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle fanzeyi/zsh-at
-antigen bundle unixorn/autoupdate-antigen.zshplugin
 #antigen bundle l04m33/dot-files .oh-my-zsh_custom/plugins/my-env/
 
 # themes
