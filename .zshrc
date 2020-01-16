@@ -1,5 +1,5 @@
 if [ ! -d "$HOME/.antigen" ]; then 
-    git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"
+    git clone --branch master https://github.com/zsh-users/antigen.git "$HOME/.antigen"
 fi
 source $HOME/.antigen/antigen.zsh
 
@@ -8,11 +8,14 @@ antigen use oh-my-zsh
 # libraries
 antigen bundle mafredri/zsh-async
 
-# plugins
-antigen bundle robbyrussell/oh-my-zsh plugins/z
-antigen bundle robbyrussell/oh-my-zsh plugins/git
-antigen bundle robbyrussell/oh-my-zsh plugins/bgnotify
+# oh-my-zsh bundled plugins
+antigen bundle z
+antigen bundle git
+antigen bundle bgnotify
+
+# external plugins
 antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle fanzeyi/zsh-at
 antigen bundle unixorn/autoupdate-antigen.zshplugin
 #antigen bundle l04m33/dot-files .oh-my-zsh_custom/plugins/my-env/
 
