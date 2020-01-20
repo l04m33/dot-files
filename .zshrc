@@ -12,7 +12,6 @@ if ! zgen saved; then
 
     zgen oh-my-zsh
     zgen oh-my-zsh plugins/z
-    zgen oh-my-zsh plugins/git
     zgen oh-my-zsh plugins/bgnotify
 
     zgen load zsh-users/zsh-syntax-highlighting
