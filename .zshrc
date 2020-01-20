@@ -1,27 +1,26 @@
-if [ ! -d "$HOME/.antigen" ]; then 
-    git clone --branch master https://github.com/zsh-users/antigen.git "$HOME/.antigen"
+autoload -U compinit && compinit
+
+export ZSH_RC_MGR_HOME="${HOME}/.zgen"
+if [ ! -d "${ZSH_RC_MGR_HOME}" ]; then
+    git clone --branch master 'https://github.com/tarjoilija/zgen.git' "${ZSH_RC_MGR_HOME}"
 fi
-source $HOME/.antigen/antigen.zsh
+source ${ZSH_RC_MGR_HOME}/zgen.zsh
 
-antigen use oh-my-zsh
+if ! zgen saved; then
 
-# libraries
-antigen bundle mafredri/zsh-async
+    zgen load mafredri/zsh-async
 
-# oh-my-zsh bundled plugins
-antigen bundle z
-antigen bundle git
-antigen bundle bgnotify
+    zgen oh-my-zsh
+    zgen oh-my-zsh plugins/z
+    zgen oh-my-zsh plugins/git
+    zgen oh-my-zsh plugins/bgnotify
 
-# external plugins
-antigen bundle zsh-users/zsh-syntax-highlighting
-antigen bundle fanzeyi/zsh-at
-#antigen bundle l04m33/dot-files .oh-my-zsh_custom/plugins/my-env/
+    zgen load zsh-users/zsh-syntax-highlighting
+    zgen load fanzeyi/zsh-at
+    zgen load sindresorhus/pure
 
-# themes
-antigen bundle sindresorhus/pure
-
-antigen apply
+    zgen save
+fi
 
 source $HOME/.dot-files/.oh-my-zsh_custom/plugins/my-env/my-env.plugin.zsh
 source $HOME/.dot-files/.oh-my-zsh_custom/plugins/my-gpg-agent/my-gpg-agent.plugin.zsh
