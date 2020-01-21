@@ -67,6 +67,9 @@
 (defparameter *rc-wp-dir*
   (rc-build-resource-dir "wp"))
 
+; qwerty or colemak-dh
+(defvar *rc-keyboard-layout* 'colemak-dh)
+
 
 ;;--------- StumpWM Behaviors ---------
 
@@ -108,6 +111,43 @@
         (eval-command (format nil "fselect ~A" new-f)))
       (message "Cannot split smaller than minimum size."))))
 
+(defun rc-map-nav-keys (layout)
+  (case layout
+    (qwerty
+      (define-key *top-map* (kbd "s-h") "prev-in-frame")
+      (define-key *top-map* (kbd "s-l") "next-in-frame")
+      (define-key *top-map* (kbd "s-k") "rc-prev-frame-or-window")
+      (define-key *top-map* (kbd "s-j") "rc-next-frame-or-window")
+
+      (define-key *top-map* (kbd "s-H") "move-window left")
+      (define-key *top-map* (kbd "s-L") "move-window right")
+      (define-key *top-map* (kbd "s-K") "move-window up")
+      (define-key *top-map* (kbd "s-J") "move-window down"))
+    (colemak-dh
+      (define-key *top-map* (kbd "s-k") "prev-in-frame")
+      (define-key *top-map* (kbd "s-i") "next-in-frame")
+      (define-key *top-map* (kbd "s-e") "rc-prev-frame-or-window")
+      (define-key *top-map* (kbd "s-n") "rc-next-frame-or-window")
+
+      (define-key *top-map* (kbd "s-K") "move-window left")
+      (define-key *top-map* (kbd "s-I") "move-window right")
+      (define-key *top-map* (kbd "s-E") "move-window up")
+      (define-key *top-map* (kbd "s-N") "move-window down"))))
+
+
+(defcommand rc-switch-kb-layout (&optional (layout nil)) ()
+  "Switch keyboard layout and map navigation keys accordingly."
+  (cond
+    ((equal layout nil)
+     (setf *rc-keyboard-layout* (if (eql *rc-keyboard-layout* 'qwerty)
+                                  'colemak-dh
+                                  'qwerty))
+     (rc-map-nav-keys *rc-keyboard-layout*)
+     (message "Switched to keyboard layout: ^[^2^f1~A^]" *rc-keyboard-layout*))
+    (t
+     (setf *rc-keyboard-layout* (intern (string-upcase layout) "STUMPWM-USER"))
+     (rc-map-nav-keys *rc-keyboard-layout*)
+     (message "Switched to keyboard layout: ^[^2^f1~A^]" *rc-keyboard-layout*))))
 
 (defcommand rc-delete-maybe-remove (&optional (window (current-window))) ()
   "Delete a window. If invoked on an empty frame, remove that frame."
@@ -312,23 +352,15 @@
 
 (set-prefix-key (kbd "s-t"))
 
+(rc-map-nav-keys *rc-keyboard-layout*)
+
 (define-key *top-map* (kbd "s-RET") "exec xterm")
 
 (define-key *top-map* (kbd "s-C") "rc-delete-maybe-remove")
-(define-key *top-map* (kbd "s-h") "prev-in-frame")
-(define-key *top-map* (kbd "s-l") "next-in-frame")
-(define-key *top-map* (kbd "s-'") "windowlist")
+(define-key *top-map* (kbd "s-/") "windowlist")
 
-(define-key *top-map* (kbd "s-k") "rc-prev-frame-or-window")
-(define-key *top-map* (kbd "s-j") "rc-next-frame-or-window")
-
-(define-key *top-map* (kbd "s-H") "move-window left")
-(define-key *top-map* (kbd "s-L") "move-window right")
-(define-key *top-map* (kbd "s-K") "move-window up")
-(define-key *top-map* (kbd "s-J") "move-window down")
-
-(define-key *top-map* (kbd "s-i") "rc-hsplit-and-focus")
-(define-key *top-map* (kbd "s--") "rc-vsplit-and-focus")
+(define-key *top-map* (kbd "s-,") "rc-hsplit-and-focus")
+(define-key *top-map* (kbd "s-.") "rc-vsplit-and-focus")
 (define-key *top-map* (kbd "s-=") "balance-frames")
 (define-key *top-map* (kbd "s-s") "iresize")
 
