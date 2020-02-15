@@ -16,6 +16,7 @@
           stumpwm::send-client-message
           stumpwm::float-group
           stumpwm::float-window
+          stumpwm::unfloat-window
           stumpwm::*float-window-border*
           stumpwm::*float-window-title-height*))
 
@@ -248,11 +249,15 @@
          (other-group (elt gset-groups other-group-nr))
          (windows (group-windows cur-group)))
     (move-windows-to-group windows other-group)
-    (when (typep cur-group 'tile-group)
+    (if (typep cur-group 'tile-group)
+      ;; tile-group -> float-group
+      ;; Remove all tile-group frames since the tile-group is now empty.
       (let ((frames (group-frames cur-group)))
         (dolist (f frames)
           (unless (= 0 (frame-number f))
-            (remove-split cur-group f)))))
+            (remove-split cur-group f))))
+      ;; float-group -> tile-group
+      (mapcar #'(lambda (w) (unfloat-window w other-group)) windows))
     (gset:switch-to-group-set gset other-group-nr)))
 
 (defcommand rc-show-group-overview () ()
