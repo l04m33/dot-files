@@ -51,7 +51,7 @@ xterm*color14:      #8abeb7
 xterm*color15:      #ecebec
 
 ! Fonts
-xterm*faceName: Inconsolata NF Custom:antialias=true
+xterm*faceName: Tamzen For Powerline:antialias=false
 xterm*faceNameDoublesize: WenQuanYi Zen Hei Mono:antialias=true
 xterm*faceSize: 13
 
