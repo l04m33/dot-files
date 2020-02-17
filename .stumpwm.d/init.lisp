@@ -441,10 +441,14 @@
 (set-float-focus-color (nth 4 *colors*))
 (set-float-unfocus-color (nth 0 *colors*))
 
+;; Tell StumpWM where to find the fonts
 (setf xft:*font-dirs* `(,*rc-fonts-dir*))
 (xft:cache-fonts)
+(run-shell-command "xset fp+ \"${HOME}/.local/share/fonts/tamzen-font-bdf\"" t)
+(run-shell-command "xset fp rehash" t)
+
 (set-font (list
-            (make-instance 'xft:font :family "Inconsolata NF Custom" :subfamily "Medium" :size 11)
+            "-*-tamzenforpowerline-medium-*-*-*-15-*-*-*-*-*-*-*"
             (make-instance 'xft:font :family "WenQuanYi Zen Hei Mono" :subfamily "Regular" :size 11)))
 
 
