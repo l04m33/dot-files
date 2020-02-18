@@ -16,7 +16,7 @@ if [ -n "$APPINST_BINS" ]; then
     export PATH=$APPINST_BINS:$PATH
 fi
 
-export EDITOR=vim
+export EDITOR=$(if which kak > /dev/null 2>&1; then echo kak; else echo vim; fi)
 
 # history options
 export HISTCONTROL=ignoredups:erasedups
