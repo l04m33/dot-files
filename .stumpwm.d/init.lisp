@@ -35,7 +35,8 @@
 
 (defparameter *rc-current-wp* nil)
 
-(defparameter *rc-group-count* 9)
+(defparameter *rc-first-group* 0)
+(defparameter *rc-last-group*  9)
 
 (defparameter *rc-modules-common* '(;;"stumptray"
                                     "ttf-fonts"
@@ -282,7 +283,7 @@
                    (format stream "~A" win-num))))
              (write-string "-" stream)))))
      (iter-groups (screen cur-group gnr stream)
-       (loop for s from 1 to *rc-group-count*
+       (loop for s from *rc-first-group* to *rc-last-group*
              for sname = (write-to-string s)
              do (write-group-stat (gset:find-group-set screen sname)
                                   cur-group gnr stream))))
@@ -375,13 +376,13 @@
 (define-key *top-map* (kbd "s-:") "eval")
 (define-key *top-map* (kbd "s-;") "colon")
 
-(loop for gs from 1 to *rc-group-count*
+(loop for gs from *rc-first-group* to *rc-last-group*
       for key = (format nil "s-~A" gs)
       for cmd = (format nil "gset-select ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
 (define-key *top-map* (kbd "s-SPC") "rc-switch-group-in-group-set")
-(loop for gs from 1 to *rc-group-count*
-      for char in '(#\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
+(loop for gs from *rc-first-group* to *rc-last-group*
+      for char in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
       for key = (format nil "s-~A" char)
       for cmd = (format nil "rc-move-window-to-group-set ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
@@ -396,7 +397,7 @@
 
 ;;--------- Groups ---------
 
-(loop for gs from 1 to *rc-group-count*
+(loop for gs from *rc-first-group* to *rc-last-group*
       for gs-name = (format nil "~A" gs)
       do (gset:add-group-set (current-screen) gs-name
                              `(("T" tile-group)
