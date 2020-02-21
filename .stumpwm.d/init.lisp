@@ -18,7 +18,10 @@
           stumpwm::float-window
           stumpwm::unfloat-window
           stumpwm::*float-window-border*
-          stumpwm::*float-window-title-height*))
+          stumpwm::*float-window-title-height*
+          stumpwm::setup-iresize
+          stumpwm::resize-unhide
+          stumpwm::abort-resize-p))
 
 
 ;;--------- Debugging ---------
@@ -124,7 +127,10 @@
       (define-key *top-map* (kbd "s-H") "move-window left")
       (define-key *top-map* (kbd "s-L") "move-window right")
       (define-key *top-map* (kbd "s-K") "move-window up")
-      (define-key *top-map* (kbd "s-J") "move-window down"))
+      (define-key *top-map* (kbd "s-J") "move-window down")
+
+      (define-key *top-map* (kbd "s-s") "iresize"))
+
     (colemak-dh
       (define-key *top-map* (kbd "s-k") "prev-in-frame")
       (define-key *top-map* (kbd "s-i") "next-in-frame")
@@ -134,7 +140,9 @@
       (define-key *top-map* (kbd "s-K") "move-window left")
       (define-key *top-map* (kbd "s-I") "move-window right")
       (define-key *top-map* (kbd "s-E") "move-window up")
-      (define-key *top-map* (kbd "s-N") "move-window down"))))
+      (define-key *top-map* (kbd "s-N") "move-window down")
+
+      (define-key *top-map* (kbd "s-s") "colemak-dh-iresize"))))
 
 
 (defcommand rc-switch-kb-layout (&optional (layout nil)) ()
@@ -368,7 +376,6 @@
 (define-key *top-map* (kbd "s-,") "rc-hsplit-and-focus")
 (define-key *top-map* (kbd "s-.") "rc-vsplit-and-focus")
 (define-key *top-map* (kbd "s-=") "balance-frames")
-(define-key *top-map* (kbd "s-s") "iresize")
 
 (define-key *top-map* (kbd "s-f") "fullscreen")
 
@@ -393,6 +400,21 @@
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
 (define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle")
+
+(define-interactive-keymap (colemak-dh-iresize tile-group) (:on-enter #'setup-iresize
+                                                            :on-exit #'resize-unhide
+                                                            :abort-if #'abort-resize-p)
+  ((kbd "Up") "resize-direction up")
+  ((kbd "e") "resize-direction up")
+
+  ((kbd "Down") "resize-direction down")
+  ((kbd "n") "resize-direction down")
+
+  ((kbd "Left") "resize-direction left")
+  ((kbd "k") "resize-direction left")
+
+  ((kbd "Right") "resize-direction right")
+  ((kbd "i") "resize-direction right"))
 
 
 ;;--------- Groups ---------
