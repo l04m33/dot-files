@@ -473,7 +473,8 @@
                                       "^[^(:fg \"#373b41\")^]"
                                       "^[^(:fg \"#969896\")^(:bg \"#373b41\")^]"
                                       "^[^(:fg \"#1d1f21\")^(:bg \"#969896\")  ^]"))
-    (setf cpu::*cpu-modeline-fmt* "%c %t"))
+    ;; The CPU package may not be available
+    (setf (symbol-value (find-symbol "*CPU-MODELINE-FMT*" "CPU")) "%c %t"))
   (setf *screen-mode-line-format* `("^[^(:fg \"#1d1f21\")^(:bg \"#81a2be\") %n ^]"
                                     "^[^(:fg \"#81a2be\")^(:bg \"#8abeb7\")^]"
                                     "^[^(:fg \"#1d1f21\")^(:bg \"#8abeb7\") %d ^]"
