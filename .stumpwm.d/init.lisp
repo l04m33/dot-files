@@ -87,7 +87,7 @@
 (when (not swm-gaps:*gaps-on*)
   (eval-command "toggle-gaps"))
 
-(setf cglobal:*rc-keyboard-layout* 'colemak-dh)
+(setf cglobal:*keyboard-layout* 'colemak-dh)
 
 
 ;;--------- Custom Functions and Commands ---------
@@ -135,15 +135,15 @@
   "Switch keyboard layout and map navigation keys accordingly."
   (cond
     ((equal layout nil)
-     (setf cglobal:*rc-keyboard-layout* (if (eql cglobal:*rc-keyboard-layout* 'qwerty)
-                                          'colemak-dh
-                                          'qwerty))
-     (rc-map-nav-keys cglobal:*rc-keyboard-layout*)
-     (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*rc-keyboard-layout*))
+     (setf cglobal:*keyboard-layout* (if (eql cglobal:*keyboard-layout* 'qwerty)
+                                        'colemak-dh
+                                        'qwerty))
+     (rc-map-nav-keys cglobal:*keyboard-layout*)
+     (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*keyboard-layout*))
     (t
-     (setf cglobal:*rc-keyboard-layout* (intern (string-upcase layout) "STUMPWM-USER"))
-     (rc-map-nav-keys cglobal:*rc-keyboard-layout*)
-     (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*rc-keyboard-layout*))))
+     (setf cglobal:*keyboard-layout* (intern (string-upcase layout) "STUMPWM-USER"))
+     (rc-map-nav-keys cglobal:*keyboard-layout*)
+     (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*keyboard-layout*))))
 
 (defcommand rc-delete-maybe-remove (&optional (window (current-window))) ()
   "Delete a window. If invoked on an empty frame, remove that frame."
@@ -277,7 +277,7 @@
                    (format stream "~A" win-num))))
              (write-string "-" stream)))))
      (iter-groups (screen cur-group gnr stream)
-       (loop for s from cglobal:*rc-first-group* to cglobal:*rc-last-group*
+       (loop for s from cglobal:*first-group* to cglobal:*last-group*
              for sname = (write-to-string s)
              do (write-group-stat (gset:find-group-set screen sname)
                                   cur-group gnr stream))))
@@ -292,7 +292,7 @@
 
 (defun rc-get-random-wp (&optional dir exclude)
   "Get a random wallpaper from DIR."
-  (let* ((wp-dir (or dir cglobal:*rc-wp-dir*))
+  (let* ((wp-dir (or dir cglobal:*wp-dir*))
          (wp-wild (merge-pathnames wp-dir (make-pathname :name :wild :type :wild)))
          (wp-list (remove-if
                     #'(lambda (p)
@@ -310,10 +310,10 @@
   (let ((wp (rc-get-random-wp (if dir
                                 (pathname dir)
                                 nil)
-                              cglobal:*rc-current-wp*)))
+                              cglobal:*current-wp*)))
     (when wp
       (message "Setting wallpaper: ^[^2^f1~A^]" wp)
-      (setf cglobal:*rc-current-wp* wp)
+      (setf cglobal:*current-wp* wp)
       (run-shell-command (format nil "feh --bg-fill ~a" wp)))))
 
 (defcommand rc-start-swank (&optional port) (:string)
@@ -352,7 +352,7 @@
 
 (set-prefix-key (kbd "s-t"))
 
-(rc-map-nav-keys cglobal:*rc-keyboard-layout*)
+(rc-map-nav-keys cglobal:*keyboard-layout*)
 
 (define-key *top-map* (kbd "s-RET") "exec xterm")
 
@@ -369,12 +369,12 @@
 (define-key *top-map* (kbd "s-:") "eval")
 (define-key *top-map* (kbd "s-;") "colon")
 
-(loop for gs from cglobal:*rc-first-group* to cglobal:*rc-last-group*
+(loop for gs from cglobal:*first-group* to cglobal:*last-group*
       for key = (format nil "s-~A" gs)
       for cmd = (format nil "gset-select ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
 (define-key *top-map* (kbd "s-SPC") "rc-switch-group-in-group-set")
-(loop for gs from cglobal:*rc-first-group* to cglobal:*rc-last-group*
+(loop for gs from cglobal:*first-group* to cglobal:*last-group*
       for char in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
       for key = (format nil "s-~A" char)
       for cmd = (format nil "rc-move-window-to-group-set ~A" gs)
@@ -405,7 +405,7 @@
 
 ;;--------- Groups ---------
 
-(loop for gs from cglobal:*rc-first-group* to cglobal:*rc-last-group*
+(loop for gs from cglobal:*first-group* to cglobal:*last-group*
       for gs-name = (format nil "~A" gs)
       do (gset:add-group-set (current-screen) gs-name
                              `(("T" tile-group)
@@ -451,7 +451,7 @@
 (set-float-unfocus-color (nth 0 *colors*))
 
 ;; Tell StumpWM where to find the fonts
-(setf xft:*font-dirs* `(,cglobal:*rc-fonts-dir*))
+(setf xft:*font-dirs* `(,cglobal:*fonts-dir*))
 (xft:cache-fonts)
 (run-shell-command "xset fp+ \"${HOME}/.local/share/fonts/tamzen-font-bdf\"" t)
 (run-shell-command "xset fp rehash" t)

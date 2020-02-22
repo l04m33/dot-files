@@ -3,29 +3,29 @@
   (:use #:cl
         #:stumpwm)
 
-  (:export #:*rc-first-group*
-           #:*rc-last-group*
-           #:*rc-fonts-dir*
-           #:*rc-wp-dir*
-           #:*rc-current-wp*
-           #:*rc-keyboard-layout*))
+  (:export #:*first-group*
+           #:*last-group*
+           #:*fonts-dir*
+           #:*wp-dir*
+           #:*current-wp*
+           #:*keyboard-layout*))
 
 
 (in-package #:custom-globals)
 
 
-(defparameter *rc-first-group* 0)
-(defparameter *rc-last-group*  9)
+(defparameter *first-group* 0)
+(defparameter *last-group*  9)
 
 ; ~/.stumpwm.d/fonts/
-(defparameter *rc-fonts-dir*
+(defparameter *fonts-dir*
   (cutil:build-resource-dir "fonts"))
 
 ; ~/.stumpwm.d/wp/
-(defparameter *rc-wp-dir*
+(defparameter *wp-dir*
   (cutil:build-resource-dir "wp"))
 
-(defparameter *rc-current-wp* nil)
+(defparameter *current-wp* nil)
 
 ; qwerty or colemak-dh
-(defvar *rc-keyboard-layout* 'colemak-dh)
+(defvar *keyboard-layout* 'colemak-dh)
