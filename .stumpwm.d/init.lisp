@@ -1,7 +1,6 @@
 (in-package #:stumpwm-user)
 
-(import `(stumpwm::window-frame
-          stumpwm::window-urgent-p
+(import `(stumpwm::window-urgent-p
           stumpwm::frame-windows
           stumpwm::tile-group-current-frame
           stumpwm::focus-prev-frame
@@ -295,21 +294,8 @@
 
 ;;--------- Hooks ---------
 
-;; Remove a frame when there is no window in it
-(defun rc-remove-empty-frame (win)
-  (unless (typep win 'float-window)
-    (let* ((f (window-frame win))
-           (g (window-group win))
-           (win-list (frame-windows g f)))
-      (unless win-list
-        (remove-split)))))
-
-(add-hook *destroy-window-hook* 'rc-remove-empty-frame)
-
-(defun rc-echo-urgent-window (win)
-  (message "^[^1^f1~A^] needs attention." (window-title win)))
-
-(add-hook *urgent-window-hook* 'rc-echo-urgent-window)
+(add-hook *destroy-window-hook* 'croutine:remove-empty-frame)
+(add-hook *urgent-window-hook* 'croutine:echo-urgent-window)
 
 
 ;;--------- Key Bindings ---------

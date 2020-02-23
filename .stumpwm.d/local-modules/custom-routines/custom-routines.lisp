@@ -5,15 +5,33 @@
   (:import-from #:stumpwm
                 #:tile-group-current-frame
                 #:split-frame
+                #:window-frame
                 #:frame-window
                 #:frame-windows
                 #:eval-command
                 #:tile-group
                 #:float-group
-                #:send-client-message))
+                #:float-window
+                #:send-client-message)
+  (:export #:remove-empty-frame
+           #:echo-urgent-window))
 
 
 (in-package #:custom-routines)
+
+
+;; Remove a frame when there is no window in it
+(defun remove-empty-frame (win)
+  (unless (typep win 'float-window)
+    (let* ((f (window-frame win))
+           (g (window-group win))
+           (win-list (frame-windows g f)))
+      (unless win-list
+        (remove-split)))))
+
+
+(defun echo-urgent-window (win)
+  (message "^[^1^f1~A^] needs attention." (window-title win)))
 
 
 (defun split-and-focus (group dir ratio)
