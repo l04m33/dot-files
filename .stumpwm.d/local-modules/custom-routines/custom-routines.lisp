@@ -12,6 +12,7 @@
                 #:tile-group
                 #:float-group
                 #:float-window
+                #:sort-windows
                 #:send-client-message)
   (:export #:remove-empty-frame
            #:echo-urgent-window
@@ -73,8 +74,8 @@
     (:qwerty
       (define-key map (kbd "s-h") "prev-in-frame")
       (define-key map (kbd "s-l") "next-in-frame")
-      (define-key map (kbd "s-k") "rc-prev-frame-or-window")
-      (define-key map (kbd "s-j") "rc-next-frame-or-window")
+      (define-key map (kbd "s-k") "prev-frame-or-window")
+      (define-key map (kbd "s-j") "next-frame-or-window")
 
       (define-key map (kbd "s-H") "move-window left")
       (define-key map (kbd "s-L") "move-window right")
@@ -86,8 +87,8 @@
     (:colemak-dh
       (define-key map (kbd "s-k") "prev-in-frame")
       (define-key map (kbd "s-i") "next-in-frame")
-      (define-key map (kbd "s-e") "rc-prev-frame-or-window")
-      (define-key map (kbd "s-n") "rc-next-frame-or-window")
+      (define-key map (kbd "s-e") "prev-frame-or-window")
+      (define-key map (kbd "s-n") "next-frame-or-window")
 
       (define-key map (kbd "s-K") "move-window left")
       (define-key map (kbd "s-I") "move-window right")
@@ -95,7 +96,6 @@
       (define-key map (kbd "s-N") "move-window down")
 
       (define-key map (kbd "s-s") "colemak-dh-iresize"))))
-
 
 (defcommand switch-kb-layout (&optional (layout nil)) (:string)
   "Switch keyboard layout and map navigation keys accordingly."
@@ -110,4 +110,48 @@
      (setf cglobal:*keyboard-layout* (intern (string-upcase layout) "KEYWORD"))
      (map-nav-keys stumpwm::*top-map* cglobal:*keyboard-layout*)
      (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*keyboard-layout*))))
+
+
+(defcommand (next-float-window float-group) () ()
+  "Switch to the next float window."
+  (let ((window (current-window)))
+    (when window
+      (let* ((group (current-group))
+             (group-windows (sort-windows group))
+             (next-window
+               (loop for w from 0 to (1- (length group-windows))
+                     when (= (window-number window)
+                             (window-number (nth w group-windows)))
+                     return (or (nth (1+ w) group-windows)
+                                (nth 0 group-windows)))))
+        (when next-window
+          (focus-window next-window t))))))
+
+(defcommand (prev-float-window float-group) () ()
+  "Switch to the previous float window."
+  (let ((window (current-window)))
+    (when window
+      (let* ((group (current-group))
+             (group-windows (sort-windows group))
+             (prev-window
+               (loop for w from (1- (length group-windows)) downto 0
+                     when (= (window-number window)
+                             (window-number (nth w group-windows)))
+                     return (if (> w 0)
+                              (nth (1- w) group-windows)
+                              (car (last group-windows))))))
+        (when prev-window
+          (focus-window prev-window t))))))
+
+(defcommand next-frame-or-window () ()
+  "Switch to the next frame or window depending on the type of the current group."
+  (if (typep (current-group) 'float-group)
+    (next-float-window)
+    (fnext)))
+
+(defcommand prev-frame-or-window () ()
+  "Switch to the previous frame or window depending on the type of the current group."
+  (if (typep (current-group) 'float-group)
+    (prev-float-window)
+    (fprev)))
 

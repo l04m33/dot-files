@@ -7,7 +7,6 @@
           stumpwm::frame-number
           stumpwm::group-frames
           stumpwm::tile-group
-          stumpwm::sort-windows
           stumpwm::head-mode-line
           stumpwm::eval-command
           stumpwm::float-group
@@ -89,49 +88,6 @@
 
 
 ;;--------- Custom Functions and Commands ---------
-
-(defcommand (rc-next-float-window float-group) () ()
-  "Switch to the next float window."
-  (let ((window (current-window)))
-    (when window
-      (let* ((group (current-group))
-             (group-windows (sort-windows group))
-             (next-window
-               (loop for w from 0 to (1- (length group-windows))
-                     when (= (window-number window)
-                             (window-number (nth w group-windows)))
-                     return (or (nth (1+ w) group-windows)
-                                (nth 0 group-windows)))))
-        (when next-window
-          (focus-window next-window t))))))
-
-(defcommand (rc-prev-float-window float-group) () ()
-  "Switch to the previous float window."
-  (let ((window (current-window)))
-    (when window
-      (let* ((group (current-group))
-             (group-windows (sort-windows group))
-             (prev-window
-               (loop for w from (1- (length group-windows)) downto 0
-                     when (= (window-number window)
-                             (window-number (nth w group-windows)))
-                     return (if (> w 0)
-                              (nth (1- w) group-windows)
-                              (car (last group-windows))))))
-        (when prev-window
-          (focus-window prev-window t))))))
-
-(defcommand rc-next-frame-or-window () ()
-  "Switch to the next frame or window depending on the type of the current group."
-  (if (typep (current-group) 'float-group)
-    (rc-next-float-window)
-    (fnext)))
-
-(defcommand rc-prev-frame-or-window () ()
-  "Switch to the previous frame or window depending on the type of the current group."
-  (if (typep (current-group) 'float-group)
-    (rc-prev-float-window)
-    (fprev)))
 
 (defcommand rc-switch-group-in-group-set () ()
   "Switch to the other group in a group set."
