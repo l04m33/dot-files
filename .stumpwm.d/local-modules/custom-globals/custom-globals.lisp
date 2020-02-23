@@ -27,5 +27,5 @@
 
 (defparameter *current-wp* nil)
 
-; qwerty or colemak-dh
-(defvar *keyboard-layout* 'colemak-dh)
+; :qwerty or :colemak-dh
+(defvar *keyboard-layout* :colemak-dh)

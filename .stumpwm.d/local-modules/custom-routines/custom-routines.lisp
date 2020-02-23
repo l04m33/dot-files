@@ -14,7 +14,8 @@
                 #:float-window
                 #:send-client-message)
   (:export #:remove-empty-frame
-           #:echo-urgent-window))
+           #:echo-urgent-window
+           #:map-nav-keys))
 
 
 (in-package #:custom-routines)
@@ -65,4 +66,48 @@
                (win-list (frame-windows g f)))
           (unless win-list
             (remove-split)))))))
+
+
+(defun map-nav-keys (map layout)
+  (case layout
+    (:qwerty
+      (define-key map (kbd "s-h") "prev-in-frame")
+      (define-key map (kbd "s-l") "next-in-frame")
+      (define-key map (kbd "s-k") "rc-prev-frame-or-window")
+      (define-key map (kbd "s-j") "rc-next-frame-or-window")
+
+      (define-key map (kbd "s-H") "move-window left")
+      (define-key map (kbd "s-L") "move-window right")
+      (define-key map (kbd "s-K") "move-window up")
+      (define-key map (kbd "s-J") "move-window down")
+
+      (define-key map (kbd "s-s") "iresize"))
+
+    (:colemak-dh
+      (define-key map (kbd "s-k") "prev-in-frame")
+      (define-key map (kbd "s-i") "next-in-frame")
+      (define-key map (kbd "s-e") "rc-prev-frame-or-window")
+      (define-key map (kbd "s-n") "rc-next-frame-or-window")
+
+      (define-key map (kbd "s-K") "move-window left")
+      (define-key map (kbd "s-I") "move-window right")
+      (define-key map (kbd "s-E") "move-window up")
+      (define-key map (kbd "s-N") "move-window down")
+
+      (define-key map (kbd "s-s") "colemak-dh-iresize"))))
+
+
+(defcommand switch-kb-layout (&optional (layout nil)) (:string)
+  "Switch keyboard layout and map navigation keys accordingly."
+  (cond
+    ((equal layout nil)
+     (setf cglobal:*keyboard-layout* (if (eql cglobal:*keyboard-layout* :qwerty)
+                                        :colemak-dh
+                                        :qwerty))
+     (map-nav-keys stumpwm::*top-map* cglobal:*keyboard-layout*)
+     (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*keyboard-layout*))
+    (t
+     (setf cglobal:*keyboard-layout* (intern (string-upcase layout) "KEYWORD"))
+     (map-nav-keys stumpwm::*top-map* cglobal:*keyboard-layout*)
+     (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*keyboard-layout*))))
 

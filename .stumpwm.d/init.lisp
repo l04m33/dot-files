@@ -85,53 +85,10 @@
 (when (not swm-gaps:*gaps-on*)
   (eval-command "toggle-gaps"))
 
-(setf cglobal:*keyboard-layout* 'colemak-dh)
+(setf cglobal:*keyboard-layout* :colemak-dh)
 
 
 ;;--------- Custom Functions and Commands ---------
-
-(defun rc-map-nav-keys (layout)
-  (case layout
-    (qwerty
-      (define-key *top-map* (kbd "s-h") "prev-in-frame")
-      (define-key *top-map* (kbd "s-l") "next-in-frame")
-      (define-key *top-map* (kbd "s-k") "rc-prev-frame-or-window")
-      (define-key *top-map* (kbd "s-j") "rc-next-frame-or-window")
-
-      (define-key *top-map* (kbd "s-H") "move-window left")
-      (define-key *top-map* (kbd "s-L") "move-window right")
-      (define-key *top-map* (kbd "s-K") "move-window up")
-      (define-key *top-map* (kbd "s-J") "move-window down")
-
-      (define-key *top-map* (kbd "s-s") "iresize"))
-
-    (colemak-dh
-      (define-key *top-map* (kbd "s-k") "prev-in-frame")
-      (define-key *top-map* (kbd "s-i") "next-in-frame")
-      (define-key *top-map* (kbd "s-e") "rc-prev-frame-or-window")
-      (define-key *top-map* (kbd "s-n") "rc-next-frame-or-window")
-
-      (define-key *top-map* (kbd "s-K") "move-window left")
-      (define-key *top-map* (kbd "s-I") "move-window right")
-      (define-key *top-map* (kbd "s-E") "move-window up")
-      (define-key *top-map* (kbd "s-N") "move-window down")
-
-      (define-key *top-map* (kbd "s-s") "colemak-dh-iresize"))))
-
-
-(defcommand rc-switch-kb-layout (&optional (layout nil)) ()
-  "Switch keyboard layout and map navigation keys accordingly."
-  (cond
-    ((equal layout nil)
-     (setf cglobal:*keyboard-layout* (if (eql cglobal:*keyboard-layout* 'qwerty)
-                                        'colemak-dh
-                                        'qwerty))
-     (rc-map-nav-keys cglobal:*keyboard-layout*)
-     (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*keyboard-layout*))
-    (t
-     (setf cglobal:*keyboard-layout* (intern (string-upcase layout) "STUMPWM-USER"))
-     (rc-map-nav-keys cglobal:*keyboard-layout*)
-     (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*keyboard-layout*))))
 
 (defcommand (rc-next-float-window float-group) () ()
   "Switch to the next float window."
@@ -302,7 +259,7 @@
 
 (set-prefix-key (kbd "s-t"))
 
-(rc-map-nav-keys cglobal:*keyboard-layout*)
+(croutine:map-nav-keys *top-map* cglobal:*keyboard-layout*)
 
 (define-key *top-map* (kbd "s-RET") "exec xterm")
 
