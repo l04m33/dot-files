@@ -159,10 +159,6 @@
           (unless win-list
             (remove-split)))))))
 
-(defcommand (rc-fprev tile-group) () ()
-  "Switch to the previous frame."
-  (focus-prev-frame (current-group)))
-
 (defcommand (rc-hsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
   "Hsplit a frame, and move focus to the new frame."
   (rc-split-and-focus (current-group) :column (read-from-string ratio)))
@@ -212,7 +208,7 @@
   "Switch to the previous frame or window depending on the type of the current group."
   (if (typep (current-group) 'float-group)
     (rc-prev-float-window)
-    (rc-fprev)))
+    (fprev)))
 
 (defcommand rc-switch-group-in-group-set () ()
   "Switch to the other group in a group set."
