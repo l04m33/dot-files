@@ -2,10 +2,8 @@
 
 (import `(stumpwm::window-frame
           stumpwm::window-urgent-p
-          stumpwm::frame-window
           stumpwm::frame-windows
           stumpwm::tile-group-current-frame
-          stumpwm::split-frame
           stumpwm::focus-prev-frame
           stumpwm::frame-number
           stumpwm::group-frames
@@ -13,7 +11,6 @@
           stumpwm::sort-windows
           stumpwm::head-mode-line
           stumpwm::eval-command
-          stumpwm::send-client-message
           stumpwm::float-group
           stumpwm::float-window
           stumpwm::unfloat-window
@@ -61,6 +58,7 @@
 (defparameter *rc-local-modules* `("custom-utils"
                                    "custom-globals"
                                    "group-set"
+                                   "custom-routines"
                                    "stumpwm-patches"))
 
 ; ~/.stumpwm.d/local-modules/
@@ -92,16 +90,6 @@
 
 
 ;;--------- Custom Functions and Commands ---------
-
-(defun rc-split-and-focus (group dir ratio)
-  (let ((old-f (tile-group-current-frame group))
-        (new-f (split-frame group dir ratio)))
-    (if new-f
-      (progn
-        (when (frame-window old-f)
-          (update-decoration (frame-window old-f)))
-        (eval-command (format nil "fselect ~A" new-f)))
-      (message "Cannot split smaller than minimum size."))))
 
 (defun rc-map-nav-keys (layout)
   (case layout
@@ -145,27 +133,6 @@
      (setf cglobal:*keyboard-layout* (intern (string-upcase layout) "STUMPWM-USER"))
      (rc-map-nav-keys cglobal:*keyboard-layout*)
      (message "Switched to keyboard layout: ^[^2^f1~A^]" cglobal:*keyboard-layout*))))
-
-(defcommand rc-delete-maybe-remove (&optional (window (current-window))) ()
-  "Delete a window. If invoked on an empty frame, remove that frame."
-  (if window
-    (send-client-message
-      window :WM_PROTOCOLS
-      (xlib:intern-atom *display* :WM_DELETE_WINDOW))
-    (let ((g (current-group)))
-      (unless (typep g 'float-group)
-        (let* ((f (tile-group-current-frame g))
-               (win-list (frame-windows g f)))
-          (unless win-list
-            (remove-split)))))))
-
-(defcommand (rc-hsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
-  "Hsplit a frame, and move focus to the new frame."
-  (rc-split-and-focus (current-group) :column (read-from-string ratio)))
-
-(defcommand (rc-vsplit-and-focus tile-group) (&optional (ratio "1/2")) (:string)
-  "Vsplit a frame, and move focus to the new frame."
-  (rc-split-and-focus (current-group) :row (read-from-string ratio)))
 
 (defcommand (rc-next-float-window float-group) () ()
   "Switch to the next float window."
@@ -353,11 +320,11 @@
 
 (define-key *top-map* (kbd "s-RET") "exec xterm")
 
-(define-key *top-map* (kbd "s-C") "rc-delete-maybe-remove")
+(define-key *top-map* (kbd "s-C") "delete-maybe-remove")
 (define-key *top-map* (kbd "s-/") "windowlist")
 
-(define-key *top-map* (kbd "s-,") "rc-hsplit-and-focus")
-(define-key *top-map* (kbd "s-.") "rc-vsplit-and-focus")
+(define-key *top-map* (kbd "s-,") "hsplit-and-focus")
+(define-key *top-map* (kbd "s-.") "vsplit-and-focus")
 (define-key *top-map* (kbd "s-=") "balance-frames")
 
 (define-key *top-map* (kbd "s-f") "fullscreen")
