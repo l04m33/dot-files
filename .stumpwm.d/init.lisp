@@ -166,45 +166,6 @@
                            (format out " ~%"))))
       (message "~A" stat-message))))
 
-(defun rc-get-random-wp (&optional dir exclude)
-  "Get a random wallpaper from DIR."
-  (let* ((wp-dir (or dir cglobal:*wp-dir*))
-         (wp-wild (merge-pathnames wp-dir (make-pathname :name :wild :type :wild)))
-         (wp-list (remove-if
-                    #'(lambda (p)
-                        (or (null (pathname-name p))
-                            (and (not (null exclude))
-                                 (pathname-match-p p exclude))))
-                    (directory wp-wild)))
-         (wp-count (length wp-list)))
-      (if (> wp-count 0)
-        (elt wp-list (random wp-count))
-        nil)))
-
-(defcommand rc-random-wp (&optional dir) (:string)
-  "Switch to a wallpaper randomly selected from DIR."
-  (let ((wp (rc-get-random-wp (if dir
-                                (pathname dir)
-                                nil)
-                              cglobal:*current-wp*)))
-    (when wp
-      (message "Setting wallpaper: ^[^2^f1~A^]" wp)
-      (setf cglobal:*current-wp* wp)
-      (run-shell-command (format nil "feh --bg-fill ~a" wp)))))
-
-(defcommand rc-start-swank (&optional port) (:string)
-  "Start the SWANK server."
-  (swank:create-server :port (parse-integer (or port "4005"))
-                       :dont-close t))
-
-(defcommand rc-stop-swank (&optional port) (:string)
-  "Stop the SWANK server."
-  (swank:stop-server (parse-integer (or port "4005"))))
-
-(defcommand rc-start-vlime (&optional port) (:string)
-  "Start the Vlime server."
-  (vlime:main :port (parse-integer (or port "7002")) :backend :vlime-usocket))
-
 ;;--------- Hooks ---------
 
 (add-hook *destroy-window-hook* 'croutine:remove-empty-frame)
@@ -373,7 +334,7 @@
 
 ;;--------- Daemons ---------
 
-(eval-command "rc-random-wp")
+(eval-command "random-wp")
 (run-shell-command  "ibus-daemon -d -x -r -n stumpwm")
 (run-shell-command  "xautolock -time 10 -corners '00+-' -locker slock")
 (run-shell-command  "compton -c -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 --opacity-rule '90:class_g*?=\"xterm\"' --opacity-rule '75:window_type=\"dock\"'")

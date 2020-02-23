@@ -155,3 +155,43 @@
     (prev-float-window)
     (fprev)))
 
+
+(defun get-random-wp (&optional dir exclude)
+  "Get a random wallpaper from DIR."
+  (let* ((wp-dir (or dir cglobal:*wp-dir*))
+         (wp-wild (merge-pathnames wp-dir (make-pathname :name :wild :type :wild)))
+         (wp-list (remove-if
+                    #'(lambda (p)
+                        (or (null (pathname-name p))
+                            (and (not (null exclude))
+                                 (pathname-match-p p exclude))))
+                    (directory wp-wild)))
+         (wp-count (length wp-list)))
+      (if (> wp-count 0)
+        (elt wp-list (random wp-count))
+        nil)))
+
+(defcommand random-wp (&optional dir) (:string)
+  "Switch to a wallpaper randomly selected from DIR."
+  (let ((wp (get-random-wp (if dir
+                             (pathname dir)
+                             nil)
+                           cglobal:*current-wp*)))
+    (when wp
+      (message "Setting wallpaper: ^[^2^f1~A^]" wp)
+      (setf cglobal:*current-wp* wp)
+      (run-shell-command (format nil "feh --bg-fill ~a" wp)))))
+
+(defcommand start-swank (&optional port) (:string)
+  "Start the SWANK server."
+  (swank:create-server :port (parse-integer (or port "4005"))
+                       :dont-close t))
+
+(defcommand stop-swank (&optional port) (:string)
+  "Stop the SWANK server."
+  (swank:stop-server (parse-integer (or port "4005"))))
+
+(defcommand start-vlime (&optional port) (:string)
+  "Start the Vlime server."
+  (vlime:main :port (parse-integer (or port "7002")) :backend :vlime-usocket))
+
