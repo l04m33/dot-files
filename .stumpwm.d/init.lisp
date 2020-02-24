@@ -1,17 +1,9 @@
 (in-package #:stumpwm-user)
 
-(import `(stumpwm::window-urgent-p
-          stumpwm::frame-windows
-          stumpwm::tile-group-current-frame
-          stumpwm::focus-prev-frame
-          stumpwm::frame-number
-          stumpwm::group-frames
-          stumpwm::tile-group
+(import `(stumpwm::tile-group
           stumpwm::head-mode-line
           stumpwm::eval-command
           stumpwm::float-group
-          stumpwm::float-window
-          stumpwm::unfloat-window
           stumpwm::*float-window-border*
           stumpwm::*float-window-title-height*
           stumpwm::setup-iresize
@@ -76,7 +68,7 @@
 (mapcar #'load-module (append *rc-modules* *rc-local-modules*))
 
 
-;;--------- Module Variables ---------
+;;--------- Module Behaviors ---------
 
 (setf swm-gaps:*inner-gaps-size* 5)
 (setf swm-gaps:*outer-gaps-size* 10)
@@ -86,85 +78,6 @@
 
 (setf cglobal:*keyboard-layout* :colemak-dh)
 
-
-;;--------- Custom Functions and Commands ---------
-
-(defcommand rc-switch-group-in-group-set () ()
-  "Switch to the other group in a group set."
-  (let* ((gset (gset:current-group-set))
-         (cur-group-nr (and gset (gset:gset-current-group-nr gset))))
-    (case cur-group-nr
-      (0 (gset:switch-to-group-set gset 1))
-      (1 (gset:switch-to-group-set gset 0))
-      ((nil) (message "Group ^[^2~A^] does not belong to any group set."
-                      (group-name (current-group)))))))
-
-(defcommand rc-move-window-to-group-set (to-group-set) (:string)
-  "Move a window to another group set."
-  (let ((window (current-window)))
-    (when window
-      (let ((gset (gset:find-group-set (current-screen) to-group-set)))
-        (if gset
-          (gset:move-window-to-group-set window gset)
-          (message "Group set ^[^2~A^] not found." to-group-set))))))
-
-(defcommand rc-move-all-windows-to-other-group () ()
-  "Move all windows in current group to the other group in a group set."
-  (let* ((gset (gset:current-group-set))
-         (gset-groups (gset:gset-groups gset))
-         (cur-group-nr (gset:gset-current-group-nr gset))
-         (other-group-nr (cond
-                           ((= cur-group-nr 0) 1)
-                           ((= cur-group-nr 1) 0)))
-         (cur-group (elt gset-groups cur-group-nr))
-         (other-group (elt gset-groups other-group-nr))
-         (windows (group-windows cur-group)))
-    (move-windows-to-group windows other-group)
-    (if (typep cur-group 'tile-group)
-      ;; tile-group -> float-group
-      ;; Remove all tile-group frames since the tile-group is now empty.
-      (let ((frames (group-frames cur-group)))
-        (dolist (f frames)
-          (unless (= 0 (frame-number f))
-            (remove-split cur-group f))))
-      ;; float-group -> tile-group
-      (mapcar #'(lambda (w) (unfloat-window w other-group)) windows))
-    (gset:switch-to-group-set gset other-group-nr)))
-
-(defcommand rc-show-group-overview () ()
-  "Show brief stats of all groups in group sets."
-  (labels
-    ((write-group-stat (gset cur-group gnr stream)
-       (let* ((group (nth gnr (gset:gset-groups gset)))
-              (group-windows (group-windows group))
-              (win-num (length group-windows)))
-         (write-string " " stream)
-         (if (string= (group-name group) (group-name cur-group))
-           (write-string "*" stream)
-           (if (> win-num 0)
-             (let ((has-urgent-window
-                     (loop for w in group-windows
-                           when (window-urgent-p w) return t
-                           finally (return nil))))
-               (if has-urgent-window
-                 (write-string "!" stream)
-                 (if (> win-num 9)
-                   (write-string "#" stream)
-                   (format stream "~A" win-num))))
-             (write-string "-" stream)))))
-     (iter-groups (screen cur-group gnr stream)
-       (loop for s from cglobal:*first-group* to cglobal:*last-group*
-             for sname = (write-to-string s)
-             do (write-group-stat (gset:find-group-set screen sname)
-                                  cur-group gnr stream))))
-    (let* ((screen (current-screen))
-           (cur-group (current-group))
-           (stat-message (with-output-to-string (out)
-                           (iter-groups screen cur-group 0 out)
-                           (format out " ~%")
-                           (iter-groups screen cur-group 1 out)
-                           (format out " ~%"))))
-      (message "~A" stat-message))))
 
 ;;--------- Hooks ---------
 
@@ -197,14 +110,14 @@
       for key = (format nil "s-~A" gs)
       for cmd = (format nil "gset-select ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
-(define-key *top-map* (kbd "s-SPC") "rc-switch-group-in-group-set")
+(define-key *top-map* (kbd "s-SPC") "switch-group-in-group-set")
 (loop for gs from cglobal:*first-group* to cglobal:*last-group*
       for char in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
       for key = (format nil "s-~A" char)
-      for cmd = (format nil "rc-move-window-to-group-set ~A" gs)
+      for cmd = (format nil "move-window-to-group-set ~A" gs)
       do (define-key *top-map* (kbd key) cmd))
-(define-key *top-map* (kbd "S-s-SPC") "rc-move-all-windows-to-other-group")
-(define-key *top-map* (kbd "s-p") "rc-show-group-overview")
+(define-key *top-map* (kbd "S-s-SPC") "move-all-windows-to-other-group")
+(define-key *top-map* (kbd "s-p") "show-group-overview")
 (define-key *top-map* (kbd "s-P") "vgroups")
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
