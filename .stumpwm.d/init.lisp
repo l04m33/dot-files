@@ -5,10 +5,7 @@
           stumpwm::eval-command
           stumpwm::float-group
           stumpwm::*float-window-border*
-          stumpwm::*float-window-title-height*
-          stumpwm::setup-iresize
-          stumpwm::resize-unhide
-          stumpwm::abort-resize-p))
+          stumpwm::*float-window-title-height*))
 
 
 ;;--------- Debugging ---------
@@ -49,6 +46,7 @@
                                    "custom-globals"
                                    "group-set"
                                    "custom-routines"
+                                   "custom-keymaps"
                                    "stumpwm-patches"))
 
 ; ~/.stumpwm.d/local-modules/
@@ -78,6 +76,13 @@
 
 (setf cglobal:*keyboard-layout* :colemak-dh)
 
+(loop for gs from cglobal:*first-group* to cglobal:*last-group*
+      for gs-name = (format nil "~A" gs)
+      do (gset:add-group-set (current-screen) gs-name
+                             `(("T" tile-group)
+                               ("F" float-group))))
+(gset:gset-select "1")
+
 
 ;;--------- Hooks ---------
 
@@ -87,67 +92,7 @@
 
 ;;--------- Key Bindings ---------
 
-(set-prefix-key (kbd "s-t"))
-
-(croutine:map-nav-keys *top-map* cglobal:*keyboard-layout*)
-
-(define-key *top-map* (kbd "s-RET") "exec xterm")
-
-(define-key *top-map* (kbd "s-C") "delete-maybe-remove")
-(define-key *top-map* (kbd "s-/") "windowlist")
-
-(define-key *top-map* (kbd "s-,") "hsplit-and-focus")
-(define-key *top-map* (kbd "s-.") "vsplit-and-focus")
-(define-key *top-map* (kbd "s-=") "balance-frames")
-
-(define-key *top-map* (kbd "s-f") "fullscreen")
-
-(define-key *top-map* (kbd "s-r") "exec")
-(define-key *top-map* (kbd "s-:") "eval")
-(define-key *top-map* (kbd "s-;") "colon")
-
-(loop for gs from cglobal:*first-group* to cglobal:*last-group*
-      for key = (format nil "s-~A" gs)
-      for cmd = (format nil "gset-select ~A" gs)
-      do (define-key *top-map* (kbd key) cmd))
-(define-key *top-map* (kbd "s-SPC") "switch-group-in-group-set")
-(loop for gs from cglobal:*first-group* to cglobal:*last-group*
-      for char in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
-      for key = (format nil "s-~A" char)
-      for cmd = (format nil "move-window-to-group-set ~A" gs)
-      do (define-key *top-map* (kbd key) cmd))
-(define-key *top-map* (kbd "S-s-SPC") "move-all-windows-to-other-group")
-(define-key *top-map* (kbd "s-p") "show-group-overview")
-(define-key *top-map* (kbd "s-P") "vgroups")
-
-(define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
-(define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle")
-
-(define-interactive-keymap (colemak-dh-iresize tile-group) (:on-enter #'setup-iresize
-                                                            :on-exit #'resize-unhide
-                                                            :abort-if #'abort-resize-p)
-  ((kbd "Up") "resize-direction up")
-  ((kbd "e") "resize-direction up")
-
-  ((kbd "Down") "resize-direction down")
-  ((kbd "n") "resize-direction down")
-
-  ((kbd "Left") "resize-direction left")
-  ((kbd "k") "resize-direction left")
-
-  ((kbd "Right") "resize-direction right")
-  ((kbd "i") "resize-direction right"))
-
-
-;;--------- Groups ---------
-
-(loop for gs from cglobal:*first-group* to cglobal:*last-group*
-      for gs-name = (format nil "~A" gs)
-      do (gset:add-group-set (current-screen) gs-name
-                             `(("T" tile-group)
-                               ("F" float-group))))
-(gset:gset-select "1")
+(eval-command "top-map-colemak-dh")
 
 
 ;;--------- Appearance ---------
