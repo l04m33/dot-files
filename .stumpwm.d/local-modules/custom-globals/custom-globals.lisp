@@ -7,8 +7,7 @@
            #:*last-group*
            #:*fonts-dir*
            #:*wp-dir*
-           #:*current-wp*
-           #:*keyboard-layout*))
+           #:*current-wp*))
 
 
 (in-package #:custom-globals)
@@ -27,5 +26,3 @@
 
 (defparameter *current-wp* nil)
 
-; :qwerty or :colemak-dh
-(defvar *keyboard-layout* :colemak-dh)
