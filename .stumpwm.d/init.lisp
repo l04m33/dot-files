@@ -74,8 +74,6 @@
 (when (not swm-gaps:*gaps-on*)
   (eval-command "toggle-gaps"))
 
-(setf cglobal:*keyboard-layout* :colemak-dh)
-
 (loop for gs from cglobal:*first-group* to cglobal:*last-group*
       for gs-name = (format nil "~A" gs)
       do (gset:add-group-set (current-screen) gs-name
