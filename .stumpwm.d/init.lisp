@@ -1,9 +1,9 @@
 (in-package #:stumpwm-user)
 
 (import `(stumpwm::tile-group
+          stumpwm::float-group
           stumpwm::head-mode-line
           stumpwm::eval-command
-          stumpwm::float-group
           stumpwm::*float-window-border*
           stumpwm::*float-window-title-height*))
 
@@ -132,15 +132,13 @@
 (set-float-focus-color (nth 4 *colors*))
 (set-float-unfocus-color (nth 0 *colors*))
 
-;; Tell StumpWM where to find the fonts
-(setf xft:*font-dirs* `(,cglobal:*fonts-dir*))
-(xft:cache-fonts)
-(run-shell-command "xset fp+ \"${HOME}/.local/share/fonts/tamzen-font-bdf\"" t)
-(run-shell-command "xset fp rehash" t)
-
+(croutine:cache-fonts)
 (set-font (list
             "-*-tamzenforpowerline-medium-*-*-*-15-*-*-*-*-*-*-*"
-            (make-instance 'xft:font :family "WenQuanYi Zen Hei Mono" :subfamily "Regular" :size 11)))
+            (make-instance 'xft:font
+                           :family "WenQuanYi Zen Hei Mono"
+                           :subfamily "Regular"
+                           :size 11)))
 
 
 ;;--------- Mode Line ---------

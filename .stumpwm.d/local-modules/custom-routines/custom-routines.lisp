@@ -19,7 +19,8 @@
                 #:window-urgent-p
                 #:send-client-message)
   (:export #:remove-empty-frame
-           #:echo-urgent-window))
+           #:echo-urgent-window
+           #:cache-fonts))
 
 
 (in-package #:custom-routines)
@@ -232,4 +233,12 @@
                            (iter-groups screen cur-group 1 out)
                            (format out " ~%"))))
       (message "~A" stat-message))))
+
+
+(defun cache-fonts ()
+  "Tell StumpWM where to find the fonts"
+  (setf xft:*font-dirs* `(,cglobal:*fonts-dir*))
+  (xft:cache-fonts)
+  (run-shell-command "xset fp+ \"${HOME}/.local/share/fonts/tamzen-font-bdf\"" t)
+  (run-shell-command "xset fp rehash" t))
 
