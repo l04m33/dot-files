@@ -61,6 +61,7 @@ so one can further customize it."
 
     (,(kbd "s-C") "delete-maybe-remove")
     (,(kbd "s-/") "windowlist")
+    (,(kbd "s-?") "frame-windowlist")
 
     (,(kbd "s-,") "hsplit-and-focus")
     (,(kbd "s-.") "vsplit-and-focus")
