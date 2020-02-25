@@ -110,7 +110,8 @@ so one can further customize it."
     ((kbd "s-K") "move-window up")
     ((kbd "s-J") "move-window down")
 
-    ((kbd "s-s") "iresize")))
+    ((kbd "s-s") "iresize")
+    ((kbd "s-g") "imove-qwerty")))
 
 
 (defvar *top-map-colemak-dh*
@@ -125,7 +126,8 @@ so one can further customize it."
     ((kbd "s-E") "move-window up")
     ((kbd "s-N") "move-window down")
 
-    ((kbd "s-s") "iresize-colemak-dh")))
+    ((kbd "s-s") "iresize-colemak-dh")
+    ((kbd "s-g") "imove-colemak-dh")))
 
 
 (let ((common-maps (append *common-top-maps* *group-set-maps*)))
@@ -149,4 +151,36 @@ so one can further customize it."
 
   ((kbd "Right") "resize-direction right")
   ((kbd "i")     "resize-direction right"))
+
+
+(defun imove-abort-p ()
+  (when (null (current-window))
+    (message "No current window!")
+    t))
+
+(define-interactive-keymap imove-qwerty (:abort-if #'imove-abort-p)
+  ((kbd "Up")    "move-any-window up")
+  ((kbd "k")     "move-any-window up")
+
+  ((kbd "Down")  "move-any-window down")
+  ((kbd "j")     "move-any-window down")
+
+  ((kbd "Left")  "move-any-window left")
+  ((kbd "h")     "move-any-window left")
+
+  ((kbd "Right") "move-any-window right")
+  ((kbd "l")     "move-any-window right"))
+
+(define-interactive-keymap imove-colemak-dh (:abort-if #'imove-abort-p)
+  ((kbd "Up")    "move-any-window up")
+  ((kbd "e")     "move-any-window up")
+
+  ((kbd "Down")  "move-any-window down")
+  ((kbd "n")     "move-any-window down")
+
+  ((kbd "Left")  "move-any-window left")
+  ((kbd "k")     "move-any-window left")
+
+  ((kbd "Right") "move-any-window right")
+  ((kbd "i")     "move-any-window right"))
 

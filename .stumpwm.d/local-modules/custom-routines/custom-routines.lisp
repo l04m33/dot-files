@@ -10,12 +10,15 @@
                 #:window-frame
                 #:frame-window
                 #:frame-windows
+                #:neighbour
+                #:pull-window
                 #:eval-command
                 #:tile-group
                 #:tile-window
                 #:float-group
                 #:float-window
                 #:unfloat-window
+                #:float-window-move-resize
                 #:sort-windows
                 #:window-urgent-p
                 #:send-client-message)
@@ -138,6 +141,36 @@
     (when (and frame (null win-list))
       (remove-split group frame)
       (focus-window win))))
+
+
+(defun move-tile-window (win dir &optional (amount 1))
+  (let* ((group (window-group win))
+         (new-frame (window-frame win)))
+    (dotimes (i amount)
+      (setf new-frame (neighbour dir new-frame (group-frames group))))
+    (when new-frame
+      (pull-window win new-frame))))
+
+(defun move-float-window (win dir &optional (amount 1))
+  (let* ((x (window-x win))
+         (y (window-y win))
+         (new-x (case dir (:left (- x amount)) (:right (+ x amount)) (t x)))
+         (new-y (case dir (:up (- y amount)) (:down (+ y amount)) (t y))))
+    (float-window-move-resize win
+                              :x new-x
+                              :y new-y
+                              :width (window-width win)
+                              :height (window-height win))))
+
+(defcommand move-any-window (dir) ((:direction "Direction: "))
+  (let ((win (current-window)))
+    (when win
+      (if (typep win 'tile-window)
+        (move-tile-window win dir 1)
+        (let* ((screen (window-screen win))
+               (max-dim (max (screen-width screen) (screen-height screen)))
+               (step (ceiling (/ max-dim 40))))
+          (move-float-window win dir step))))))
 
 
 (defun get-random-wp (&optional dir exclude)
