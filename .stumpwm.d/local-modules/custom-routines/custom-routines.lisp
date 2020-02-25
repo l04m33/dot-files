@@ -73,12 +73,13 @@
             (remove-split)))))))
 
 
-(defcommand (next-float-window float-group) () ()
+(defcommand next-float-window () ()
   "Switch to the next float window."
   (let ((window (current-window)))
     (when window
       (let* ((group (current-group))
-             (group-windows (sort-windows group))
+             (group-windows (remove-if-not #'(lambda (w) (typep w 'float-window))
+                                           (sort-windows group)))
              (next-window
                (loop for w from 0 to (1- (length group-windows))
                      when (= (window-number window)
@@ -88,12 +89,13 @@
         (when next-window
           (focus-window next-window t))))))
 
-(defcommand (prev-float-window float-group) () ()
+(defcommand prev-float-window () ()
   "Switch to the previous float window."
   (let ((window (current-window)))
     (when window
       (let* ((group (current-group))
-             (group-windows (sort-windows group))
+             (group-windows (remove-if-not #'(lambda (w) (typep w 'float-window))
+                                           (sort-windows group)))
              (prev-window
                (loop for w from (1- (length group-windows)) downto 0
                      when (= (window-number window)
@@ -106,15 +108,23 @@
 
 (defcommand next-frame-or-window () ()
   "Switch to the next frame or window depending on the type of the current group."
-  (if (typep (current-group) 'float-group)
-    (next-float-window)
-    (fnext)))
+  (let ((cw (current-window)))
+    (if (null cw)
+      (when (typep (current-group) 'tile-group)
+        (fnext))
+      (if (typep cw 'float-window)
+        (next-float-window)
+        (fnext)))))
 
 (defcommand prev-frame-or-window () ()
   "Switch to the previous frame or window depending on the type of the current group."
-  (if (typep (current-group) 'float-group)
-    (prev-float-window)
-    (fprev)))
+  (let ((cw (current-window)))
+    (if (null cw)
+      (when (typep (current-group) 'tile-group)
+        (fprev))
+      (if (typep cw 'float-window)
+        (prev-float-window)
+        (fprev)))))
 
 
 (defun get-random-wp (&optional dir exclude)
