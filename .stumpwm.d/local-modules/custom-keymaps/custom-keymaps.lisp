@@ -68,6 +68,7 @@ so one can further customize it."
     (,(kbd "s-=") "balance-frames")
 
     (,(kbd "s-f") "fullscreen")
+    (,(kbd "s-F") "float-this-maybe-remove")
 
     (,(kbd "s-r") "exec")
     (,(kbd "s-:") "eval")

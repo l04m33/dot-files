@@ -12,6 +12,7 @@
                 #:frame-windows
                 #:eval-command
                 #:tile-group
+                #:tile-window
                 #:float-group
                 #:float-window
                 #:unfloat-window
@@ -33,7 +34,7 @@
            (g (window-group win))
            (win-list (frame-windows g f)))
       (unless win-list
-        (remove-split)))))
+        (remove-split g f)))))
 
 
 (defun echo-urgent-window (win)
@@ -70,7 +71,7 @@
         (let* ((f (tile-group-current-frame g))
                (win-list (frame-windows g f)))
           (unless win-list
-            (remove-split)))))))
+            (remove-split g f)))))))
 
 
 (defcommand next-float-window () ()
@@ -125,6 +126,17 @@
       (if (typep cw 'float-window)
         (prev-float-window)
         (fprev)))))
+
+(defcommand (float-this-maybe-remove tile-group) () ()
+  (let* ((win (current-window))
+         (frame (and win (typep win 'tile-window) (window-frame win)))
+         (group (window-group win))
+         (win-list (and frame (remove-if #'(lambda (w) (eq w win))
+                                         (frame-windows group frame)))))
+    (float-window win group)
+    (when (and frame (null win-list))
+      (remove-split group frame)
+      (focus-window win))))
 
 
 (defun get-random-wp (&optional dir exclude)
