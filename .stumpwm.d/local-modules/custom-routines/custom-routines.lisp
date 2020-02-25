@@ -130,10 +130,11 @@
 (defcommand (float-this-maybe-remove tile-group) () ()
   (let* ((win (current-window))
          (frame (and win (typep win 'tile-window) (window-frame win)))
-         (group (window-group win))
+         (group (and win (window-group win)))
          (win-list (and frame (remove-if #'(lambda (w) (eq w win))
                                          (frame-windows group frame)))))
-    (float-window win group)
+    (when win
+      (float-window win group))
     (when (and frame (null win-list))
       (remove-split group frame)
       (focus-window win))))
