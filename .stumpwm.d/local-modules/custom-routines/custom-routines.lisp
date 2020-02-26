@@ -148,6 +148,11 @@
       (remove-split group frame)
       (focus-window win))))
 
+(defcommand (float-or-unfloat-this tile-group) () ()
+  (if (typep (current-window) 'float-window)
+    (unfloat-this)
+    (float-this-maybe-remove)))
+
 
 (defun move-tile-window (win dir &optional (amount 1))
   (let* ((group (window-group win))
@@ -340,6 +345,28 @@
                            (iter-groups screen cur-group 1 out)
                            (format out " ~%"))))
       (message "~A" stat-message))))
+
+
+(defcommand (weighted-frames tile-group) (&optional (ratio "0.618")) (:string)
+  (let ((group (current-group)))
+    (if (<= (length (group-frames group)) 1)
+      (message "There's only one frame!")
+      (let* ((head (current-head group))
+             (head-width (frame-width head))
+             (head-height (frame-height head))
+
+             (ratio-n (read-from-string ratio))
+
+             (target-width (round (* head-width ratio-n)))
+             (target-height (round (* head-height ratio-n)))
+
+             (frame (tile-group-current-frame group))
+             (width (frame-width frame))
+             (height (frame-height frame))
+
+             (delta-width (- target-width width))
+             (delta-height (- target-height height)))
+        (resize delta-width delta-height)))))
 
 
 (defun cache-fonts ()

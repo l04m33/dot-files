@@ -67,9 +67,10 @@ so one can further customize it."
     (,(kbd "s-,") "hsplit-and-focus")
     (,(kbd "s-.") "vsplit-and-focus")
     (,(kbd "s-=") "balance-frames")
+    (,(kbd "s-+") "weighted-frames")
 
     (,(kbd "s-f") "fullscreen")
-    (,(kbd "s-F") "float-this-maybe-remove")
+    (,(kbd "s-F") "float-or-unfloat-this")
 
     (,(kbd "s-r") "exec")
     (,(kbd "s-:") "eval")
