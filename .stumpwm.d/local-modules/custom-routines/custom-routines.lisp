@@ -173,15 +173,19 @@
                               :width (window-width win)
                               :height (window-height win))))
 
+(defun win-op-step (&optional win)
+  (let* ((head (if win
+                 (window-head win)
+                 (current-head)))
+         (max-dim (max (frame-width head) (frame-height head))))
+    (round (/ max-dim 40))))
+
 (defcommand move-any-window (dir) ((:direction "Direction: "))
   (let ((win (current-window)))
     (when win
       (if (typep win 'tile-window)
         (move-tile-window win dir 1)
-        (let* ((screen (window-screen win))
-               (max-dim (max (screen-width screen) (screen-height screen)))
-               (step (ceiling (/ max-dim 40))))
-          (move-float-window win dir step))))))
+        (move-float-window win dir (win-op-step win))))))
 
 
 (defun resize-tile-window (win-or-frame dir &optional (amount 1))
@@ -222,11 +226,11 @@
   (let ((win (current-window)))
     (if win
       (if (typep win 'tile-window)
-        (resize-tile-window win dir *resize-increment*)
-        (resize-float-window win dir *resize-increment*))
+        (resize-tile-window win dir (win-op-step win))
+        (resize-float-window win dir (win-op-step win)))
       (let ((group (current-group)))
         (when (typep group 'tile-group)
-          (resize-tile-window (tile-group-current-frame group) dir *resize-increment*))))))
+          (resize-tile-window (tile-group-current-frame group) dir (win-op-step)))))))
 
 
 (defun get-random-wp (&optional dir exclude)
