@@ -3,9 +3,15 @@
   (:use #:cl
         #:stumpwm)
   (:import-from #:stumpwm
+                #:frame
+                #:frame-head
                 #:frame-number
                 #:group-frames
                 #:tile-group-current-frame
+                #:tile-group-frame-tree
+                #:clear-frame-outlines
+                #:draw-frame-outlines
+                #:resize-frame
                 #:split-frame
                 #:window-frame
                 #:frame-window
@@ -171,6 +177,51 @@
                (max-dim (max (screen-width screen) (screen-height screen)))
                (step (ceiling (/ max-dim 40))))
           (move-float-window win dir step))))))
+
+
+(defun resize-tile-window (win-or-frame dir &optional (amount 1))
+  (let* ((group (if (typep win-or-frame 'frame)
+                  (current-group)  ;; XXX
+                  (window-group win-or-frame)))
+         (frame (if (typep win-or-frame 'frame)
+                  win-or-frame
+                  (window-frame win-or-frame)))
+         (head (frame-head group frame)))
+    (if (atom (tile-group-frame-tree group))
+      (message "No more frames!")
+      (progn
+        (clear-frame-outlines group)
+        (case dir
+          (:up
+           (resize-frame group frame (- amount) :height))
+          (:down
+           (resize-frame group frame amount :height))
+          (:left
+           (resize-frame group frame (- amount) :width))
+          (:right
+           (resize-frame group frame amount :width)))
+        (draw-frame-outlines group head)))))
+
+(defun resize-float-window (win dir &optional (amount 1))
+  (let* ((width (window-width win))
+         (height (window-height win))
+         (new-width (case dir (:left (- width amount)) (:right (+ width amount)) (t width)))
+         (new-height (case dir (:up (- height amount)) (:down (+ height amount)) (t height))))
+    (float-window-move-resize win
+                              :x (window-x win)
+                              :y (window-y win)
+                              :width new-width
+                              :height new-height)))
+
+(defcommand resize-any-window (dir) ((:direction "Direction: "))
+  (let ((win (current-window)))
+    (if win
+      (if (typep win 'tile-window)
+        (resize-tile-window win dir *resize-increment*)
+        (resize-float-window win dir *resize-increment*))
+      (let ((group (current-group)))
+        (when (typep group 'tile-group)
+          (resize-tile-window (tile-group-current-frame group) dir *resize-increment*))))))
 
 
 (defun get-random-wp (&optional dir exclude)

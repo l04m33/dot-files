@@ -4,6 +4,7 @@
         #:stumpwm)
   (:import-from #:stumpwm
                 #:tile-group
+                #:float-group
                 #:enter-interactive-keymap
                 #:exit-interactive-keymap
                 #:setup-iresize
@@ -110,7 +111,7 @@ so one can further customize it."
     ((kbd "s-K") "move-window up")
     ((kbd "s-J") "move-window down")
 
-    ((kbd "s-s") "iresize")
+    ((kbd "s-s") "iresize-qwerty")
     ((kbd "s-g") "imove-qwerty")))
 
 
@@ -137,20 +138,36 @@ so one can further customize it."
         common-maps))
 
 
-(define-interactive-keymap (iresize-colemak-dh tile-group) (:on-enter #'setup-iresize
-                                                            :on-exit #'resize-unhide
-                                                            :abort-if #'abort-resize-p)
-  ((kbd "Up")    "resize-direction up")
-  ((kbd "e")     "resize-direction up")
+(defun iresize-abort-p ()
+  (when (and (null (current-window)) (typep (current-group) 'float-group))
+    (message "No current window!")
+    t))
 
-  ((kbd "Down")  "resize-direction down")
-  ((kbd "n")     "resize-direction down")
+(define-interactive-keymap iresize-qwerty (:abort-if #'iresize-abort-p)
+  ((kbd "Up")    "resize-any-window up")
+  ((kbd "k")     "resize-any-window up")
 
-  ((kbd "Left")  "resize-direction left")
-  ((kbd "k")     "resize-direction left")
+  ((kbd "Down")  "resize-any-window down")
+  ((kbd "j")     "resize-any-window down")
 
-  ((kbd "Right") "resize-direction right")
-  ((kbd "i")     "resize-direction right"))
+  ((kbd "Left")  "resize-any-window left")
+  ((kbd "h")     "resize-any-window left")
+
+  ((kbd "Right") "resize-any-window right")
+  ((kbd "l")     "resize-any-window right"))
+
+(define-interactive-keymap iresize-colemak-dh (:abort-if #'iresize-abort-p)
+  ((kbd "Up")    "resize-any-window up")
+  ((kbd "e")     "resize-any-window up")
+
+  ((kbd "Down")  "resize-any-window down")
+  ((kbd "n")     "resize-any-window down")
+
+  ((kbd "Left")  "resize-any-window left")
+  ((kbd "k")     "resize-any-window left")
+
+  ((kbd "Right") "resize-any-window right")
+  ((kbd "i")     "resize-any-window right"))
 
 
 (defun imove-abort-p ()
