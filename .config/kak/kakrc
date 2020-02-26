@@ -84,7 +84,7 @@ define-command -hidden -params 1.. rc-stumpwm-new-impl %{
             kakoune_params="-e '$@'"
         fi
         if [ "${cmd}" != "nop" ]; then
-            stumpish "rc-${cmd}-and-focus"
+            stumpish "${cmd}-and-focus" < /dev/null > /dev/null 2>&1
         fi
         stumpish "run-shell-command xterm -e ${kak_opt_rc_kak_exec} -c ${kak_session} ${kakoune_params}" < /dev/null > /dev/null 2>&1
     }
