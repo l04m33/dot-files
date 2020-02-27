@@ -62,6 +62,12 @@ so one can further customize it."
     (,(kbd "s-/") "windowlist")
     (,(kbd "s-?") "frame-windowlist")
 
+    (,(kbd "s-m") "mark")
+    (,(kbd "s-M") "pull-marked")
+
+    (,(kbd "s-v") "toggle-always-on-top")
+    (,(kbd "s-V") "toggle-always-show")
+
     (,(kbd "s-,") "hsplit-and-focus")
     (,(kbd "s-.") "vsplit-and-focus")
     (,(kbd "s-=") "balance-frames")
