@@ -90,6 +90,7 @@
 
 ;;--------- Key Bindings ---------
 
+(set-prefix-key (kbd "s-t"))
 (eval-command "top-map-colemak-dh")
 
 

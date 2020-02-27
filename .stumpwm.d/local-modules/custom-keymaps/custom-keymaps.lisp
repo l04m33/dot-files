@@ -56,9 +56,7 @@ so one can further customize it."
 
 
 (defvar *common-top-maps*
-  `((,(kbd "s-t") ,*root-map*)
-
-    (,(kbd "s-RET") "exec xterm")
+  `((,(kbd "s-RET") "exec xterm")
 
     (,(kbd "s-C") "delete-maybe-remove")
     (,(kbd "s-/") "windowlist")
