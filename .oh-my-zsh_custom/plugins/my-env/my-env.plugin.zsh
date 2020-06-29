@@ -17,7 +17,10 @@ for ef in "$GUIX_ENV_FILE" "$GUIX_PROFILE_ENV_FILE"; do
     fi
 done
 if [ -n "$GUIX_PROFILE" ]; then
-    export GUIX_LOCPATH=$GUIX_PROFILE/lib/locale
+    export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
+    if [ -f "$GUIX_PROFILE/lib/libclang.so" ]; then
+        export LIBCLANG_PATH="$GUIX_PROFILE/lib"
+    fi
 fi
 
 export EDITOR=$(if which kak > /dev/null 2>&1; then echo kak; else echo vim; fi)
