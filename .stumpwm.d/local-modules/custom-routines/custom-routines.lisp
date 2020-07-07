@@ -379,7 +379,7 @@
 
 (defun cache-fonts ()
   "Tell StumpWM where to find the fonts"
-  (setf (find-symbol "*FONT-DIRS*" "XFT") `(,cglobal:*fonts-dir*))
+  (setf (symbol-value (find-symbol "*FONT-DIRS*" "XFT")) `(,cglobal:*fonts-dir*))
   (funcall (find-symbol "CACHE-FONTS" "XFT"))
   (run-shell-command "xset fp+ \"${HOME}/.local/share/fonts/tamzen-font-bdf\"" t)
   (run-shell-command "xset fp rehash" t))
