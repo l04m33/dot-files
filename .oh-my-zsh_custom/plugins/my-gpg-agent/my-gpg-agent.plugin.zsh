@@ -1,4 +1,4 @@
-local GPG_AGENT_BIN=/usr/bin/gpg-agent
+local GPG_AGENT_BIN=$(which gpg-agent)
 local GPG_AGENT_ENV="$HOME/.gnupg/gpg-agent.env"
 local GPG_CONNECT_AGENT_ERR_MSG="gpg-connect-agent: no gpg-agent running in this session"
 
