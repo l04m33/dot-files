@@ -257,7 +257,9 @@
                              nil)
                            cglobal:*current-wp*)))
     (when wp
-      (message "Setting wallpaper: ^[^2^f1~A^]" wp)
+      (if (find-package "XFT")
+        (message "Setting wallpaper: ^[^2^f1~A^]" wp)
+        (message "Setting wallpaper: ^[^2^f0~A^]" wp))
       (setf cglobal:*current-wp* wp)
       (run-shell-command (format nil "feh --bg-fill ~a" wp)))))
 
