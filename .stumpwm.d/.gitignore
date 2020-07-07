@@ -1,4 +1,5 @@
 debug.log
 modules
+stumpwm-contrib
 *.fasl
 wp

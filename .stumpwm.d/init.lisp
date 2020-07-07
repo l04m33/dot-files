@@ -31,9 +31,11 @@
 
 ;;--------- Modules ---------
 
-(defparameter *rc-modules-common* '(;;"stumptray"
-                                    "ttf-fonts"
-                                    "swm-gaps"))
+(defparameter *rc-modules-common* (append (if (find-package "XFT")
+                                            '("ttf-fonts")
+                                            '())
+                                          '(;;"stumptray"
+                                            "swm-gaps")))
 (defparameter *rc-modules-linux* '("battery-portable"
                                    "cpu"
                                    "mem"
@@ -49,6 +51,15 @@
                                    "custom-keymaps"
                                    "stumpwm-patches"))
 
+; ~/.stumpwm.d/stumpwm-contrib/
+(defparameter *rc-modules-dir*
+  (merge-pathnames
+    (make-pathname
+      :directory (append '(:relative) '("stumpwm-contrib")))
+    *data-dir*))
+
+(init-load-path *rc-modules-dir*)
+
 ; ~/.stumpwm.d/local-modules/
 (defparameter *rc-local-modules-dir*
   (merge-pathnames
@@ -56,12 +67,12 @@
       :directory (append '(:relative) '("local-modules")))
     *data-dir*))
 
-(let* ((full-module-paths (mapcar #'(lambda (p)
-                                      (merge-pathnames
-                                        (make-pathname :directory `(:relative ,p))
-                                        *rc-local-modules-dir*))
-                                  *rc-local-modules*)))
-  (mapcar #'add-to-load-path full-module-paths))
+(let* ((full-local-module-paths (mapcar #'(lambda (p)
+                                            (merge-pathnames
+                                              (make-pathname :directory `(:relative ,p))
+                                              *rc-local-modules-dir*))
+                                        *rc-local-modules*)))
+  (mapcar #'add-to-load-path full-local-module-paths))
 
 (mapcar #'load-module (append *rc-modules* *rc-local-modules*))
 
@@ -131,13 +142,16 @@
 (set-float-focus-color (nth 4 *colors*))
 (set-float-unfocus-color (nth 0 *colors*))
 
-(croutine:cache-fonts)
-(set-font (list
-            "-*-tamzenforpowerline-medium-*-*-*-15-*-*-*-*-*-*-*"
-            (make-instance 'xft:font
-                           :family "WenQuanYi Zen Hei Mono"
-                           :subfamily "Regular"
-                           :size 11)))
+(if (find-package "XFT")
+  (progn
+    (croutine:cache-fonts)
+    (set-font (list
+                "-*-tamzenforpowerline-medium-*-*-*-15-*-*-*-*-*-*-*"
+                (make-instance (find-symbol "FONT" "XFT")
+                               :family "WenQuanYi Zen Hei Mono"
+                               :subfamily "Regular"
+                               :size 11))))
+  (set-font "-*-tamzenforpowerline-medium-*-*-*-15-*-*-*-*-*-*-*"))
 
 
 ;;--------- Mode Line ---------

@@ -47,7 +47,9 @@
 
 
 (defun echo-urgent-window (win)
-  (message "^[^1^f1~A^] needs attention." (window-title win)))
+  (if (find-package "XFT")
+    (message "^[^1^f1~A^] needs attention." (window-title win))
+    (message "^[^1^f0~A^] needs attention." (window-title win))))
 
 
 (defun split-and-focus (group dir ratio)
@@ -261,16 +263,18 @@
 
 (defcommand start-swank (&optional port) (:string)
   "Start the SWANK server."
-  (swank:create-server :port (parse-integer (or port "4005"))
-                       :dont-close t))
+  (funcall (find-symbol "CREATE-SERVER" "SWANK")
+           :port (parse-integer (or port "4005"))
+           :dont-close t))
 
 (defcommand stop-swank (&optional port) (:string)
   "Stop the SWANK server."
-  (swank:stop-server (parse-integer (or port "4005"))))
+  (funcall (find-symbol "STOP-SERVER" "SWANK")
+           (parse-integer (or port "4005"))))
 
 (defcommand start-vlime (&optional port) (:string)
   "Start the Vlime server."
-  (vlime:main :port (parse-integer (or port "7002")) :backend :vlime-usocket))
+  (funcall (find-symbol "MAIN" "VLIME") :port (parse-integer (or port "7002")) :backend :vlime-usocket))
 
 
 (defcommand switch-group-in-group-set () ()
@@ -375,8 +379,8 @@
 
 (defun cache-fonts ()
   "Tell StumpWM where to find the fonts"
-  (setf xft:*font-dirs* `(,cglobal:*fonts-dir*))
-  (xft:cache-fonts)
+  (setf (find-symbol "*FONT-DIRS*" "XFT") `(,cglobal:*fonts-dir*))
+  (funcall (find-symbol "CACHE-FONTS" "XFT"))
   (run-shell-command "xset fp+ \"${HOME}/.local/share/fonts/tamzen-font-bdf\"" t)
   (run-shell-command "xset fp rehash" t))
 

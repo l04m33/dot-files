@@ -5,6 +5,7 @@
   :depends-on (#:stumpwm
                #:custom-globals
                #:group-set
-               #:swank
-               #:vlime)
+               ;;#:swank
+               ;;#:vlime
+               )
   :components ((:file "custom-routines")))
