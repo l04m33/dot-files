@@ -381,8 +381,16 @@
 
 (defun cache-fonts ()
   "Tell StumpWM where to find the fonts"
-  (setf (symbol-value (find-symbol "*FONT-DIRS*" "XFT")) `(,cglobal:*fonts-dir*))
-  (funcall (find-symbol "CACHE-FONTS" "XFT"))
-  (run-shell-command "xset fp+ \"${HOME}/.local/share/fonts/tamzen-font-bdf\"" t)
+  (when (find-package "XFT")
+    (setf (symbol-value (find-symbol "*FONT-DIRS*" "XFT")) `(,cglobal:*fonts-dir*))
+    (funcall (find-symbol "CACHE-FONTS" "XFT")))
+  ;; Local Tamzen installation
+  (run-shell-command "xset fp+ ${HOME}/.local/share/fonts/tamzen-font-bdf" t)
+  ;;;; X11 core fonts wouldn't follow symlinks to read font files, yet guix is all about symlinks,
+  ;;;; so these lines below doesn't work at all....
+  ;; tamzen in guix
+  ;(run-shell-command "xset fp+ $(dirname $(readlink -f /run/current-system/profile/share/fonts/misc/fonts.dir))" t)
+  ;; wqy-zenhei in Guix
+  ;(run-shell-command "xset fp+ $(dirname $(readlink -f /run/current-system/profile/share/fonts/truetype/fonts.dir))" t)
   (run-shell-command "xset fp rehash" t))
 

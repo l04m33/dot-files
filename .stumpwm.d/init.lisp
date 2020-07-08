@@ -142,15 +142,14 @@
 (set-float-focus-color (nth 4 *colors*))
 (set-float-unfocus-color (nth 0 *colors*))
 
+(croutine:cache-fonts)
 (if (find-package "XFT")
-  (progn
-    (croutine:cache-fonts)
-    (set-font (list
-                "-*-tamzenforpowerline-medium-*-*-*-15-*-*-*-*-*-*-*"
-                (make-instance (find-symbol "FONT" "XFT")
-                               :family "WenQuanYi Zen Hei Mono"
-                               :subfamily "Regular"
-                               :size 11))))
+  (set-font (list
+              "-*-tamzenforpowerline-medium-*-*-*-15-*-*-*-*-*-*-*"
+              (make-instance (find-symbol "FONT" "XFT")
+                             :family "WenQuanYi Zen Hei Mono"
+                             :subfamily "Regular"
+                             :size 11)))
   (set-font "-*-tamzenforpowerline-medium-*-*-*-15-*-*-*-*-*-*-*"))
 
 
