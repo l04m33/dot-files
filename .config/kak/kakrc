@@ -131,6 +131,9 @@ evaluate-commands %sh{
                       parinfer-enable-window -smart
                   }
               }"
+        echo "plug \"TeddyDD/kakoune-wiki\" config %{
+                  wiki-setup %sh{ echo $HOME/notes }
+              }"
     else
         echo "nop"
     fi
