@@ -39,6 +39,10 @@ map global insert <s-tab> '<a-;><lt>'
 
 define-command -hidden -params 1.. rc-tmux-new-impl %{
     evaluate-commands %sh{
+        if [ -z "${TMUX}" ]; then
+            echo "echo -markup '{Error}Not in a tmux session'"
+            exit
+        fi
         orientation="$1"
         shift
         if [ $# -ne 0 ]; then
