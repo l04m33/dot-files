@@ -10,14 +10,14 @@ declare-option -hidden str rc_kak_exec %sh{
             break
         fi
     done
-    echo -n ${kakoune_exec}
+    printf '%s' "${kakoune_exec}"
 }
 
 declare-option -hidden str rc_plug_kak_found %sh{
     if [ -f "${kak_config}/plugins/plug.kak/rc/plug.kak" ]; then
-        echo "yes"
+        printf 'yes'
     else
-        echo "no"
+        printf 'no'
     fi
 }
 
@@ -43,7 +43,7 @@ map global insert <s-tab> '<a-;><lt>'
 define-command -hidden -params 1.. rc-tmux-new-impl %{
     evaluate-commands %sh{
         if [ -z "${TMUX}" ]; then
-            echo "echo -markup '${kak_opt_rc_msg_not_in_tmux}'"
+            printf "echo -markup '%s'" "${kak_opt_rc_msg_not_in_tmux}"
             exit
         fi
         orientation="$1"
@@ -51,7 +51,7 @@ define-command -hidden -params 1.. rc-tmux-new-impl %{
         if [ $# -ne 0 ]; then
             kakoune_params="-e '$@'"
         fi
-        echo "tmux-terminal-${orientation} ${kak_opt_rc_kak_exec} -c ${kak_session} ${kakoune_params}"
+        printf 'tmux-terminal-%s %s -c %s %s' "${orientation}" "${kak_opt_rc_kak_exec}" "${kak_session}" "${kakoune_params}"
     }
 }
 
@@ -70,18 +70,18 @@ define-command -params .. -command-completion rc-tmux-new-window %{
 define-command -params 1 rc-tmux-copy-buffer %{
     evaluate-commands %sh{
         if [ -z "${TMUX}" ]; then
-            echo "echo -markup '${kak_opt_rc_msg_not_in_tmux}'"
+            printf "echo -markup '%s'" "${kak_opt_rc_msg_not_in_tmux}"
             exit
         fi
         cmd="$1"
         if [ ${cmd} = 'y' ]; then
             tmux set-buffer -- "${kak_selections}" > /dev/null 2>&1
-            echo 'nop'
+            printf 'nop'
         else
             if [ ${cmd} = 'p' ]; then
-                echo 'execute-keys <a-!>tmux<space>show-buffer<ret>'
+                printf 'execute-keys <a-!>tmux<space>show-buffer<ret>'
             else # P
-                echo 'execute-keys !tmux<space>show-buffer<ret>'
+                printf 'execute-keys !tmux<space>show-buffer<ret>'
             fi
         fi
     }
@@ -105,7 +105,7 @@ map -docstring 'Paste from copy buffer, after current selection' global rc-tmux 
 define-command -hidden -params 1.. rc-stumpwm-new-impl %{
     evaluate-commands %sh{
         if [ -z "${DISPLAY}" ]; then
-            echo "echo -markup '${kak_opt_rc_msg_not_in_x}'"
+            printf "echo -markup '%s'" "${kak_opt_rc_msg_not_in_x}"
             exit
         fi
         cmd="$1"
@@ -135,7 +135,7 @@ define-command -params .. -command-completion rc-stumpwm-new-window %{
 define-command -params 1.. rc-x-selection %{
     evaluate-commands %sh{
         if [ -z "${DISPLAY}" ]; then
-            echo "echo -markup '${kak_opt_rc_msg_not_in_x}'"
+            printf "echo -markup '%s'" "${kak_opt_rc_msg_not_in_x}"
             exit
         fi
         cmd="$1"
@@ -146,13 +146,13 @@ define-command -params 1.. rc-x-selection %{
             target="primary"
         fi
         if [ ${cmd} = 'y' ]; then
-            printf %s "$kak_selections" | xsel --input --${target} > /dev/null 2>&1
-            echo 'nop'
+            printf '%s' "$kak_selections" | xsel --input --${target} > /dev/null 2>&1
+            printf 'nop'
         else
             if [ ${cmd} = 'p' ]; then
-                echo "execute-keys <a-!>xsel<space>--output<space>--${target}<ret>"
+                printf 'execute-keys <a-!>xsel<space>--output<space>--%s<ret>' "${target}"
             else # P
-                echo "execute-keys !xsel<space>--output<space>--${target}<ret>"
+                printf 'execute-keys !xsel<space>--output<space>--%s<ret>' "${target}"
             fi
         fi
     }
@@ -211,7 +211,7 @@ define-command -hidden -params .. rc-enable-kak-lsp %{
                 kak-lsp -s $kak_session -vvv > /tmp/kak-lsp.log 2>&1 < /dev/null &
             fi
         else
-            echo "echo -markup '{Error}kak-lsp command not found'"
+            printf "echo -markup '{Error}kak-lsp command not found'"
         fi
     }
     hook -group rc-kak-lsp-switch global WinSetOption filetype=(python) %{
