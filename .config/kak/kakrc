@@ -21,6 +21,8 @@ declare-option -hidden str rc_plug_kak_found %sh{
     fi
 }
 
+declare-option -hidden str rc_msg_not_in_tmux "Not in a tmux session"
+
 
 ######### Options #########
 
@@ -40,7 +42,7 @@ map global insert <s-tab> '<a-;><lt>'
 define-command -hidden -params 1.. rc-tmux-new-impl %{
     evaluate-commands %sh{
         if [ -z "${TMUX}" ]; then
-            echo "echo -markup '{Error}Not in a tmux session'"
+            echo "echo -markup '{Error}${kak_opt_rc_msg_not_in_tmux}'"
             exit
         fi
         orientation="$1"
@@ -64,6 +66,26 @@ define-command -params .. -command-completion rc-tmux-new-window %{
     rc-tmux-new-impl 'window' %arg{@}
 }
 
+define-command -params 1 rc-tmux-copy-buffer %{
+    evaluate-commands %sh{
+        if [ -z "${TMUX}" ]; then
+            echo "echo -markup '{Error}${kak_opt_rc_msg_not_in_tmux}'"
+            exit
+        fi
+        cmd="$1"
+        if [ ${cmd} = 'y' ]; then
+            tmux set-buffer -- "${kak_selections}" > /dev/null 2>&1
+            echo 'nop'
+        else
+            if [ ${cmd} = 'p' ]; then
+                echo 'execute-keys <a-!>tmux<space>show-buffer<ret>'
+            else # P
+                echo 'execute-keys !tmux<space>show-buffer<ret>'
+            fi
+        fi
+    }
+}
+
 declare-user-mode rc-tmux
 map -docstring 'Tmux control'       global user    t ': enter-user-mode rc-tmux<ret>'
 map -docstring 'Split horizontally' global rc-tmux h ': rc-tmux-new-horizontal<ret>'
@@ -72,6 +94,9 @@ map -docstring 'Create new window'  global rc-tmux w ': rc-tmux-new-window<ret>'
 map -docstring 'Split horizontally and run command' global rc-tmux H ': rc-tmux-new-horizontal '
 map -docstring 'Split vertically and run command'   global rc-tmux V ': rc-tmux-new-vertical '
 map -docstring 'Create new window and run command'  global rc-tmux W ': rc-tmux-new-window '
+map -docstring 'Yank to copy buffer'    global rc-tmux y ': rc-tmux-copy-buffer y<ret>'
+map -docstring 'Paste from copy buffer' global rc-tmux p ': rc-tmux-copy-buffer p<ret>'
+map -docstring 'Paste from copy buffer, after current selection' global rc-tmux P ': rc-tmux-copy-buffer P<ret>'
 
 
 ######### StumpWM Integration #########
