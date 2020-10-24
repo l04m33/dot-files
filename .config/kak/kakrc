@@ -22,6 +22,7 @@ declare-option -hidden str rc_plug_kak_found %sh{
 }
 
 declare-option -hidden str rc_msg_not_in_tmux "Not in a tmux session"
+declare-option -hidden str rc_msg_not_in_x    "Not in a GUI session"
 
 
 ######### Options #########
@@ -104,7 +105,7 @@ map -docstring 'Paste from copy buffer, after current selection' global rc-tmux 
 define-command -hidden -params 1.. rc-stumpwm-new-impl %{
     evaluate-commands %sh{
         if [ -z "${DISPLAY}" ]; then
-            echo "echo -markup '{Error}Not in a GUI session'"
+            echo "echo -markup '{Error}${kak_opt_rc_msg_not_in_x}'"
             exit
         fi
         cmd="$1"
@@ -131,6 +132,32 @@ define-command -params .. -command-completion rc-stumpwm-new-window %{
     rc-stumpwm-new-impl 'nop' %arg{@}
 }
 
+define-command -params 1.. rc-x-selection %{
+    evaluate-commands %sh{
+        if [ -z "${DISPLAY}" ]; then
+            echo "echo -markup '{Error}${kak_opt_rc_msg_not_in_x}'"
+            exit
+        fi
+        cmd="$1"
+        shift
+        if [ $# -ne 0 ]; then
+            target="$1"
+        else
+            target="primary"
+        fi
+        if [ ${cmd} = 'y' ]; then
+            printf %s "$kak_selections" | xsel --input --${target} > /dev/null 2>&1
+            echo 'nop'
+        else
+            if [ ${cmd} = 'p' ]; then
+                echo "execute-keys <a-!>xsel<space>--output<space>--${target}<ret>"
+            else # P
+                echo "execute-keys !xsel<space>--output<space>--${target}<ret>"
+            fi
+        fi
+    }
+}
+
 declare-user-mode rc-stumpwm
 map -docstring 'StumpWM control'    global user       g ': enter-user-mode rc-stumpwm<ret>'
 map -docstring 'Split horizontally' global rc-stumpwm h ': rc-stumpwm-new-horizontal<ret>'
@@ -139,6 +166,9 @@ map -docstring 'Create new window'  global rc-stumpwm w ': rc-stumpwm-new-window
 map -docstring 'Split horizontally and run command' global rc-stumpwm H ': rc-stumpwm-new-horizontal '
 map -docstring 'Split vertically and run command'   global rc-stumpwm V ': rc-stumpwm-new-vertical '
 map -docstring 'Create new window and run command'  global rc-stumpwm W ': rc-stumpwm-new-window '
+map -docstring 'Yank to clipboard'    global rc-stumpwm y ': rc-x-selection y clipboard<ret>'
+map -docstring 'Paste from clipboard' global rc-stumpwm p ': rc-x-selection p clipboard<ret>'
+map -docstring 'Paste from clipboard, after current selection' global rc-stumpwm P ': rc-x-selection P clipboard<ret>'
 
 
 ######### Plug.kak Integration #########
