@@ -21,8 +21,8 @@ declare-option -hidden str rc_plug_kak_found %sh{
     fi
 }
 
-declare-option -hidden str rc_msg_not_in_tmux "Not in a tmux session"
-declare-option -hidden str rc_msg_not_in_x    "Not in a GUI session"
+declare-option -hidden str rc_msg_not_in_tmux "{Error}Not in a tmux session"
+declare-option -hidden str rc_msg_not_in_x    "{Error}Not in a GUI session"
 
 
 ######### Options #########
@@ -43,7 +43,7 @@ map global insert <s-tab> '<a-;><lt>'
 define-command -hidden -params 1.. rc-tmux-new-impl %{
     evaluate-commands %sh{
         if [ -z "${TMUX}" ]; then
-            echo "echo -markup '{Error}${kak_opt_rc_msg_not_in_tmux}'"
+            echo "echo -markup '${kak_opt_rc_msg_not_in_tmux}'"
             exit
         fi
         orientation="$1"
@@ -70,7 +70,7 @@ define-command -params .. -command-completion rc-tmux-new-window %{
 define-command -params 1 rc-tmux-copy-buffer %{
     evaluate-commands %sh{
         if [ -z "${TMUX}" ]; then
-            echo "echo -markup '{Error}${kak_opt_rc_msg_not_in_tmux}'"
+            echo "echo -markup '${kak_opt_rc_msg_not_in_tmux}'"
             exit
         fi
         cmd="$1"
@@ -105,7 +105,7 @@ map -docstring 'Paste from copy buffer, after current selection' global rc-tmux 
 define-command -hidden -params 1.. rc-stumpwm-new-impl %{
     evaluate-commands %sh{
         if [ -z "${DISPLAY}" ]; then
-            echo "echo -markup '{Error}${kak_opt_rc_msg_not_in_x}'"
+            echo "echo -markup '${kak_opt_rc_msg_not_in_x}'"
             exit
         fi
         cmd="$1"
@@ -135,7 +135,7 @@ define-command -params .. -command-completion rc-stumpwm-new-window %{
 define-command -params 1.. rc-x-selection %{
     evaluate-commands %sh{
         if [ -z "${DISPLAY}" ]; then
-            echo "echo -markup '{Error}${kak_opt_rc_msg_not_in_x}'"
+            echo "echo -markup '${kak_opt_rc_msg_not_in_x}'"
             exit
         fi
         cmd="$1"
