@@ -175,26 +175,26 @@ map -docstring 'Paste from clipboard, after current selection' global rc-stumpwm
 
 evaluate-commands %sh{
     if [ "$kak_opt_rc_plug_kak_found" = "yes" ]; then
-        echo "source \"${kak_config}/plugins/plug.kak/rc/plug.kak\""
-        echo "plug \"robertmeta/plug.kak\" branch \"dev\" noload"
-        echo "plug \"andreyorst/fzf.kak\" config %{
-                  map -docstring 'fzf mode' global user f ': fzf-mode<ret>'
-              }"
-        echo "plug \"ul/kak-lsp\" noload do %{
-                  cargo install --locked --force --path .
-              }"
-        echo "plug \"eraserhd/parinfer-rust\" do %{
-                  cargo install --locked --force --path .
-              } config %{
-                  hook global WinSetOption filetype=(clojure|lisp|scheme|racket) %{
-                      parinfer-enable-window -smart
-                  }
-              }"
-        echo "plug \"TeddyDD/kakoune-wiki\" config %{
-                  wiki-setup %sh{ echo $HOME/notes }
-              }"
+        printf 'source "%s/plugins/plug.kak/rc/plug.kak"\n' "${kak_config}"
+        printf 'plug "robertmeta/plug.kak" branch "dev" noload\n'
+        printf 'plug "andreyorst/fzf.kak" config %%{
+                    map -docstring "fzf mode" global user f ": fzf-mode<ret>"
+                }\n'
+        printf 'plug "ul/kak-lsp" noload do %%{
+                    cargo install --locked --force --path .
+                }\n'
+        printf 'plug "eraserhd/parinfer-rust" do %%{
+                    cargo install --locked --force --path .
+                } config %%{
+                    hook global WinSetOption filetype=(clojure|lisp|scheme|racket) %%{
+                        parinfer-enable-window -smart
+                    }
+                }\n'
+        printf 'plug "TeddyDD/kakoune-wiki" config %%{
+                    wiki-setup %%sh{ printf "%s/notes" "${HOME}" }
+                }\n'
     else
-        echo "nop"
+        printf 'nop'
     fi
 }
 
