@@ -191,7 +191,7 @@ evaluate-commands %sh{
                     }
                 }\n'
         printf 'plug "TeddyDD/kakoune-wiki" config %%{
-                    wiki-setup %%sh{ printf "%s/notes" "${HOME}" }
+                    wiki-setup %%sh{ printf "%%s/notes" "${HOME}" }
                 }\n'
     else
         printf 'nop'
