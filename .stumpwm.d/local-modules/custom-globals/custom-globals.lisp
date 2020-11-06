@@ -5,6 +5,7 @@
 
   (:export #:*first-group*
            #:*last-group*
+           #:*no-super-key*
            #:*fonts-dir*
            #:*wp-dir*
            #:*current-wp*))
@@ -15,6 +16,8 @@
 
 (defparameter *first-group* 0)
 (defparameter *last-group*  9)
+
+(defparameter *no-super-key* nil)
 
 ; ~/.stumpwm.d/fonts/
 (defparameter *fonts-dir*

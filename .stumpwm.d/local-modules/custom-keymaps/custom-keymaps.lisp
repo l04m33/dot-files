@@ -10,16 +10,30 @@
                 #:setup-iresize
                 #:resize-unhide
                 #:abort-resize-p)
-  (:export #:make-interactive-keymap))
+  (:export #:make-interactive-keymap
+           #:tkbd))
 
 
 (in-package #:custom-keymaps)
 
 
+;; For keyboards/systems where the Super key is unavailable,
+;; use Ctrl + Meta instead.
+(defun tkbd (k-spec)
+  (let ((k (kbd k-spec)))
+    (if (and cglobal:*no-super-key* (stumpwm::key-super k))
+      (progn
+        (setf (stumpwm::key-super k)   nil
+              (stumpwm::key-control k) t
+              (stumpwm::key-meta k)    t)
+        k)
+      k)))
+
+
 (defmacro make-interactive-keymap
-    (name (&key on-enter on-exit abort-if (exit-on '((kbd "RET")
-                                                     (kbd "ESC")
-                                                     (kbd "C-g"))))
+    (name (&key on-enter on-exit abort-if (exit-on '((tkbd "RET")
+                                                     (tkbd "ESC")
+                                                     (tkbd "C-g"))))
      &body key-bindings)
   "Basically the same as define-interactive-keymap, but returns the keymap
 so one can further customize it."
@@ -56,39 +70,39 @@ so one can further customize it."
 
 
 (defvar *common-top-maps*
-  `((,(kbd "s-RET") "exec xterm")
+  `((,(tkbd "s-RET") "exec xterm")
 
-    (,(kbd "s-C") "delete-maybe-remove")
-    (,(kbd "s-/") "windowlist")
-    (,(kbd "s-?") "frame-windowlist")
+    (,(tkbd "s-C") "delete-maybe-remove")
+    (,(tkbd "s-/") "windowlist")
+    (,(tkbd "s-?") "frame-windowlist")
 
-    (,(kbd "s-m") "mark")
-    (,(kbd "s-M") "pull-marked")
+    (,(tkbd "s-m") "mark")
+    (,(tkbd "s-M") "pull-marked")
 
-    (,(kbd "s-v") "toggle-always-on-top")
-    (,(kbd "s-V") "toggle-always-show")
+    (,(tkbd "s-v") "toggle-always-on-top")
+    (,(tkbd "s-V") "toggle-always-show")
 
-    (,(kbd "s-,") "hsplit-and-focus")
-    (,(kbd "s-.") "vsplit-and-focus")
-    (,(kbd "s-=") "balance-frames")
-    (,(kbd "s-+") "weighted-frames")
+    (,(tkbd "s-,") "hsplit-and-focus")
+    (,(tkbd "s-.") "vsplit-and-focus")
+    (,(tkbd "s-=") "balance-frames")
+    (,(tkbd "s-+") "weighted-frames")
 
-    (,(kbd "s-f") "fullscreen")
-    (,(kbd "s-F") "float-or-unfloat-this")
+    (,(tkbd "s-f") "fullscreen")
+    (,(tkbd "s-F") "float-or-unfloat-this")
 
-    (,(kbd "s-r") "exec")
-    (,(kbd "s-:") "eval")
-    (,(kbd "s-;") "colon")
+    (,(tkbd "s-r") "exec")
+    (,(tkbd "s-:") "eval")
+    (,(tkbd "s-;") "colon")
 
-    (,(kbd "s-SPC")   "switch-group-in-group-set")
-    (,(kbd "S-s-SPC") "move-all-windows-to-other-group")
+    (,(tkbd "s-SPC")   "switch-group-in-group-set")
+    (,(tkbd "S-s-SPC") "move-all-windows-to-other-group")
 
-    (,(kbd "s-p") "show-group-overview")
-    (,(kbd "s-P") "vgroups")
+    (,(tkbd "s-p") "show-group-overview")
+    (,(tkbd "s-P") "vgroups")
     
-    (,(kbd "XF86AudioLowerVolume") "amixer-Master-1-")
-    (,(kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
-    (,(kbd "XF86AudioMute")        "amixer-Master-toggle")))
+    (,(tkbd "XF86AudioLowerVolume") "amixer-Master-1-")
+    (,(tkbd "XF86AudioRaiseVolume") "amixer-Master-1+")
+    (,(tkbd "XF86AudioMute")        "amixer-Master-toggle")))
 
 
 (defvar *group-set-maps*
@@ -96,44 +110,44 @@ so one can further customize it."
     (loop for gs from cglobal:*first-group* to cglobal:*last-group*
           for key = (format nil "s-~A" gs)
           for cmd = (format nil "gset-select ~A" gs)
-          collect (list (kbd key) cmd))
+          collect (list (tkbd key) cmd))
     (loop for gs from cglobal:*first-group* to cglobal:*last-group*
           for char in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
           for key = (format nil "s-~A" char)
           for cmd = (format nil "move-window-to-group-set ~A" gs)
-          collect (list (kbd key) cmd))))
+          collect (list (tkbd key) cmd))))
 
 
 (defvar *top-map-qwerty*
-  (make-interactive-keymap top-map-qwerty (:exit-on ((kbd "C-s-t")))
-    ((kbd "s-h") "prev-in-frame")
-    ((kbd "s-l") "next-in-frame")
-    ((kbd "s-k") "prev-frame-or-window")
-    ((kbd "s-j") "next-frame-or-window")
+  (make-interactive-keymap top-map-qwerty (:exit-on ((tkbd "s-T")))
+    ((tkbd "s-h") "prev-in-frame")
+    ((tkbd "s-l") "next-in-frame")
+    ((tkbd "s-k") "prev-frame-or-window")
+    ((tkbd "s-j") "next-frame-or-window")
 
-    ((kbd "s-H") "move-window left")
-    ((kbd "s-L") "move-window right")
-    ((kbd "s-K") "move-window up")
-    ((kbd "s-J") "move-window down")
+    ((tkbd "s-H") "move-window left")
+    ((tkbd "s-L") "move-window right")
+    ((tkbd "s-K") "move-window up")
+    ((tkbd "s-J") "move-window down")
 
-    ((kbd "s-s") "iresize-qwerty")
-    ((kbd "s-g") "imove-qwerty")))
+    ((tkbd "s-s") "iresize-qwerty")
+    ((tkbd "s-g") "imove-qwerty")))
 
 
 (defvar *top-map-colemak-dh*
-  (make-interactive-keymap top-map-colemak-dh (:exit-on ((kbd "C-s-t")))
-    ((kbd "s-k") "prev-in-frame")
-    ((kbd "s-i") "next-in-frame")
-    ((kbd "s-e") "prev-frame-or-window")
-    ((kbd "s-n") "next-frame-or-window")
+  (make-interactive-keymap top-map-colemak-dh (:exit-on ((tkbd "s-T")))
+    ((tkbd "s-k") "prev-in-frame")
+    ((tkbd "s-i") "next-in-frame")
+    ((tkbd "s-e") "prev-frame-or-window")
+    ((tkbd "s-n") "next-frame-or-window")
 
-    ((kbd "s-K") "move-window left")
-    ((kbd "s-I") "move-window right")
-    ((kbd "s-E") "move-window up")
-    ((kbd "s-N") "move-window down")
+    ((tkbd "s-K") "move-window left")
+    ((tkbd "s-I") "move-window right")
+    ((tkbd "s-E") "move-window up")
+    ((tkbd "s-N") "move-window down")
 
-    ((kbd "s-s") "iresize-colemak-dh")
-    ((kbd "s-g") "imove-colemak-dh")))
+    ((tkbd "s-s") "iresize-colemak-dh")
+    ((tkbd "s-g") "imove-colemak-dh")))
 
 
 (let ((common-maps (append *common-top-maps* *group-set-maps*)))
@@ -149,30 +163,30 @@ so one can further customize it."
     t))
 
 (define-interactive-keymap iresize-qwerty (:abort-if #'iresize-abort-p)
-  ((kbd "Up")    "resize-any-window up")
-  ((kbd "k")     "resize-any-window up")
+  ((tkbd "Up")    "resize-any-window up")
+  ((tkbd "k")     "resize-any-window up")
 
-  ((kbd "Down")  "resize-any-window down")
-  ((kbd "j")     "resize-any-window down")
+  ((tkbd "Down")  "resize-any-window down")
+  ((tkbd "j")     "resize-any-window down")
 
-  ((kbd "Left")  "resize-any-window left")
-  ((kbd "h")     "resize-any-window left")
+  ((tkbd "Left")  "resize-any-window left")
+  ((tkbd "h")     "resize-any-window left")
 
-  ((kbd "Right") "resize-any-window right")
-  ((kbd "l")     "resize-any-window right"))
+  ((tkbd "Right") "resize-any-window right")
+  ((tkbd "l")     "resize-any-window right"))
 
 (define-interactive-keymap iresize-colemak-dh (:abort-if #'iresize-abort-p)
-  ((kbd "Up")    "resize-any-window up")
-  ((kbd "e")     "resize-any-window up")
+  ((tkbd "Up")    "resize-any-window up")
+  ((tkbd "e")     "resize-any-window up")
 
-  ((kbd "Down")  "resize-any-window down")
-  ((kbd "n")     "resize-any-window down")
+  ((tkbd "Down")  "resize-any-window down")
+  ((tkbd "n")     "resize-any-window down")
 
-  ((kbd "Left")  "resize-any-window left")
-  ((kbd "k")     "resize-any-window left")
+  ((tkbd "Left")  "resize-any-window left")
+  ((tkbd "k")     "resize-any-window left")
 
-  ((kbd "Right") "resize-any-window right")
-  ((kbd "i")     "resize-any-window right"))
+  ((tkbd "Right") "resize-any-window right")
+  ((tkbd "i")     "resize-any-window right"))
 
 
 (defun imove-abort-p ()
@@ -181,28 +195,28 @@ so one can further customize it."
     t))
 
 (define-interactive-keymap imove-qwerty (:abort-if #'imove-abort-p)
-  ((kbd "Up")    "move-any-window up")
-  ((kbd "k")     "move-any-window up")
+  ((tkbd "Up")    "move-any-window up")
+  ((tkbd "k")     "move-any-window up")
 
-  ((kbd "Down")  "move-any-window down")
-  ((kbd "j")     "move-any-window down")
+  ((tkbd "Down")  "move-any-window down")
+  ((tkbd "j")     "move-any-window down")
 
-  ((kbd "Left")  "move-any-window left")
-  ((kbd "h")     "move-any-window left")
+  ((tkbd "Left")  "move-any-window left")
+  ((tkbd "h")     "move-any-window left")
 
-  ((kbd "Right") "move-any-window right")
-  ((kbd "l")     "move-any-window right"))
+  ((tkbd "Right") "move-any-window right")
+  ((tkbd "l")     "move-any-window right"))
 
 (define-interactive-keymap imove-colemak-dh (:abort-if #'imove-abort-p)
-  ((kbd "Up")    "move-any-window up")
-  ((kbd "e")     "move-any-window up")
+  ((tkbd "Up")    "move-any-window up")
+  ((tkbd "e")     "move-any-window up")
 
-  ((kbd "Down")  "move-any-window down")
-  ((kbd "n")     "move-any-window down")
+  ((tkbd "Down")  "move-any-window down")
+  ((tkbd "n")     "move-any-window down")
 
-  ((kbd "Left")  "move-any-window left")
-  ((kbd "k")     "move-any-window left")
+  ((tkbd "Left")  "move-any-window left")
+  ((tkbd "k")     "move-any-window left")
 
-  ((kbd "Right") "move-any-window right")
-  ((kbd "i")     "move-any-window right"))
+  ((tkbd "Right") "move-any-window right")
+  ((tkbd "i")     "move-any-window right"))
 
