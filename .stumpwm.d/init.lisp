@@ -205,6 +205,6 @@
 (eval-command "random-wp")
 (run-shell-command  "ibus-daemon -d -x -r -n stumpwm")
 (run-shell-command  "xautolock -time 10 -corners '00+-' -locker slock")
-(run-shell-command  "compton -c -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 --opacity-rule '90:class_g*?=\"xterm\"' --opacity-rule '75:window_type=\"dock\"'")
+(run-shell-command  "compton -c -t-4 -l-4 -r4 -o.75 -f -D7 -I.07 -O.07 --opacity-rule '90:class_g*?=\"xterm\"' --opacity-rule '90:class_g*?=\"kitty\"' --opacity-rule '75:window_type=\"dock\"'")
 (run-shell-command  "xrdb -merge ~/.Xresources") ;; Just to be sure
 
