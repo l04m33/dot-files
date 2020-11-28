@@ -71,6 +71,7 @@ so one can further customize it."
 
 (defvar *common-top-maps*
   `((,(tkbd "s-RET") "exec xterm")
+    (,(tkbd "s-S-RET") "exec kitty")
 
     (,(tkbd "s-C") "delete-maybe-remove")
     (,(tkbd "s-/") "windowlist")
