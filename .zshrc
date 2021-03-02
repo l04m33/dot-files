@@ -15,7 +15,6 @@ if ! zgen saved; then
     zgen oh-my-zsh plugins/bgnotify
 
     zgen load zsh-users/zsh-syntax-highlighting
-    zgen load fanzeyi/zsh-at
     zgen load sindresorhus/pure
 
     zgen save
