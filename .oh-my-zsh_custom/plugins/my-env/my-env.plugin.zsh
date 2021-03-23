@@ -12,8 +12,8 @@ GUIX_ENV_FILE="$HOME/.config/guix/current/etc/profile"
 GUIX_PROFILE_ENV_FILE="$HOME/.guix-profile/etc/profile"
 for ef in "$GUIX_ENV_FILE" "$GUIX_PROFILE_ENV_FILE"; do
     if [ -f "$ef" ]; then
-        source "$ef"
         export GUIX_PROFILE=${ef:h:h}
+        source "$ef"
     fi
 done
 if [ -n "$GUIX_PROFILE" ]; then
