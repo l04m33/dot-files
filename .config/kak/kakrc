@@ -1,5 +1,8 @@
 ######### Globals #########
 
+# Which terminal executable to use, for GUI integration
+declare-option str rc_term_exec "kitty"
+
 declare-option -hidden str rc_kak_exec %sh{
     kakoune_prefix="$(dirname $(dirname $kak_runtime))"
     kakoune_exec="kak"
@@ -116,7 +119,7 @@ define-command -hidden -params 1.. rc-stumpwm-new-impl %{
         if [ "${cmd}" != "nop" ]; then
             stumpish "${cmd}-and-focus" < /dev/null > /dev/null 2>&1
         fi
-        stumpish "run-shell-command xterm -e ${kak_opt_rc_kak_exec} -c ${kak_session} ${kakoune_params}" < /dev/null > /dev/null 2>&1
+        stumpish "run-shell-command ${kak_opt_rc_term_exec} -e ${kak_opt_rc_kak_exec} -c ${kak_session} ${kakoune_params}" < /dev/null > /dev/null 2>&1
     }
 }
 
