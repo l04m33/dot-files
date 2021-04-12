@@ -1,3 +1,17 @@
+#
+# When I log in to a non-login and non-interactive shell via SSH, e.g.
+#
+#     ssh me@server 'echo $PATH'
+#
+# This is the ONLY init file that would be executed by zsh. I have no
+# choice but to assemble the PATH right here, so that all profiles from
+# my Guix setup can be accessed properly.
+#
+# Yet, this file would be executed EVERYTIME a zsh is spawned, hence
+# the __ZSH_ENV_INITIALIZED__ variable. To update the PATH, one needs
+# to log out and then log back in, or unset this variable.
+#
+
 if [ -z "$__ZSH_ENV_INITIALIZED__" ]; then
     GLOBAL_ETC_PROFILE="/etc/profile"
     if [ -f "$GLOBAL_ETC_PROFILE" ]; then
