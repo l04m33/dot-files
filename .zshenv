@@ -22,3 +22,10 @@ if [ -z "$__ZSH_ENV_INITIALIZED__" ]; then
 
     export __ZSH_ENV_INITIALIZED__=y
 fi
+
+#
+# The user-defined functions are NOT automatically "propagated" to
+# child shells, so we need to define them everytime a new shell is
+# spawned. Just... keep the functions defined here slim and simple.
+#
+source $HOME/.dot-files/.oh-my-zsh_custom/plugins/my-functions/my-functions.plugin.zsh
