@@ -77,8 +77,8 @@ so one can further customize it."
     (,(tkbd "s-/") "windowlist")
     (,(tkbd "s-?") "frame-windowlist")
 
-    (,(tkbd "s-m") "mark")
-    (,(tkbd "s-M") "pull-marked")
+    (,(tkbd "s-w") "mark")
+    (,(tkbd "s-W") "pull-marked")
 
     (,(tkbd "s-v") "toggle-always-on-top")
     (,(tkbd "s-V") "toggle-always-show")
@@ -137,12 +137,12 @@ so one can further customize it."
 
 (defvar *top-map-colemak-dh*
   (make-interactive-keymap top-map-colemak-dh (:exit-on ((tkbd "s-T")))
-    ((tkbd "s-k") "prev-in-frame")
+    ((tkbd "s-m") "prev-in-frame")
     ((tkbd "s-i") "next-in-frame")
     ((tkbd "s-e") "prev-frame-or-window")
     ((tkbd "s-n") "next-frame-or-window")
 
-    ((tkbd "s-K") "move-window left")
+    ((tkbd "s-M") "move-window left")
     ((tkbd "s-I") "move-window right")
     ((tkbd "s-E") "move-window up")
     ((tkbd "s-N") "move-window down")
@@ -184,7 +184,7 @@ so one can further customize it."
   ((tkbd "n")     "resize-any-window down")
 
   ((tkbd "Left")  "resize-any-window left")
-  ((tkbd "k")     "resize-any-window left")
+  ((tkbd "m")     "resize-any-window left")
 
   ((tkbd "Right") "resize-any-window right")
   ((tkbd "i")     "resize-any-window right"))
@@ -216,7 +216,7 @@ so one can further customize it."
   ((tkbd "n")     "move-any-window down")
 
   ((tkbd "Left")  "move-any-window left")
-  ((tkbd "k")     "move-any-window left")
+  ((tkbd "m")     "move-any-window left")
 
   ((tkbd "Right") "move-any-window right")
   ((tkbd "i")     "move-any-window right"))
