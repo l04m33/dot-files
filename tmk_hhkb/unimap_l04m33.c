@@ -45,18 +45,33 @@ enum function_id {
     FUNC_AUTO_LBRACKET,
     FUNC_AUTO_RBRACKET,
     FUNC_AUTO_PAREN,
-    PENTI_KEY,
+    FUNC_PENTI_KEY,
 };
 
-#define AC_L1      ACTION_LAYER_TAP_TOGGLE(1)
-#define AC_L2      ACTION_LAYER_TAP_KEY(2, KC_SPC)
+enum layer_id {
+    LAYER_COLEMAK_DH = 0,
+    LAYER_QWERTY,
+    LAYER_SPCFN,
+    LAYER_SWITCHES,
+    LAYER_PENTI,
+
+    LAYER_COUNT,
+};
+
+#define AC_CTLESC  ACTION_MODS_TAP_KEY(MOD_LCTL, KC_ESC)
 #define AC_CTLENT  ACTION_MODS_TAP_KEY(MOD_RCTL, KC_ENT)
+#define AC_ALTBSP  ACTION_MODS_TAP_KEY(MOD_LALT, KC_BSPC)
+#define AC_SPCFN   ACTION_LAYER_TAP_KEY(LAYER_SPCFN, KC_SPC)
+
+#define AC_SWTS    ACTION_LAYER_TAP_TOGGLE(LAYER_SWITCHES)
+#define AC_QWERTY  ACTION_LAYER_TOGGLE(1)
+#define AC_SPCFNT  ACTION_LAYER_TOGGLE(LAYER_SPCFN)
+
 #define AC_MREC    ACTION_FUNCTION_TAP(D_MACRO_FUNC_RECORD)
 #define AC_MPLAY   ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY)
-#define AC_MPLAY_1 ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY_1)
-#define AC_MPLAY_2 ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY_2)
-#define AC_LOCK    ACTION_LAYER_TAP_TOGGLE(3)
-#define AC_UNLOCK  ACTION_LAYER_MOMENTARY(4)
+#define AC_MPLAY1  ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY_1)
+#define AC_MPLAY2  ACTION_FUNCTION_TAP(D_MACRO_FUNC_PLAY_2)
+
 #define AC_LSFTPRN ACTION_FUNCTION_TAP(FUNC_LSHIFT_LPAREN)
 #define AC_RSFTPRN ACTION_FUNCTION_TAP(FUNC_RSHIFT_RPAREN)
 #define AC_AUTOLBRC ACTION_FUNCTION_TAP(FUNC_AUTO_LBRACKET)
@@ -64,75 +79,57 @@ enum function_id {
 #define AC_AUTOPRN ACTION_FUNCTION_TAP(FUNC_AUTO_PAREN)
 
 #define AC_PENTI        ACTION_LAYER_TOGGLE(5)
-#define AC_PENTI_THUMB  ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_THUMB_BIT)
-#define AC_PENTI_INDEX  ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_INDEX_BIT)
-#define AC_PENTI_MIDDLE ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_MIDDLE_BIT)
-#define AC_PENTI_RING   ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_RING_BIT)
-#define AC_PENTI_PINKY  ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_PINKY_BIT)
-#define AC_PENTI_REPEAT ACTION_FUNCTION_OPT(PENTI_KEY, PENTI_REPEAT_BIT)
+#define AC_PENTI_THUMB  ACTION_FUNCTION_OPT(FUNC_PENTI_KEY, PENTI_THUMB_BIT)
+#define AC_PENTI_INDEX  ACTION_FUNCTION_OPT(FUNC_PENTI_KEY, PENTI_INDEX_BIT)
+#define AC_PENTI_MIDDLE ACTION_FUNCTION_OPT(FUNC_PENTI_KEY, PENTI_MIDDLE_BIT)
+#define AC_PENTI_RING   ACTION_FUNCTION_OPT(FUNC_PENTI_KEY, PENTI_RING_BIT)
+#define AC_PENTI_PINKY  ACTION_FUNCTION_OPT(FUNC_PENTI_KEY, PENTI_PINKY_BIT)
+#define AC_PENTI_REPEAT ACTION_FUNCTION_OPT(FUNC_PENTI_KEY, PENTI_REPEAT_BIT)
 
+#ifndef _
+#   define _ TRNS
+#else
+#   error "The _ macro is already defined!"
+#endif
 
 #ifdef KEYMAP_SECTION_ENABLE
 const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
 #else
 const action_t actionmaps[][UNIMAP_ROWS][UNIMAP_COLS] PROGMEM = {
 #endif
-    /* layer 0: default layer
-     * ,-----------------------------------------------------------.
-     * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|  \|  `|
-     * |-----------------------------------------------------------|
-     * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|Backs|
-     * |-----------------------------------------------------------|
-     * |Contro|  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '| CTLENT |
-     * |-----------------------------------------------------------|
-     * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift |L1 |
-     * `-----------------------------------------------------------'
-     *       |Gui| Alt |          L2           | Alt |Gui|
-     *       `-------------------------------------------'
-     */
-    [0] = UNIMAP_HHKB(
+    [LAYER_COLEMAK_DH] = UNIMAP_HHKB(
     ESC,     1,    2,    3,   4,   5,   6,   7,   8,    9,    0,    MINS,     EQL,      BSLS, GRV,
-    TAB,     Q,    W,    E,   R,   T,   Y,   U,   I,    O,    P,    AUTOLBRC, AUTORBRC, BSPC,
-    LCTL,    A,    S,    D,   F,   G,   H,   J,   K,    L,    SCLN, QUOT,     CTLENT,
-    LSFTPRN, Z,    X,    C,   V,   B,   N,   M,   COMM, DOT,  SLSH, RSFTPRN,  L1,
-             LGUI, LALT,           L2,                  RALT, RGUI),
+    TAB,     Q,    W,    F,   P,   B,   J,   L,   U,    Y,    SCLN, AUTOLBRC, AUTORBRC, BSPC,
+    CTLESC,  A,    R,    S,   T,   G,   M,   N,   E,    I,    O,    QUOT,     CTLENT,
+    LSFTPRN, X,    C,    D,   V,   Z,   K,   H,   COMM, DOT,  SLSH, RSFTPRN,  SWTS,
+             LGUI, ALTBSP,         SPCFN,               RALT, RGUI),
 
-    /* layer 1: hhkb mode (hhkb fn) */
-    [1] = UNIMAP_HHKB(
-    PWR,  F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,  INS,  DEL,
-    CAPS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, PSCR, SLCK, PAUS, UP,   TRNS, BSPC,
-    TRNS, VOLD, VOLU, MUTE, TRNS, TRNS, PAST, PSLS, HOME, PGUP, LEFT, RGHT, PENT,
-    LOCK, TRNS, TRNS, TRNS, TRNS, TRNS, PPLS, PMNS, END,  PGDN, DOWN, AUTOPRN, L1,
-          MPLAY_1, MPLAY_2,       SPC,                    MREC, MPLAY),
+    [LAYER_QWERTY] = UNIMAP_HHKB(
+    _,  _,  _,  _,  _,  _,  _,  _,  _,  _,  _,    _,  _,  _,  _,
+    _,  Q,  W,  E,  R,  T,  Y,  U,  I,  O,  P,    _,  _,  _,
+    _,  A,  S,  D,  F,  G,  H,  J,  K,  L,  SCLN, _,  _,
+    _,  Z,  X,  C,  V,  B,  N,  M,  _,  _,  _,    _,  _,
+         _,  _,        _,               _,  _),
 
-    /* layer 2: vi movement keys and mouse keys (space) */
-    [2] = UNIMAP_HHKB(
-    PENTI, F1,   F2,   F3,   F4,   F5,   F6,   F7,   F8,   F9,   F10,  F11,  F12,    INS,  DEL,
-    TAB,   TRNS, WH_L, WH_U, WH_D, WH_R, HOME, PGDN, PGUP, END,  TRNS, LBRC, RBRC,   BSPC,
-    LCTL,  TRNS, MS_L, MS_U, MS_D, MS_R, LEFT, DOWN, UP,   RGHT, TRNS, TRNS, CTLENT,
-    LSFT,  TRNS, BTN3, BTN2, BTN1, TRNS, ACL2, ACL1, ACL0, TRNS, TRNS, RSFT, TRNS,
-           LGUI, LALT,             L2,                     RALT, RGUI),
+    [LAYER_SPCFN] = UNIMAP_HHKB(
+    _,    _,   _, _, _,   _,    _,    _,    _,    _,    _,      _,    _,    _,    _,
+    GRV,  EQL, 3, 2, 1,   MINS, HOME, PGDN, PGUP, END,  DELETE, LBRC, RBRC, BSPC,
+    LCTL, 0,   6, 5, 4,   QUOT, LEFT, DOWN, UP,   RGHT, INS,    _,    RCTL,
+    LSFT, 9,   8, 7, DOT, ENT,  RBRC, BSLS, _,    _,    _,      RSFT, _,
+          _,   _,             _,                  _,    _),
 
     /* layer 3: locked */
-    [3] = UNIMAP_HHKB(
-    NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, UNLOCK,
-        NO, NO,             NO,                     NO, NO),
-
-    /* layer 4: unlocking */
-    [4] = UNIMAP_HHKB(
-    NO,   NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO,   NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO,   NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    LOCK, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, UNLOCK,
-          NO, NO,             NO,                     NO, NO),
+    [LAYER_SWITCHES] = UNIMAP_HHKB(
+    NO,    NO,  NO, NO, NO,  NO,   NO,     NO,     NO,      NO,     NO,   NO,   NO, NO, NO,
+    PENTI, F11, F3, F2, F1,  PSCR, QWERTY, SPCFNT, AUTOPRN, NO,     NO,   NO,   NO, NO,
+    _,     F10, F6, F5, F4,  CAPS, MS_L,   MS_D,   MS_U,    MS_R,   BTN1, BTN2, _,
+    _,     F9,  F8, F7, F12, SLCK, MREC,   MPLAY,  MPLAY1,  MPLAY2, NO,   _,    _,
+           _,   _,                    _,                    _,      _),
 
     /* layer 5: Penti keyboard mode */
-    [5] = UNIMAP_HHKB(
-    PENTI, NO,          NO,           NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
-    NO,    NO,          PENTI_RING,   PENTI_MIDDLE, PENTI_INDEX, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    [LAYER_PENTI] = UNIMAP_HHKB(
+    NO,    NO,          NO,           NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO, NO, NO,
+    PENTI, NO,          PENTI_RING,   PENTI_MIDDLE, PENTI_INDEX, NO, NO, NO, NO, NO, NO, NO, NO, NO,
     NO,    PENTI_PINKY, NO,           PENTI_REPEAT, NO,          NO, NO, NO, NO, NO, NO, NO, NO,
     NO,    NO,          NO,           NO,           NO,          NO, NO, NO, NO, NO, NO, NO, NO,
            NO,          NO,                                      PENTI_THUMB,        NO, NO),
@@ -169,7 +166,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
         case FUNC_AUTO_PAREN:
             action_auto_paren(record);
             break;
-        case PENTI_KEY:
+        case FUNC_PENTI_KEY:
             action_penti_key(record, opt);
             break;
         default:
@@ -267,5 +264,6 @@ action_t action_for_key(uint8_t layer, keypos_t key)
 
 void hook_late_init(void)
 {
+    auto_paren_state.enabled = 1;
     d_macro_stack_scan_hook_late_init();
 }
