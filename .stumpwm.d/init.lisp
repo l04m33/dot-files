@@ -173,8 +173,11 @@
                                       "^[^(:fg \"#373b41\")^]"
                                       "^[^(:fg \"#969896\")^(:bg \"#373b41\")^]"
                                       "^[^(:fg \"#1d1f21\")^(:bg \"#969896\")  ^]"))
-    ;; The CPU package may not be available
-    (setf (symbol-value (find-symbol "*CPU-MODELINE-FMT*" "CPU")) "%c %t"))
+    ;; The CPU package may not be available.
+    ;; And AMD thermal drivers don't work with %t
+    (if (symbol-value (find-symbol "*ACPI-THERMAL-ZONE*" "CPU"))
+      (setf (symbol-value (find-symbol "*CPU-MODELINE-FMT*" "CPU")) "%c %t")
+      (setf (symbol-value (find-symbol "*CPU-MODELINE-FMT*" "CPU")) "%c")))
   (setf *screen-mode-line-format* `("^[^(:fg \"#1d1f21\")^(:bg \"#81a2be\") %n ^]"
                                     "^[^(:fg \"#81a2be\")^(:bg \"#8abeb7\")^]"
                                     "^[^(:fg \"#1d1f21\")^(:bg \"#8abeb7\") %d ^]"
