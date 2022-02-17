@@ -179,11 +179,11 @@ map -docstring 'Paste from clipboard, after current selection' global rc-stumpwm
 evaluate-commands %sh{
     if [ "$kak_opt_rc_plug_kak_found" = "yes" ]; then
         printf 'source "%s/plugins/plug.kak/rc/plug.kak"\n' "${kak_config}"
-        printf 'plug "robertmeta/plug.kak" branch "dev" noload\n'
+        printf 'plug "andreyorst/plug.kak" noload\n'
         printf 'plug "andreyorst/fzf.kak" config %%{
                     map -docstring "fzf mode" global user f ": fzf-mode<ret>"
                 }\n'
-        printf 'plug "ul/kak-lsp" noload do %%{
+        printf 'plug "kak-lsp/kak-lsp" noload do %%{
                     cargo install --locked --force --path .
                 }\n'
         printf 'plug "eraserhd/parinfer-rust" do %%{
