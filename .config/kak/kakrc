@@ -229,3 +229,14 @@ define-command -hidden -params .. rc-enable-kak-lsp %{
 hook -group rc-lisp-switch global WinSetOption filetype=(lisp|scheme) %{
     set-option window indentwidth 2
 }
+
+######### Other File Types #########
+
+evaluate-commands %sh{
+    filetype_dir="${kak_config}/filetype"
+    if [ -d "${filetype_dir}" ]; then
+        find "${filetype_dir}" -type f -name '*.kak' -exec printf 'source %s\n' '{}' \;
+    else
+        printf nop
+    fi
+}
