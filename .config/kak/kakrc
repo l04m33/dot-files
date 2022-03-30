@@ -205,6 +205,7 @@ evaluate-commands %sh{
 ######### Kak-lsp Integration #########
 
 map -docstring 'Enable kak-lsp' global user l ': rc-enable-kak-lsp<ret>'
+map -docstring 'Hook current filetype to kak-lsp' global user L ': rc-kak-lsp-hook-ft "%opt{filetype}"<ret>'
 
 define-command -hidden -params .. rc-enable-kak-lsp %{
     evaluate-commands %sh{
@@ -217,10 +218,21 @@ define-command -hidden -params .. rc-enable-kak-lsp %{
             printf "echo -markup '{Error}kak-lsp command not found'"
         fi
     }
-    hook -group rc-kak-lsp-switch global WinSetOption filetype=(python) %{
-        lsp-enable-window
-    }
     map -docstring 'kak-lsp' global user l ': enter-user-mode lsp<ret>'
+}
+
+define-command -params 1 rc-kak-lsp-hook-ft %{
+    evaluate-commands %sh{
+        ft="$1"
+        printf "hook -group rc-kak-lsp-switch global WinSetOption filetype=(${ft}) %%{
+                    lsp-enable-window
+                }\n"
+        # Files that are already opened will NOT trigger the WinSetOption hook.
+        # XXX: This only works for the current buffer.
+        if [ "$ft" = "$kak_opt_filetype" ]; then
+            printf "lsp-enable-window\n"
+        fi
+    }
 }
 
 
