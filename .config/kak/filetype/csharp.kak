@@ -5,7 +5,7 @@
 # The original code was licensed under the Unlicense.
 #
 
-hook global BufCreate .*\.cs %{
+hook global BufCreate .*\.(cs|csx)$ %{
     set-option buffer filetype csharp
 }
 
