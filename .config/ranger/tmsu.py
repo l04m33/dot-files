@@ -38,7 +38,12 @@ from ranger.api.commands import *
 
 
 class TmsuCmdFailedError(Exception):
-    pass
+    @property
+    def output(self):
+        try:
+            return self.args[0]
+        except IndexError:
+            return ''
 
 
 class TmsuMixin(object):
@@ -61,8 +66,7 @@ class TmsuMixin(object):
         try:
             return self._exec_cmd(self._build_cmd(sub_cmd, *args)).decode()
         except subprocess.CalledProcessError as e:
-            te = TmsuCmdFailedError('{}'.format(e.output.strip()))
-            te.output = e.output.decode()
+            te = TmsuCmdFailedError(e.output.decode())
             raise te
 
     def _parse_info_line(self, line):
@@ -155,8 +159,9 @@ class tmsu_tags(TmsuMixin, Command):
         hlf = self.fm.thisfile.path
         out = self._exec('tags', hlf)
         info = self._parse_info_text(out)
-        if len(info.values()[0].strip()) > 0:
-            self.fm.notify('Tags: {}'.format(info.values()[0]))
+        tags = next(iter(info.values()))
+        if len(tags.strip()) > 0:
+            self.fm.notify('Tags: {}'.format(tags))
         else:
             self.fm.notify('No tags.')
 
