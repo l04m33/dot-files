@@ -4,3 +4,24 @@ roots = ["requirements.txt", "setup.py", ".git", ".hg"]
 command = "pyls"
 args = []
 offset_encoding = "utf-8"
+
+[language.zig]
+filetypes = ["zig"]
+roots = ["build.zig", ".git", ".hg"]
+command = "zls"
+args = []
+offset_encoding = "utf-8"
+
+[language.csharp]
+filetypes = ["csharp"]
+roots = ["*.sln", "*.csproj", ".git", ".hg"]
+command = "OmniSharp"
+args = ["-lsp"]
+offset_encoding = "utf-8"
+
+[language.racket]
+filetypes = ["racket"]
+roots = ["info.rkt", ".git", ".hg"]
+command = "racket"
+args = ["-l", "racket-langserver"]
+offset_encoding = "utf-8"
