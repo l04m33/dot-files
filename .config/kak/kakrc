@@ -32,7 +32,7 @@ declare-option -hidden str rc_msg_not_in_x    "{Error}Not in a GUI session"
 
 colorscheme tomorrow-night
 addhl global/number-lines number-lines -relative -hlcursor
-set-option global ui_options ncurses_assistant=cat
+set-option global ui_options terminal_assistant=cat
 
 
 ######### Basic Key Mappings #########
@@ -189,13 +189,15 @@ evaluate-commands %sh{
         printf 'plug "eraserhd/parinfer-rust" do %%{
                     cargo install --locked --force --path .
                 } config %%{
-                    hook global WinSetOption filetype=(clojure|lisp|scheme|racket) %%{
+                    hook global WinSetOption filetype=(lisp|scheme|racket) %%{
                         parinfer-enable-window -smart
                     }
                 }\n'
         printf 'plug "TeddyDD/kakoune-wiki" config %%{
                     wiki-setup %%sh{ printf "%%s/notes" "${HOME}" }
                 }\n'
+
+        printf 'plug "https://bitbucket.org/KJ_Duncan/kakoune-racket.kak.git"\n'
     else
         printf 'nop'
     fi
@@ -238,7 +240,7 @@ define-command -params 1 rc-kak-lsp-hook-ft %{
 
 ######### Lisp Files #########
 
-hook -group rc-lisp-switch global WinSetOption filetype=(lisp|scheme) %{
+hook -group rc-lisp-switch global WinSetOption filetype=(lisp|scheme|racket) %{
     set-option window indentwidth 2
 }
 
