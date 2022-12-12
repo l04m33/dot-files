@@ -1,4 +1,7 @@
 (cons* (channel
+        (name 'local-channel)
+        (url "https://github.com/l04m33/local-channel.git"))
+       (channel
         (name 'nonguix)
         (url "https://gitlab.com/nonguix/nonguix")
         ;; Enable signature verification:
