@@ -11,6 +11,10 @@
 # the __ZSH_ENV_INITIALIZED__ variable. To update the PATH, one needs
 # to log out and then log back in, or unset this variable.
 #
+# If the PATH turned out wrong, check the zprofile files. Some systems
+# source /etc/profile in ~/.zprofile or /etc/zprofile, and would unset
+# the PATH we built here.
+#
 
 if [ -z "$__ZSH_ENV_INITIALIZED__" ]; then
     GLOBAL_ETC_PROFILE="/etc/profile"
