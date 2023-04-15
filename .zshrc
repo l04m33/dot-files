@@ -20,4 +20,9 @@ if ! zgen saved; then
     zgen save
 fi
 
+if command -V emacsclient > /dev/null 2>&1; then
+    alias ec='emacsclient -a "" -t'
+    alias ecc='emacsclient -a "" -c'
+fi
+
 source $HOME/.dot-files/.oh-my-zsh_custom/plugins/my-gpg-agent/my-gpg-agent.plugin.zsh
