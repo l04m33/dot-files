@@ -8,7 +8,19 @@ if [ -n "$APPINST_BINS" ]; then
     export PATH=$APPINST_BINS:$PATH
 fi
 
-export EDITOR=$(if which kak > /dev/null 2>&1; then echo kak; else echo vim; fi)
+if command -V emacsclient > /dev/null 2>&1; then
+    export EDITOR="emacsclient -a '' -t"
+    export VISUAL="emacsclient -a '' -c"
+    alias ec='emacsclient -a "" -t'
+    alias ecc='emacsclient -a "" -c'
+else
+    if command -V kak > /dev/null 2>&1; then
+        export EDITOR="kak"
+    else
+        export EDITOR="vim"
+        export VISUAL="gvim"
+    fi
+fi
 
 if [ -e "$HOME/.local_env" ]; then
     . "$HOME/.local_env"
