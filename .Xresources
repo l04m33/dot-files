@@ -53,7 +53,8 @@ xterm*color15:      #ecebec
 ! Fonts
 xterm*faceName: Tamzen For Powerline:antialias=false
 xterm*faceNameDoublesize: WenQuanYi Zen Hei Mono:antialias=true
-xterm*faceSize: 13
+! TamzenForPowerline8x15
+xterm*faceSize: 11
 
 !!!!!!!!! XScreenSaver Settings !!!!!!!!!
 
