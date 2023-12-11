@@ -1,23 +1,23 @@
-autoload -U compinit && compinit
+#autoload -U compinit && compinit
 
-export ZSH_RC_MGR_HOME="${HOME}/.zgen"
+export ZSH_RC_MGR_HOME="${HOME}/.zgenom"
 if [ ! -d "${ZSH_RC_MGR_HOME}" ]; then
-    git clone --branch master 'https://github.com/tarjoilija/zgen.git' "${ZSH_RC_MGR_HOME}"
+    git clone --branch main 'https://github.com/jandamm/zgenom.git' "${ZSH_RC_MGR_HOME}"
 fi
-source ${ZSH_RC_MGR_HOME}/zgen.zsh
+source ${ZSH_RC_MGR_HOME}/zgenom.zsh
 
-if ! zgen saved; then
+if ! zgenom saved; then
 
-    zgen load mafredri/zsh-async . main
+    zgenom load mafredri/zsh-async . main
 
-    zgen oh-my-zsh
-    zgen oh-my-zsh plugins/z
-    zgen oh-my-zsh plugins/bgnotify
+    zgenom ohmyzsh
+    zgenom ohmyzsh plugins/z
+    zgenom ohmyzsh plugins/bgnotify
 
-    zgen load zsh-users/zsh-syntax-highlighting
-    zgen load sindresorhus/pure pure.zsh main
+    zgenom load zsh-users/zsh-syntax-highlighting
+    zgenom load sindresorhus/pure pure.zsh main
 
-    zgen save
+    zgenom save
 fi
 
 if command -V emacsclient > /dev/null 2>&1; then
